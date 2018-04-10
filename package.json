@@ -1,0 +1,25 @@
+{
+  "name": "schueleruni_ueb01",
+  "version": "1.0.0",
+  "description": "Die erste Veranstaltung Webanwendungen in der Praxis",
+  "main": "server.js",
+  "scripts": {
+    "start": "node index.js",
+    "compile": "babel --presets es2015 -d lib/ src/",
+    "prepublish": "npm run compile"
+  },
+  "dependencies": {
+    "css-validator": "^0.8.0",
+    "express": "^4.16.2",
+    "handlebars": "^4.0.11",
+    "html-escape": "^2.0.0",
+    "html-validator": "^2.2.3",
+    "js-yaml": "^3.11.0"
+  },
+  "author": "[mpg] Marian P. Gajda",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1"
+  }
+}
