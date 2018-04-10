@@ -1,8 +1,8 @@
 {
-  "name": "schueleruni_ueb01",
-  "version": "1.0.0",
-  "description": "Die erste Veranstaltung Webanwendungen in der Praxis",
-  "main": "server.js",
+  "name": "fhw-web",
+  "version": "0.0.1",
+  "description": "Framework zur Übung 'Web-Anwendungen' an der Fachhochschule Wedel",
+  "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "compile": "babel --presets es2015 -d lib/ src/",
