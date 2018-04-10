@@ -7,16 +7,14 @@ const path = require('path');
 const { generateErrorPage } = require('./customError');
 const validator = require('./validator');
 
+const app = express();
+
+
 const config = {
 	validator: {
 		html: false
 	}
 };
-
-const app = express();
-
-app.use('/assets', express.static('assets'));
-app.use('/docs', express.static('docs/_build/html'));
 
 
 function loadGlobalFrontmatter() {
@@ -27,31 +25,46 @@ function loadGlobalFrontmatter() {
 
 
 // request handler
-app.use(async function(req, res) {
-	let html = '';
-	let status = 200;
+function magicRoutes() {
+	return async function(req, res) {
+		let html = '';
+		let status = 200;
 
-	try {
-		// TODO: json validation
-		const frontmatterGlobal = loadGlobalFrontmatter();
-		html = await compile(req.originalUrl, frontmatterGlobal);
-		if (config.validator.html) {
+		try {
+			// TODO: json validation
+			const frontmatterGlobal = loadGlobalFrontmatter();
+			html = await compile(req.originalUrl, frontmatterGlobal);
+			if (config.validator.html) {
 
-			await validator.html(html);
+				await validator.html(html);
+			}
+
+		} catch(error) {
+			html = generateErrorPage(error);
+			status = error.status || 500;
+
+		} finally {
+			res.status(status);
+			res.send(html);
 		}
-
-	} catch(error) {
-		html = generateErrorPage(error);
-		status = error.status || 500;
-
-	} finally {
-		res.status(status);
-		res.send(html);
 	}
-});
+}
 
-const host = 'localhost';
-const port = 8080;
-app.listen(port);
+/*
+	userConfig ::= { <port> }
 
-console.log(`Server listening on http://${host}:${port}/`);
+	port ::= <Integer>
+ */
+function start(userConfig) {
+	const port = userConfig.port || 8080;
+
+	app.use('/assets', express.static('assets'));
+	app.use(magicRoutes());
+
+	app.listen(port);
+	console.log(`Server listening on http://localhost:${port}/`);
+}
+
+module.exports = {
+	start
+};

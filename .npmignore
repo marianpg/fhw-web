@@ -3,4 +3,5 @@ node_modules/
 pages/
 templates/
 assets/
-lib/
+src/
+run.js
