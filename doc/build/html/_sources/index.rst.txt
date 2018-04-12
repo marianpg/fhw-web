@@ -89,7 +89,7 @@ Die angeforderte page wird auf dem Dateisystem entsprechend gesucht.
   Wird kein Dateiname angegeben, wird implizit nach einer index.hbs gesucht. Die Dateierweiterung "hbs" kann im
   Webbrowser ausgelassen werden.
 
-  Hinweis: Aufgrund der statischen Ressource 'assets' können keine pages mit diesen Namen sinnvoll angelegt werden.
+  *Hinweis*: Aufgrund der statischen Ressource 'assets' können keine pages mit diesen Namen sinnvoll angelegt werden.
 
 
 - templates/
