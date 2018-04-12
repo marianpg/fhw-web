@@ -13,10 +13,10 @@ Projekteinrichtung
 ^^^^^^^^^^^^^^^^^^
 Folgende Befehle müssen erstmalig im Projektordner ausgeführt werden::
 
-    $ npm init
+    $ npm init #alle Rückfragen mit 'y' bzw. 'j' für yes/ja bestätigen
     $ npm install --save fhw-web
 
-Lege dann eine Datei server.js mit folgendem Inhalt an::
+Lege dann eine Datei index.js mit folgendem Inhalt an::
 
     'use strict';
     var fhWeb = require('fhw-web');
