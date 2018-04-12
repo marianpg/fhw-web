@@ -1,0 +1,13 @@
+{
+  "hobbies": ["lesen", "schwimmen", "reiten"],
+  "name": "Thomas"
+}
+---
+<p>
+  Mein Name ist {{ page.name }} und meine Hobbies sind
+  <ul>
+    {{#each page.hobbies }}
+      <li>{{ this }}</li>
+    {{/each}}
+  </ul>
+</p>

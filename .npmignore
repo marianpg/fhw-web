@@ -1,7 +1,11 @@
 package-lock.json
 node_modules/
-pages/
-templates/
+
 assets/
+controller/
+doc/
+pages/
 src/
+templates/
+routes.json
 run.js

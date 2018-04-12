@@ -1,0 +1,18 @@
+<header>
+  Drei Spalten mit Flex
+</header>
+
+<div id="flex">
+  <nav>nav</nav>
+  <article>{{ content }}</article>
+  {{#if page.aside }}
+  <aside>
+   {{#if page.aside.commercial}}
+   <h2>Werbung</h2>
+   {{#endif}}
+  </aside>
+  {{/if}}
+</div>
+
+<footer>footer</footer>
+

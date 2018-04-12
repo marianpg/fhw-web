@@ -1,0 +1,200 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="de">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>FHW Web Dokumentation &#8212; FHW Web 10.04.2018 Dokumentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="index" title="Stichwortverzeichnis" href="genindex.html" />
+    <link rel="search" title="Suche" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="fhw-web-dokumentation">
+<h1>FHW Web Dokumentation<a class="headerlink" href="#fhw-web-dokumentation" title="Link zu dieser Überschrift">¶</a></h1>
+</div>
+<div class="section" id="erste-schritte">
+<h1>Erste Schritte<a class="headerlink" href="#erste-schritte" title="Link zu dieser Überschrift">¶</a></h1>
+<div class="section" id="projekteinrichtung">
+<h2>Projekteinrichtung<a class="headerlink" href="#projekteinrichtung" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Folgende Befehle müssen erstmalig im Projektordner ausgeführt werden:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ npm init
+$ npm install --save fhw-web
+</pre></div>
+</div>
+<p>Lege dann eine Datei server.js mit folgendem Inhalt an:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="s1">&#39;use strict&#39;</span><span class="p">;</span>
+<span class="n">var</span> <span class="n">fhWeb</span> <span class="o">=</span> <span class="n">require</span><span class="p">(</span><span class="s1">&#39;fhw-web&#39;</span><span class="p">);</span>
+
+<span class="n">fhWeb</span><span class="o">.</span><span class="n">start</span><span class="p">({</span>
+    <span class="n">port</span><span class="p">:</span> <span class="mi">8080</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p>Anschließend lässt sich der Server wie folgt starten:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ npm start
+</pre></div>
+</div>
+</div>
+<div class="section" id="wesentliche-elemente">
+<h2>Wesentliche Elemente<a class="headerlink" href="#wesentliche-elemente" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Für die Verwendung des Frameworks sollten zum Stand des 26.03.2018 die Kapitel eins bis vier der Veranstaltung
+<a class="reference external" href="https://webanwendungen.fh-wedel.de/">Webanwendungen</a> studiert werden.
+Dabei werden drei wesentliche Aspekte im Framework umgesetzt:</p>
+<ul>
+<li><p class="first">Frontmatter und „Handlebars-Expression“</p>
+<p>Die Trennung der Daten von ihrer Repräsentation und die Verwendung der „Handlebars-Expression“:
+<a class="reference external" href="https://webanwendungen.fh-wedel.de/lectures/03-templating.html#angabe-von-daten-im-frontmatter">siehe VL#Frontmatter</a></p>
+</li>
+<li><p class="first">Mehrstufige Template-Logik</p>
+<p>Das Einsetzen spezieller, wiederkehrender Fragmente (Stichwort {{include}}) bzw. Referenzieren eines Templates
+(Stichworte template und {{content}}).
+<a class="reference external" href="https://webanwendungen.fh-wedel.de/lectures/03-templating.html#mehrstufige-templating-logik">siehe VL#Templating</a></p>
+<p>Wiederkehrende Elemente sind dabei logisch voneinander trennbare Inhalte.
+Dies wäre beispielsweise bei einem Header oder Footer der Fall.</p>
+<p>Referenzierte Templates hingegen enthalten ein für den Inhalt nicht weiter relevantes (Html-) Gerüst und rendern den
+eigentlichen content an einer explizit ausgewiesenen Stelle.
+<a class="reference external" href="https://webanwendungen.fh-wedel.de/lectures/03-templating.html#mehrstufige-templating-logik">siehe VL#Templating</a></p>
+</li>
+<li><p class="first">Organisation der Daten</p>
+<p>Jede hbs-Datei kann ein Frontmatter enthalten. Frontmatter-Daten, die in einer page, also einem Einstiegspunkt
+einer Request, angegeben werden, sind auch für die inkludierten templates sichtbar, umgekehrt jedoch nicht.</p>
+<p>Dabei werden die Daten, die innerhalb einer page definiert sind, in ein page Objekt gepackt. Globale Daten aus der
+global.json werden in ein global Objekt gepackt:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Marcus&quot;</span>
+<span class="p">}</span>
+
+ <span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="p">{</span><span class="k">global</span><span class="o">.</span><span class="n">salut</span><span class="p">}</span> <span class="p">{</span><span class="n">page</span><span class="o">.</span><span class="n">name</span><span class="p">}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>Bei Namenskonflikten gewinnt das zuletzt spezifizierte Feld; es „gewinnt“ somit „das letzte include“.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="projektstruktur">
+<h2>Projektstruktur<a class="headerlink" href="#projektstruktur" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Für die Aufgaben der SchülerUni sowie für die erste Aufgabe für die Studierenden werden die Routen magisch
+bereitgestellt; es ist keine Routendefinition notwendig. Diese wird vom Server anhand der Request-Url hergeleitet.
+Die angeforderte page wird auf dem Dateisystem entsprechend gesucht.</p>
+<ul>
+<li><p class="first">pages/</p>
+<p>Hier werden die hbs-Dokumente erstellt, die sich über den Webbrowser aufrufen lassen. Der Aufruf der Website
+entspricht dabei folgendem Schema:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">localhost</span><span class="p">:</span><span class="mi">8080</span><span class="o">/**</span><span class="n">Dateiname</span><span class="o">**</span>
+</pre></div>
+</div>
+<p>Wird kein Dateiname angegeben, wird implizit nach einer index.hbs gesucht. Die Dateierweiterung „hbs“ kann im
+Webbrowser ausgelassen werden.</p>
+<p>Hinweis: Aufgrund der statischen Ressource ‚assets‘ können keine pages mit diesen Namen sinnvoll angelegt werden.</p>
+</li>
+<li><p class="first">templates/</p>
+<p>Hier werden die hbs-Dokumente erstellt, die für die
+<a class="reference external" href="https://webanwendungen.fh-wedel.de/lectures/03-templating.html#mehrstufige-templating-logik">mehrstufige Template-Logik</a>
+verwendet werden sollen.</p>
+</li>
+<li><p class="first">assets/</p>
+<p>Hierhin gehören sämtliche statische Ressourcen, wie beispielsweise Bilder oder Stylesheets. Eine derartige Ressource
+lässt sich dann über den Pfad /assets/<strong>Dateiname</strong> aufrufen.</p>
+</li>
+<li><p class="first">global.json</p>
+<p>Globale Daten, die für alle pages gelten und verfügbar sein sollen, gehören in diese Datei.</p>
+</li>
+</ul>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link zu dieser Überschrift">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Stichwortverzeichnis</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Modulindex</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Suche</span></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Inhalt</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">FHW Web Dokumentation</a></li>
+<li><a class="reference internal" href="#erste-schritte">Erste Schritte</a><ul>
+<li><a class="reference internal" href="#projekteinrichtung">Projekteinrichtung</a></li>
+<li><a class="reference internal" href="#wesentliche-elemente">Wesentliche Elemente</a></li>
+<li><a class="reference internal" href="#projektstruktur">Projektstruktur</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>Diese Seite</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Quellcode anzeigen</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Schnellsuche</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Los" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, [mpg] Marian P. Gajda.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

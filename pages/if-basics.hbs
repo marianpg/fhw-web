@@ -1,0 +1,18 @@
+{
+  "vorname": "Hermine",
+  "nachname": "Granger",
+  "weiblich": true,
+  "geburtsjahr": 1979
+}
+---
+<ul>
+  <li>Vorname: {{ page.vorname }}</li>
+  <li>Nachname: {{ page.nachname }}</li>
+  {{#if page.weiblich}}
+    <li>Geschlecht: Weiblich</li>
+  {{/if }}
+  {{#if page.männlich}}
+    <li>Geschlecht: Männlich</li>
+  {{/if}}
+  <li>Geburtsjahr: {{ page.geburtsjahr }}</li>
+</ul>

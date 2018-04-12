@@ -1,0 +1,13 @@
+{
+  "name": "Hagrid",
+  "tiere": [
+    "Spinne", "Flubberwürmer", "Hippogreif",
+    "Niffler", "Knallrümpfige Kröter"
+  ]
+}
+---
+<ul>
+  {{#each page.tiere}}
+    <li>{{../page.name}} stellte vor: {{ this }}</li>
+  {{/each}}
+</ul>

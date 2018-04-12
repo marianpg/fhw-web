@@ -1,0 +1,14 @@
+{
+  "a" : 1,
+  "b" : 2,
+  "c" : [3,4],
+  "d" : { "hallo": "welt" }
+}
+---
+<p>Daten aus der Seite</p>
+{{ debugJson }}
+
+{{ include "data-hierarchy-1" }}
+
+<p>Daten aus der Seite</p>
+{{ debugJson }}

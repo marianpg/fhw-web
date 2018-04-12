@@ -1,0 +1,10 @@
+{
+  "dinge": ["Hase", "Katze", "🐈", true, "Hase", 13, "💩"]
+}
+---
+<h1>Auflistung von Dingen</h1>
+<ol>
+  {{#each page.dinge }}
+    <li>Ding: {{ this }}</li>
+  {{/each}}
+</ol>

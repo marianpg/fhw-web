@@ -1,43 +1,15 @@
 'use strict';
 
-const path = require('path');
-const fs = require('fs');
-const yamlToJson = require('js-yaml');
-const handlebars = require('handlebars');
+import fs from 'fs';
+import path from 'path';
+import yamlToJson from 'js-yaml';
+import handlebars from 'handlebars';
 const { FileNotFoundError } = require('./customError');
-const validator = require('./validator');
+import validator from './validator';
+
+import { contains, convert } from './file-utils';
 
 
-function contains(directory, entry) {
-    const fileList = fs.readdirSync(directory);
-    const found = fileList
-        .map( aEntry => aEntry === entry )
-        .reduce( (val, cur) => val || cur, false );
-
-    return found
-}
-
-
-// Entfernt Anker
-// Entfernt Query-Parameter
-// Ergänzt Ordnerpfade um ein 'index.html'
-// Ergänzt fehlende Dateierweiterung um '.html'
-function convert(url) {
-    let result = url === '' ? '/' : url;
-
-    result = result.match(/([\/\.0-9a-zA-Z-]+)(?=[\?#])?/g)[0] || result;
-
-    if (result.slice(-1) === '/') {
-        result += 'index.hbs';
-    }
-
-    if (result.indexOf('.hbs') === -1) {
-        result += '.hbs';
-    }
-
-
-    return result;
-}
 
 /**
  * Calculates a meaningfully indented version of the
@@ -63,7 +35,7 @@ function createHandlebarsEnv() {
 function prepareCompile(url, startDir, frontmatter) {
 	const preparedUrl = convert(url);
 	const filename = path.basename(preparedUrl);
-	const directory = path.join(process.cwd(), startDir, path.dirname(preparedUrl));
+	const directory = path.join(startDir, path.dirname(preparedUrl));
 
 	if (fs.existsSync(directory) && contains(directory, filename)) {
 
@@ -89,7 +61,7 @@ function prepareCompile(url, startDir, frontmatter) {
 }
 
 
-function compile(url, frontmatter = {}, dir = 'pages', contentHtml = '') {
+export default function compile(url, frontmatter = {}, dir = 'pages', contentHtml = '') {
     const { hbs, frontmatterCombined } = prepareCompile(url, dir, frontmatter);
     const handlebarsEnv = createHandlebarsEnv();
 
@@ -123,6 +95,3 @@ function compile(url, frontmatter = {}, dir = 'pages', contentHtml = '') {
 
 	return htmlCompiled.trim();
 }
-
-
-module.exports = compile;

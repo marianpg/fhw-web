@@ -1,0 +1,21 @@
+{
+  "vorname": "Ronald Bilius",
+  "nachname": "Weasley",
+  "männlich": true,
+  "geburtsjahr": 1980
+}
+---
+<ul>
+  <li>Vorname: {{ page.vorname }}</li>
+  <li>Nachname: {{ page.nachname }}</li>
+  <li>
+  Geschlecht:
+  {{#if page.weiblich}}
+    Weiblich
+  {{/if }}
+  {{#if page.männlich}}
+    Männlich
+  {{/if}}
+  </li>
+  <li>Geburtsjahr: {{ page.geburtsjahr }}</li>
+</ul>

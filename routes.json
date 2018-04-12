@@ -1,0 +1,29 @@
+[{
+  "url": "/assets/*",
+  "method": "get",
+  "path": "assets/",
+  "controller": "",
+  "params": {
+    "query": [],
+    "body": []
+  }
+}, {
+  "url": "/guestbook",
+  "method": "post",
+  "path": "pages/",
+  "controller": "guestbook",
+  "params": {
+    "query": ["id"],
+    "body": ["author", "text"]
+  }
+},
+{
+  "url": "/*",
+  "method": "get",
+  "path": "pages/",
+  "controller": "",
+  "params": {
+    "query": [],
+    "body": []
+  }
+}]

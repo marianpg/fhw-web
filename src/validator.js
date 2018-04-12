@@ -1,25 +1,25 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-const htmlValidator = require('html-validator');
-const cssValidator = require('css-validator');
+import fs from 'fs';
+import path from 'path';
+import htmlValidator from 'html-validator';
+import cssValidator from 'css-validator';
 
 const { HtmlValidationError, CssValidationError } = require('./customError.js');
 
 
-async function validateHtml(html) {
-	const options = { format: 'text', data: html };
+export function html(htmlStr) {
+	const options = { format: 'text', data: htmlStr };
 
 	return htmlValidator(options)
 		.then(result => {
 			if (result.includes('Error:')) {
-				throw HtmlValidationError(result, html);
+				throw HtmlValidationError(result, htmlStr);
 			}
 		});
 }
 
-async function validateCss(cssFilename) {
+export function css(cssFilename) {
 	const fname = cssFilename.includes('.css') ? cssFilename : cssFilename + '.css';
 	const file = fs.readFileSync(path.join(process.cwd(), 'assets', fname), 'utf8');
 
@@ -29,13 +29,7 @@ async function validateCss(cssFilename) {
 		}
 		if (!result.validity) {
 			const message = result.errors.map(err => err.message).join('\n');
-			console.log("mar", message);
 			throw CssValidationError(message, file);
 		}
 	});
 }
-
-module.exports = {
-	html: validateHtml,
-	css: validateCss
-};

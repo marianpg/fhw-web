@@ -1,0 +1,13 @@
+{ "template": "template-html" }
+---
+
+<h1>{{ page.title }}</h1>
+
+{{ content }}
+
+{{#each page.images}}
+  <figure>
+    <figcaption>{{ title }}</figcaption>
+    <img src="{{ src }}" width="400">
+  </figure>
+{{/each}}
