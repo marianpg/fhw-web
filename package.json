@@ -1,6 +1,6 @@
 {
   "name": "fhw-web",
-  "version": "0.3.4",
+  "version": "0.4.0",
   "description": "Framework zur Übung 'Web-Anwendungen' an der Fachhochschule Wedel",
   "main": "index.js",
   "scripts": {
