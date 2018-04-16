@@ -7,3 +7,4 @@
 'use strict';
 
 module.exports = require('./lib/fhw-web');
+//module.exports = require('./src/fhw-web');

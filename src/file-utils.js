@@ -3,6 +3,10 @@ import path from 'path';
 
 const projectPath = process.cwd();
 
+export function exists(pathToFile) {
+	return fs.existsSync(pathToFile);
+}
+
 // prüft, ob ein Ordner eine bestimmte Datei enthält
 export function contains(directory, entry) {
 	const pathToDir = path.join(projectPath, directory);
@@ -35,6 +39,10 @@ export function convert(url) {
 	return result;
 }
 
+export function openFile(pathToFile, encoding = 'utf8') {
+	return fs.readFileSync(pathToFile, encoding);
+}
+
 
 export function loadJson(filename, directory = '/') {
 	const pathToFile = path.join(projectPath, directory, filename);
@@ -52,4 +60,9 @@ export function loadDynamicModule(name, directory = '/') {
 	} else {
 		throw new Error("no Module found");
 	}
+}
+
+export function resolveRessource(url, route) {
+	// TODO: Implement
+	return url;
 }

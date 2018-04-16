@@ -1,29 +1,40 @@
 [{
   "url": "/assets/*",
-  "method": "get",
-  "path": "assets/",
-  "controller": "",
-  "params": {
-    "query": [],
-    "body": []
-  }
+  "static": "public/*"
+},{
+  "url": "/assets/*",
+  "static": "assets/*"
+}, {
+  "url": "/impressum/:date",
+  "page": "impressum"
 }, {
   "url": "/guestbook",
-  "method": "post",
-  "path": "pages/",
-  "controller": "guestbook",
+  "method": ["post"],
+  "controller": {
+    "file": "guestbook",
+    "function": "add"
+  },
   "params": {
-    "query": ["id"],
-    "body": ["author", "text"]
+    "get": ["id"],
+    "post": ["author", "text"]
   }
-},
-{
+}, {
+  "url": "/if-basics",
+  "method": ["get"],
+  "page": "if-basics"
+},  {
+  "url": "/catalogue",
+  "method": ["get"],
+  "page": "sub/catalogue"
+},   {
   "url": "/*",
-  "method": "get",
-  "path": "pages/",
-  "controller": "",
-  "params": {
-    "query": [],
-    "body": []
+  "method": ["get"],
+  "page": "*"
+}, {
+  "url": "/*",
+  "method": ["get"],
+  "controller": {
+    "file": "not-found",
+    "function": "renderError"
   }
 }]

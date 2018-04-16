@@ -2,12 +2,11 @@
 
 import fs from 'fs';
 import path from 'path';
-import yamlToJson from 'js-yaml';
+import yamlToJson from 'js-yaml'; //TODO: JSON only!
 import handlebars from 'handlebars';
 const { FileNotFoundError } = require('./customError');
-import validator from './validator';
 
-import { contains, convert } from './file-utils';
+import { exists, contains, convert } from './file-utils';
 
 
 
@@ -37,7 +36,7 @@ function prepareCompile(url, startDir, frontmatter) {
 	const filename = path.basename(preparedUrl);
 	const directory = path.join(startDir, path.dirname(preparedUrl));
 
-	if (fs.existsSync(directory) && contains(directory, filename)) {
+	if (exists(directory) && contains(directory, filename)) {
 
 		const file = fs.readFileSync(path.join(directory, filename), 'utf8');
 		const fileSplitted = file.split('---');
@@ -74,11 +73,6 @@ export default function compile(url, frontmatter = {}, dir = 'pages', contentHtm
 		const html = compile(fname, frontmatterCombined, 'templates');
 		return new handlebarsEnv.SafeString(html);
     });
-
-	/* css Validierung
-	if ('styles' in frontmatterCombined['page']) {
-		frontmatterCombined['page']['styles'].forEach(fname => validator.css(fname));
-	}*/
 
 	let templateName = '';
 	if ('template' in frontmatterCombined['page']) {

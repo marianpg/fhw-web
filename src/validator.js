@@ -1,35 +1,56 @@
 'use strict';
 
-import fs from 'fs';
-import path from 'path';
 import htmlValidator from 'html-validator';
 import cssValidator from 'css-validator';
 
-const { HtmlValidationError, CssValidationError } = require('./customError.js');
+import { exists, openFile } from './file-utils';
+
+const { HtmlValidationError, CssValidationError, FileNotFoundError } = require('./customError.js');
 
 
-export function html(htmlStr) {
-	const options = { format: 'text', data: htmlStr };
+export function validateHtml(html) {
+	const options = { format: 'text', data: html };
 
 	return htmlValidator(options)
 		.then(result => {
 			if (result.includes('Error:')) {
-				throw HtmlValidationError(result, htmlStr);
+				throw HtmlValidationError(result, html);
+			} else {
+				return Promise.resolve(html);
 			}
 		});
 }
 
-export function css(cssFilename) {
-	const fname = cssFilename.includes('.css') ? cssFilename : cssFilename + '.css';
-	const file = fs.readFileSync(path.join(process.cwd(), 'assets', fname), 'utf8');
+export function validateCss(html) {
+	const regex = /(<link.*href=\")(.*.css)(\")/g;
+	let match = regex.exec(html);
+	let queue = Promise.resolve(html);
 
-	cssValidator(file, (error, result) => {
-		if (error) {
-			throw CssValidationError(error);
+	while (match != null) {
+		const pathToFile = match[2];
+
+		if (exists(pathToFile)) {
+			const file = openFile(pathToFile);
+
+			queue = queue.then(_  => new Promise((resolve, reject) => {
+				cssValidator(file, (error, result) => {
+					if (error) {
+						reject(CssValidationError(error, html));
+					}
+					if (!result.validity) {
+						const message = result.errors.map(err => err.message).join('\n');
+						reject(CssValidationError(message, html, file));
+					}
+					resolve(html);
+				});
+			}));
+
+		} else {
+			return Promise.reject(FileNotFoundError(`Could not find Stylesheet ${pathToFile}`));
 		}
-		if (!result.validity) {
-			const message = result.errors.map(err => err.message).join('\n');
-			throw CssValidationError(message, file);
-		}
-	});
+
+		match = regex.exec(html);
+	}
+
+	return queue;
 }
