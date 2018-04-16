@@ -6,7 +6,7 @@ import yamlToJson from 'js-yaml'; //TODO: JSON only!
 import handlebars from 'handlebars';
 const { FileNotFoundError } = require('./customError');
 
-import { exists, contains, convert } from './file-utils';
+import { exists, contains, convert } from './ressource-utils';
 
 
 

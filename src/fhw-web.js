@@ -1,16 +1,15 @@
 'use strict';
 
 import express from 'express';
+import bodyParser from 'body-parser';
 
 import compile from './compile';
-const { generateErrorPage, NotImplementedError } = require('./customError');
+const { generateErrorPage, NotImplementedError, RessourceNotFoundError } = require('./customError');
 import { validateHtml, validateCss } from './validator';
 import defaultConfig from './defaultConfig';
 import prepareRoutes from './routes';
-import { loadJson, resolveRessource } from './file-utils';
+import { loadJson, resolveRessource } from './ressource-utils';
 import { isObject, isDefined } from './helper';
-
-import path from 'path'
 
 
 // use the defaultConfig as a basis
@@ -90,10 +89,23 @@ function serveController(pathToController, params = {}) {
 // TODO: Klären: url "/item/:id/price" würde ohne controller eine Suche nach einer page "/pages/item/id42/price" auslösen.
 function parseParams(req, route) {
 	let url = req.originalUrl;
-	let params = { path: {}, get: {}, post: {} };
+	let params = {
+		path: {},
+		get:req.query, // TODO: Array vs. String ("/item/id42/price?currency=euro&sortBy=price&groupBy[]=name&groupBy[]=country")
+		post: req.body
+	};
+	console.log(route.params.path);
+	// Input
+	// url			::= /item/id42/price?currency=euro
+	// route.url	::= /item/:id/*
+	// route.params ::= { path: ["id"], get: [], post: [] }
+
+	console.log(params);
 
 
-
+	// Output
+	// url			::= /item/.*/.*
+	// params		::=	{ path: {"id": "id42}, get: {"currency": "euro"}, post: {} }
 	return { url, params }
 }
 
@@ -106,16 +118,27 @@ export function start(userConfig) {
 	const app = express();
 	let config = combineConfiguration(userConfig);
 
+	app.use(bodyParser.urlencoded({ extended: false }));
+	app.use(bodyParser.json());
+
+	/*
+	app.get('/favicon.ico', (req, res) => {
+		res.status(204);
+	});*/
+
 	app.use((req, res) => {
 		prepareRoutes(config)
 			.then(routes => {
+				console.log(1, req.originalUrl);
 				// loop will stop early, if a route for called url was found
 				for (let index = 0; index < routes.length; ++index) {
 					const route = routes[index];
-					const { url, params } = parseParams(req, route);
-					const pathToRessource = resolveRessource(url, route);
-
+					console.log(1, index, route.url, req.originalUrl, new RegExp(route.url).test(req.originalUrl));
 					if (new RegExp(route.url).test(req.originalUrl)) {
+						console.log("yeah");
+						const { url, params } = parseParams(req, route);
+						const pathToRessource = resolveRessource(url, route);
+
 						if (isDefined(route.static)) {
 							console.log("serve static", pathToRessource);
 							return serveStatic(pathToRessource, res);
@@ -144,16 +167,18 @@ export function start(userConfig) {
 					return Promise.resolve(html);
 				}
 			}).then(html => {
-				// TODO: PageNotFound missing
+				console.log("url", req.originalUrl)
 				// check, if result was already sent
 				//   i.e. when serving static content
 				//   express' function "sendFile" already handles the response
 				if (!res.finished) {
-					console.log("sending success response");
-					res.status(200);
-					res.send(html);
-				} else if (html) {
-					console.log("Unexpected Server Error with Code 1. Please send a report to mpg@fh-wedel.de.");
+					if (html) {
+						console.log("sending success response");
+						res.status(200);
+						res.send(html);
+					} else {
+						throw RessourceNotFoundError(`Could not find ressource "${req.originalUrl}"`);
+					}
 				}
 			}).catch(error => {
 				// TODO: CustomError?

@@ -1,9 +1,10 @@
 'use strict';
 
 const htmlEscape = require('html-escape');
+const errorColor = '#b30000';
 
 function wrapInBody(innerHtml = '') {
-	return `<body style="background-color: red;">\n${innerHtml}\n</body>`
+	return `<body style="background-color: ${errorColor};">\n${innerHtml}\n</body>`
 }
 
 function styleBody(body) {
@@ -11,7 +12,7 @@ function styleBody(body) {
 	const match = regex.exec(body);
 	const top = match[1];
 	const tail = match[2];
-	return `${top} style="background-color: red;" ${tail}`;
+	return `${top} style="background-color: ${errorColor};" ${tail}`;
 }
 
 function renderError(html) {
@@ -56,6 +57,7 @@ class ExtendableError extends Error {
 
 
 class NotImplementedError extends ExtendableError {}
+class RessourceNotFoundError extends ExtendableError {}
 class FileNotFoundError extends ExtendableError {}
 class HtmlValidationError extends ExtendableError {}
 class CssValidationError extends ExtendableError {}
@@ -68,6 +70,7 @@ module.exports = {
 	generateErrorPage,
 	NotImplementedError(message) { return new NotImplementedError(message, 500); },
 	FileNotFoundError(message) { return new FileNotFoundError(message, 404); },
+	RessourceNotFoundError(message) { return new RessourceNotFoundError(message, 404); },
 	HtmlValidationError(message, html, extract = html) { return new HtmlValidationError(message, 500, html, extract); },
 	CssValidationError(message, html, extract) { return new CssValidationError(message, 500, html, extract); },
 	RouteDefinitionError(message) { return new RouteDefinitionError(message, 500); },

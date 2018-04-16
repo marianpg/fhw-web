@@ -3,7 +3,7 @@
 import htmlValidator from 'html-validator';
 import cssValidator from 'css-validator';
 
-import { exists, openFile } from './file-utils';
+import { exists, openFile } from './ressource-utils';
 
 const { HtmlValidationError, CssValidationError, FileNotFoundError } = require('./customError.js');
 
