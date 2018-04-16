@@ -49,7 +49,7 @@ export function loadJson(filename, directory = '/') {
 
 	return fs.existsSync(pathToFile)
 		? JSON.parse(fs.readFileSync(pathToFile, 'utf8'))
-		: {};
+		: undefined;
 }
 
 

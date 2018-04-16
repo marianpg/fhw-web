@@ -7,10 +7,15 @@ import { isDefined, isUndefined, isArray } from './helper';
 
 const HttpMethods = ['get', 'post', 'put', 'patch', 'delete'];
 
+const magicRoutes = [{
+	"url": "/*",
+	"method": ["get"],
+	"page": "*"
+}];
 
 // TODO: bei jedem Request Routes neu einlesen
 export default function prepareRoutes(config) {
-	const routeDefinitions = loadJson('routes.json');
+	const routeDefinitions = loadJson('routes.json') || magicRoutes;
 
 	// TODO: Mit Sternchen umgehen
 	// TODO: was, wenn url === "" ? Ist das schlimm?
