@@ -18,6 +18,9 @@ export function contains(directory, entry) {
 	return found
 }
 
+export function extractGetParameter(url) {
+
+}
 
 // Entfernt Anker
 // Entfernt Query-Parameter

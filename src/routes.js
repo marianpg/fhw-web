@@ -1,4 +1,4 @@
-import { loadJson } from "./file-utils";
+import { loadJson } from "./ressource-utils";
 const { RouteDefinitionError } = require('./customError');
 
 import { isDefined, isUndefined, isArray } from './helper';
@@ -15,7 +15,7 @@ const magicRoutes = [{
 
 // TODO: bei jedem Request Routes neu einlesen
 export default function prepareRoutes(config) {
-	const routeDefinitions = loadJson('routes.json') || magicRoutes;
+	const routeDefinitions = loadJson('routes.json') || JSON.parse(JSON.stringify(magicRoutes));
 
 	// TODO: Mit Sternchen umgehen
 	// TODO: was, wenn url === "" ? Ist das schlimm?
@@ -73,7 +73,7 @@ export default function prepareRoutes(config) {
 		let url = definition.url;
 
 		url = url.includes('*')
-			? url.replace('*', match => '.*')
+			? url.replace('*', _ => '.*')
 			: url;
 
 		url = url.includes(':')
