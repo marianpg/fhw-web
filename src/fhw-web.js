@@ -4,12 +4,12 @@ import express from 'express';
 import bodyParser from 'body-parser';
 
 import compile from './compile';
-const { generateErrorPage, NotImplementedError, RessourceNotFoundError } = require('./customError');
+const { generateErrorPage, NotImplementedError, RessourceNotFoundError, FunctionNotFoundError } = require('./customError');
 import { validateHtml, validateCss } from './validator';
 import defaultConfig from './defaultConfig';
 import prepareRoutes from './routes';
-import { loadJson, resolveRessource } from './ressource-utils';
-import { isObject, isDefined } from './helper';
+import { loadDynamicModule, loadGlobalFrontmatter, resolveRessource} from './ressource-utils';
+import { isObject, isDefined, isUndefined, isFunction, zip } from './helper';
 
 
 // use the defaultConfig as a basis
@@ -35,13 +35,13 @@ function combineConfiguration(userConfig) {
 	return combineObjects(defaultConfig, userConfig);
 }
 
-function serveStatic(pathToStatic, res) {
-	const options = {};
+function serveStatic(url, res) {
+	const pathToStatic = resolveRessource(url);
 
 	return new Promise((resolve, reject) => {
-		res.sendFile(pathToStatic, options, error => {
+		res.sendFile(pathToStatic, error => {
 			if (error) {
-				return reject(error); //TODO: CustomError Class
+				return reject(error); //TODO: CustomError Class?
 			} else {
 				return resolve(true);
 			}
@@ -50,7 +50,7 @@ function serveStatic(pathToStatic, res) {
 }
 
 function servePage(pathToPage, params = {}) {
-	const frontmatter = { global: loadJson('global.json') };
+	const frontmatter = Object.assign({}, params, { global: loadGlobalFrontmatter() });
 
 	return new Promise((resolve, reject) => {
 		const html = compile(pathToPage, frontmatter);
@@ -70,44 +70,84 @@ function controller() {
 	throw NotImplementedError("Controller is not implemented");
 }
 
-function serveController(pathToController, params = {}) {
-	throw NotImplementedError("Controller is not implemented");
+function serveController(controllerName, functionName, params = {}) {
+	const module = loadDynamicModule(controllerName, 'controller');
+	const frontmatter = Object.assign({}, { request: params }, { global: loadGlobalFrontmatter() });
 
-	return controller().then(result => {
+	if (isUndefined(module[functionName])) {
+		throw FunctionNotFoundError(`Module ${controllerName} does not exports a function named ${functionName}. Please check the documentation.`);
+	}
+
+	// Controller call can return either a Promise or the result directly
+	const controllerResult = module[functionName](frontmatter);
+	function resolveControllerCall(result) {
 		if (isDefined(result.page)) {
-			return servePage();
+			return servePage(result.page, frontmatter);
+
 		} else if (isDefined(result.json)) {
 			return serveJson();
+
 		} else if (isDefined(result.content)) {
 			return serveContent();
+
 		} else {
-			return Promise.reject("Return Value of Controller is not defined");
+			return Promise.reject("Return Value of Controller does not fulfill the required syntax. Please check the documentation.");
 		}
-	})
+	}
+
+	return isDefined(controllerResult.then) && isFunction(controllerResult.then)
+		? controllerResult.then(resolveControllerCall)
+		: resolveControllerCall(controllerResult);
 }
+
 
 // TODO: Klären: url "/item/:id/price" würde ohne controller eine Suche nach einer page "/pages/item/id42/price" auslösen.
 function parseParams(req, route) {
 	let url = req.originalUrl;
 	let params = {
 		path: {},
-		get:req.query, // TODO: Array vs. String ("/item/id42/price?currency=euro&sortBy=price&groupBy[]=name&groupBy[]=country")
-		post: req.body
+		get: {},
+		post: {}
 	};
-	console.log(route.params.path);
+
 	// Input
 	// url			::= /item/id42/price?currency=euro
 	// route.url	::= /item/:id/*
 	// route.params ::= { path: ["id"], get: [], post: [] }
 
-	console.log(params);
+	// Extracting Path Parameters
+	const combined = zip([route.url.split('/'), url.split('/')]);
+	combined.forEach(([key, value]) => {
+		if (key.startsWith(':')) {
+			const k = key.substr(1);
+			if (route.params.path.includes(k)) {
+				params.path[k] = value;
+			}
+		}
+	});
 
+	// Extracting Get Parameters
+	// TODO: Array vs. String ("/item/id42/price?currency=euro&sortBy=price&groupBy[]=name&groupBy[]=country")
+	Object.keys(req.query).forEach(key => {
+		if (route.params.get.includes(key) && isDefined(req.query[key])) {
+			params.get[key] = req.query[key];
+		}
+	});
+
+	// Extracting Post Parameters
+	Object.keys(req.body).forEach(key => {
+		if (route.params.post.includes(key) && isDefined(req.body[key])) {
+			params.post[key] = req.body[key];
+		}
+	});
 
 	// Output
 	// url			::= /item/.*/.*
 	// params		::=	{ path: {"id": "id42}, get: {"currency": "euro"}, post: {} }
-	return { url, params }
+	console.log(`Parsed request parameters are: ${JSON.stringify(params)}`);
+	return params;
 }
+
 
 /*
 	userConfig ::= { <port> }
@@ -121,59 +161,55 @@ export function start(userConfig) {
 	app.use(bodyParser.urlencoded({ extended: false }));
 	app.use(bodyParser.json());
 
-	/*
+	// TODO: therefore there is no favicon in the root directory allowed
 	app.get('/favicon.ico', (req, res) => {
+		console.log('NOTE: A favicon in the projects\' root directory will be ignored. Please change its location in a subdirectory like "assets" and defined a route for it.');
 		res.status(204);
-	});*/
+		res.send();
+	});
 
 	app.use((req, res) => {
+		console.log("\nIncomming request", req.originalUrl);
 		prepareRoutes(config)
 			.then(routes => {
-				console.log(1, req.originalUrl);
 				// loop will stop early, if a route for called url was found
 				for (let index = 0; index < routes.length; ++index) {
 					const route = routes[index];
-					console.log(1, index, route.url, req.originalUrl, new RegExp(route.url).test(req.originalUrl));
-					if (new RegExp(route.url).test(req.originalUrl)) {
-						console.log("yeah");
-						const { url, params } = parseParams(req, route);
-						const pathToRessource = resolveRessource(url, route);
+					const isDefinedRoute = new RegExp(route.urlRegex).test(req.path);
+					console.log(`Calling ressource "${req.path}". Does it match route "${route.urlRegex}"? ${isDefinedRoute}`);
+					if (isDefinedRoute) {
+						const params = parseParams(req, route);
 
 						if (isDefined(route.static)) {
-							console.log("serve static", pathToRessource);
-							return serveStatic(pathToRessource, res);
+							return serveStatic(req.path, res);
 						}
 
 						if (isDefined(route.page)) {
-							console.log("serve page", pathToRessource);
-							return servePage(pathToRessource, params);
+							return servePage(req.path, params);
 						}
 						if (isDefined(route.controller)) {
-							console.log("serve controller", pathToRessource);
-							return serveController(pathToRessource, params);
+							return serveController(route.controller.file, route.controller.function, params);
 						}
 					}
 				}
 			}).then(html => {
-				if (html && config.validator.html) {
+				if (!res.finished && html && config.validator.html) {
 					return validateHtml(html);
 				} else {
 					return Promise.resolve(html);
 				}
 			}).then(html => {
-				if (html && config.validator.css) {
+				if (!res.finished && html && config.validator.css) {
 					return validateCss(html);
 				} else {
 					return Promise.resolve(html);
 				}
 			}).then(html => {
-				console.log("url", req.originalUrl)
 				// check, if result was already sent
 				//   i.e. when serving static content
 				//   express' function "sendFile" already handles the response
 				if (!res.finished) {
 					if (html) {
-						console.log("sending success response");
 						res.status(200);
 						res.send(html);
 					} else {
@@ -182,12 +218,11 @@ export function start(userConfig) {
 				}
 			}).catch(error => {
 				// TODO: CustomError?
-				console.log("sending error response");
 				if (!res.finished) {
 					res.status(500);
 					res.send(generateErrorPage(error));
 				} else {
-					console.log("Unexpected Server Error with Code 2. Please send a report to mpg@fh-wedel.de.");
+					console.log("Unexpected Server Error with Code 1. Please send a report to mpg@fh-wedel.de.");
 				}
 			});
 	});
@@ -196,6 +231,6 @@ export function start(userConfig) {
 	app.listen({
 		port: config.port
 	}, () => {
-		console.log(`Server listening on http://localhost:${config.port}/`);
+		console.log(`\nServer listening on http://localhost:${config.port}/\n`);
 	});
 }

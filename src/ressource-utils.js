@@ -3,14 +3,22 @@ import path from 'path';
 
 const projectPath = process.cwd();
 
+// TODO: use properly
+function toAbsolutePath(p) {
+	return path.isAbsolute(p)
+		? p
+		: path.join(projectPath, p);
+}
+
 export function exists(pathToFile) {
 	return fs.existsSync(pathToFile);
 }
 
 // prüft, ob ein Ordner eine bestimmte Datei enthält
 export function contains(directory, entry) {
-	const pathToDir = path.join(projectPath, directory);
+	const pathToDir = toAbsolutePath(directory);
 	const fileList = fs.readdirSync(pathToDir);
+
 	const found = fileList
 		.map( aEntry => aEntry === entry )
 		.reduce( (val, cur) => val || cur, false );
@@ -19,6 +27,8 @@ export function contains(directory, entry) {
 }
 
 
+// TODO: Weitere Dateierweiterungen
+// TODO: Andere Zeichen erlauben (bspw. "_")
 // Entfernt Anker
 // Entfernt Query-Parameter
 // Ergänzt Ordnerpfade um ein 'index.hbs'
@@ -52,17 +62,25 @@ export function loadJson(filename, directory = '/') {
 		: undefined;
 }
 
+export function loadGlobalFrontmatter() {
+	return loadJson('global.json') || {};
+}
 
-export function loadDynamicModule(name, directory = '/') {
-	console.log("load dynamic module", name, directory);
-	if (contains(directory, name + ".js")) {
-		return require(path.join(projectPath, directory, name));
+
+export function loadDynamicModule(name, dir = '/') {
+	const filename = name.extname === 'js'
+		? name
+		: name + '.js';
+	const directory = toAbsolutePath(dir);
+
+	if (contains(directory, filename)) {
+		return require(toAbsolutePath(path.join(directory, filename)));
 	} else {
-		throw new Error("no Module found");
+		throw new Error(`Module ${name} not found.`);
 	}
 }
 
-export function resolveRessource(url, route) {
-	// TODO: Implement
-	return url;
+export function resolveRessource(url, dir = '/') {
+
+	return path.join(projectPath, dir, url);
 }

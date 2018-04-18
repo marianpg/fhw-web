@@ -2,11 +2,11 @@
 
 import fs from 'fs';
 import path from 'path';
-import yamlToJson from 'js-yaml'; //TODO: JSON only!
 import handlebars from 'handlebars';
 const { FileNotFoundError } = require('./customError');
 
 import { exists, contains, convert } from './ressource-utils';
+import { parseJson } from './helper';
 
 
 
@@ -41,12 +41,12 @@ function prepareCompile(url, startDir, frontmatter) {
 		const file = fs.readFileSync(path.join(directory, filename), 'utf8');
 		const fileSplitted = file.split('---');
 
-		const yaml = fileSplitted.length > 1 ? fileSplitted[0] : '' ;
+		const json = fileSplitted.length > 1 ? fileSplitted[0] : '{}';
 		const hbs = fileSplitted.length > 1 ? fileSplitted[1] : fileSplitted[0] ;
 
-		const frontmatterLocal = yamlToJson.safeLoad(yaml) || {};
+		const frontmatterLocal = parseJson(json, filename);
 		const page = Object.assign({}, frontmatter.page, frontmatterLocal);
-		const frontmatterCombined = Object.assign({}, { page: page }, { global: frontmatter.global });
+		const frontmatterCombined = Object.assign({}, { page: page }, { global: frontmatter.global }, { request: frontmatter.request });
 
 		console.log(`Output for       : ${url}`);
 		console.log(`Frontmatter JSON : ${JSON.stringify(frontmatterLocal)}`);

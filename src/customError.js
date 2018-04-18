@@ -17,7 +17,7 @@ function styleBody(body) {
 
 function renderError(html) {
 	//return `<!--${htmlEscape(html)}-->`
-	return `<div style="display: none;">${html}</div>`
+	return `<!-- Error Description in hidden div below -->\n<div title="Error Description" style="display: none;">${html}</div>`
 }
 
 function generateErrorPage(error) {
@@ -59,9 +59,11 @@ class ExtendableError extends Error {
 class NotImplementedError extends ExtendableError {}
 class RessourceNotFoundError extends ExtendableError {}
 class FileNotFoundError extends ExtendableError {}
+class FunctionNotFoundError extends ExtendableError {}
 class HtmlValidationError extends ExtendableError {}
 class CssValidationError extends ExtendableError {}
 class RouteDefinitionError extends ExtendableError {}
+class JsonParseError extends ExtendableError {}
 
 
 
@@ -70,9 +72,11 @@ module.exports = {
 	generateErrorPage,
 	NotImplementedError(message) { return new NotImplementedError(message, 500); },
 	FileNotFoundError(message) { return new FileNotFoundError(message, 404); },
+	FunctionNotFoundError(message) { return new FunctionNotFoundError(message, 500); },
 	RessourceNotFoundError(message) { return new RessourceNotFoundError(message, 404); },
 	HtmlValidationError(message, html, extract = html) { return new HtmlValidationError(message, 500, html, extract); },
 	CssValidationError(message, html, extract) { return new CssValidationError(message, 500, html, extract); },
 	RouteDefinitionError(message) { return new RouteDefinitionError(message, 500); },
+	JsonParseError(message) { return new JsonParseError(message, 500); },
 };
 

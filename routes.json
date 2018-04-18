@@ -1,12 +1,19 @@
 [{
   "url": "/assets/*",
-  "static": "public/*"
+  "static": "assets/*"
 },{
   "url": "/assets/*",
   "static": "assets/*"
 }, {
-  "url": "/impressum/:date",
-  "page": "impressum"
+  "url": "/impressum",
+  "params": {
+    "get": ["currency", "sortBy"],
+    "post": ["mk"]
+  },
+  "controller": {
+    "file": "impressum",
+    "function": "validate"
+  }
 }, {
   "url": "/guestbook",
   "method": ["post"],
@@ -31,7 +38,7 @@
   "method": ["get"],
   "page": "*"
 }, {
-  "url": "/*",
+  "url": "/foo2/*",
   "method": ["get"],
   "controller": {
     "file": "not-found",

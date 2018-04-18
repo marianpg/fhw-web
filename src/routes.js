@@ -54,12 +54,19 @@ export default function prepareRoutes(config) {
 			throw RouteDefinitionError(`Route no. ${index}: both, "page" and "controller" are declared, but only one of those definitions one the same route are supported.`);
 		}
 		if (isDefined(definition.params)) {
-			if (isDefined(definition.params.get) && !isArray(definition.params.get)) {
-				throw RouteDefinitionError(`Route no. ${index}: params.get has to be an array.`);
-
+			if (isDefined(definition.params.get)) {
+				if (!isArray(definition.params.get)) {
+					throw RouteDefinitionError(`Route no. ${index}: params.get has to be an array.`);
+				}
+			} else {
+				modified.params.get = [];
 			}
-			if (isDefined(definition.params.post) && !isArray(definition.params.post)) {
-				throw RouteDefinitionError(`Route no. ${index}: params.post has to be an array.`);
+			if (isDefined(definition.params.post)) {
+				if (!isArray(definition.params.post)) {
+					throw RouteDefinitionError(`Route no. ${index}: params.post has to be an array.`);
+				}
+			} else {
+				modified.params.post = [];
 			}
 		} else {
 			modified.params = { path: [], get: [], post: [] }
@@ -70,20 +77,20 @@ export default function prepareRoutes(config) {
 			}
 		}
 		const pathParams = [];
-		let url = definition.url;
+		let urlRegex = definition.url;
 
-		url = url.includes('*')
-			? url.replace('*', _ => '.*')
-			: url;
+		urlRegex = urlRegex.includes('*')
+			? urlRegex.replace('*', _ => '.*')
+			: urlRegex;
 
-		url = url.includes(':')
-			? url.replace(/:[a-zA-Z]*/g, match => {
+		urlRegex = urlRegex.includes(':')
+			? urlRegex.replace(/:[a-zA-Z]*/g, match => {
 				pathParams.push(match.substr(1));
-				return '.*';
+				return '[^\/]*';
 			})
-			: url;
-
-		modified.url = url;
+			: urlRegex;
+		urlRegex = urlRegex + '$'; //TODO: Kluhck?
+		modified.urlRegex = urlRegex;
 		modified.params.path = pathParams;
 
 		return modified;
