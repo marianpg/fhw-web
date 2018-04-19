@@ -22,8 +22,14 @@
     "function": "add"
   },
   "params": {
-    "get": ["id"],
     "post": ["author", "text"]
+  }
+},  {
+  "url": "/guestbook",
+  "method": ["get"],
+  "controller": {
+    "file": "guestbook",
+    "function": "get"
   }
 }, {
   "url": "/if-basics",

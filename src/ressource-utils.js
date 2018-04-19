@@ -26,6 +26,14 @@ export function contains(directory, entry) {
 	return found
 }
 
+export function listFiles(directory) {
+	const pathToDir = toAbsolutePath(directory);
+
+	return exists(pathToDir)
+		? fs.readdirSync(pathToDir)
+		: [];
+}
+
 
 // TODO: Weitere Dateierweiterungen
 // TODO: Andere Zeichen erlauben (bspw. "_")
@@ -36,7 +44,7 @@ export function contains(directory, entry) {
 export function convert(url) {
 	let result = url === '' ? '/' : url;
 
-	result = result.match(/([\/\.0-9a-zA-Z-]+)(?=[\?#])?/g)[0] || result;
+	result = result.match(/([\/\.0-9a-zA-Z-_]+)(?=[\?#])?/g)[0] || result;
 
 	if (result.slice(-1) === '/') {
 		result += 'index.hbs';
@@ -55,11 +63,20 @@ export function openFile(pathToFile, encoding = 'utf8') {
 
 
 export function loadJson(filename, directory = '/') {
-	const pathToFile = path.join(projectPath, directory, filename);
+	const fname = filename.split(".")[0] + '.json';
+	const pathToFile = path.join(projectPath, directory, fname);
 
 	return fs.existsSync(pathToFile)
 		? JSON.parse(fs.readFileSync(pathToFile, 'utf8'))
 		: undefined;
+}
+
+export function saveJson(filename, obj, directory = '/') {
+	const fname = filename.split(".")[0] + '.json';
+	const pathToFile = toAbsolutePath(path.join(directory, fname));
+	const jsonStr = JSON.stringify(obj, null, '\t');
+
+	fs.writeFileSync(pathToFile, jsonStr, 'utf8');
 }
 
 export function loadGlobalFrontmatter() {

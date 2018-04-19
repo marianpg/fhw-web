@@ -8,7 +8,7 @@ const { generateErrorPage, NotImplementedError, RessourceNotFoundError, Function
 import { validateHtml, validateCss } from './validator';
 import defaultConfig from './defaultConfig';
 import prepareRoutes from './routes';
-import { loadDynamicModule, loadGlobalFrontmatter, resolveRessource} from './ressource-utils';
+import { loadDynamicModule, loadGlobalFrontmatter, resolveRessource, loadJson as openJson, saveJson as writeJson} from './ressource-utils';
 import { isObject, isDefined, isUndefined, isFunction, zip } from './helper';
 
 
@@ -58,8 +58,9 @@ function servePage(pathToPage, params = {}) {
 	});
 }
 
-function serveJson() {
-	throw NotImplementedError("Serving Json-Response is not implemented");
+function serveJson(response, json, status) {
+	response.status(status);
+	response.json(json);
 }
 
 function serveContent() {
@@ -70,7 +71,7 @@ function controller() {
 	throw NotImplementedError("Controller is not implemented");
 }
 
-function serveController(controllerName, functionName, params = {}) {
+function serveController(response, controllerName, functionName, params = {}) {
 	const module = loadDynamicModule(controllerName, 'controller');
 	const frontmatter = Object.assign({}, { request: params }, { global: loadGlobalFrontmatter() });
 
@@ -85,7 +86,7 @@ function serveController(controllerName, functionName, params = {}) {
 			return servePage(result.page, frontmatter);
 
 		} else if (isDefined(result.json)) {
-			return serveJson();
+			return serveJson(response, JSON.stringify(result.json), result.status);
 
 		} else if (isDefined(result.content)) {
 			return serveContent();
@@ -158,12 +159,12 @@ export function start(userConfig) {
 	const app = express();
 	let config = combineConfiguration(userConfig);
 
-	app.use(bodyParser.urlencoded({ extended: false }));
+	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(bodyParser.json());
 
 	// TODO: therefore there is no favicon in the root directory allowed
 	app.get('/favicon.ico', (req, res) => {
-		console.log('NOTE: A favicon in the projects\' root directory will be ignored. Please change its location in a subdirectory like "assets" and defined a route for it.');
+		console.log('NOTE: A favicon in the projects\' root directory will be ignored. Please change its location in a subdirectory like "assets" and define a route for it.');
 		res.status(204);
 		res.send();
 	});
@@ -176,8 +177,10 @@ export function start(userConfig) {
 				for (let index = 0; index < routes.length; ++index) {
 					const route = routes[index];
 					const isDefinedRoute = new RegExp(route.urlRegex).test(req.path);
-					console.log(`Calling ressource "${req.path}". Does it match route "${route.urlRegex}"? ${isDefinedRoute}`);
-					if (isDefinedRoute) {
+					const isDefinedMethod = route.method.includes(req.method.toLowerCase());
+
+					console.log(`Calling ressource "${req.path}". Does it match route "${route.urlRegex}"? ${isDefinedRoute}. Does it match Method "${route.method}"? ${isDefinedMethod}`);
+					if (isDefinedRoute && isDefinedMethod) {
 						const params = parseParams(req, route);
 
 						if (isDefined(route.static)) {
@@ -188,7 +191,7 @@ export function start(userConfig) {
 							return servePage(req.path, params);
 						}
 						if (isDefined(route.controller)) {
-							return serveController(route.controller.file, route.controller.function, params);
+							return serveController(res, route.controller.file, route.controller.function, params);
 						}
 					}
 				}
@@ -233,4 +236,12 @@ export function start(userConfig) {
 	}, () => {
 		console.log(`\nServer listening on http://localhost:${config.port}/\n`);
 	});
+}
+
+export function loadJson(documentName) {
+	return openJson(documentName, 'data');
+}
+
+export function saveJson(documentName, obj) {
+	return writeJson(documentName, obj, 'data');
 }

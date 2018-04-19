@@ -7,11 +7,16 @@ import { isDefined, isUndefined, isArray } from './helper';
 
 const HttpMethods = ['get', 'post', 'put', 'patch', 'delete'];
 
-const magicRoutes = [{
-	"url": "/*",
-	"method": ["get"],
-	"page": "*"
-}];
+const magicRoutes = [
+	{
+		"url": "/assets/*",
+		"static": "assets/*"
+	}, {
+		"url": "/*",
+		"method": ["get"],
+		"page": "*"
+	}
+];
 
 // TODO: bei jedem Request Routes neu einlesen
 export default function prepareRoutes(config) {

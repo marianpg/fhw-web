@@ -5,16 +5,38 @@ import path from 'path';
 import handlebars from 'handlebars';
 const { FileNotFoundError } = require('./customError');
 
-import { exists, contains, convert } from './ressource-utils';
+import {exists, contains, convert, listFiles, loadDynamicModule } from './ressource-utils';
 import { parseJson } from './helper';
 
+
+
+function registerCustomHelpers(handlebarsEnv) {
+	const helpersDirectory = 'helpers';
+	const regex = /(.+)(.js)/; // only *.js files with at least one character filenames
+
+	if (exists(helpersDirectory)) {
+		listFiles(helpersDirectory).forEach(filename => {
+			const match = regex.exec(filename);
+
+			if (match) {
+				const modulename = match[1];
+				const module = loadDynamicModule(modulename, helpersDirectory);
+
+				handlebarsEnv.registerHelper(modulename, function() {
+					const args = [...arguments];
+					args.pop(); // last argument contains an options object, we do not need it here
+					return module(args);
+				});
+			}
+		})
+	}
+}
 
 
 /**
  * Calculates a meaningfully indented version of the
  * current context.
  */
-
 function registerGlobalHelpers(handlebarsEnv) {
 	handlebarsEnv.registerHelper('debugJson', function(context, options) {
 		const pageData = context.data.root;
@@ -25,7 +47,9 @@ function registerGlobalHelpers(handlebarsEnv) {
 
 function createHandlebarsEnv() {
     const handlebarsEnv = handlebars.create();
+
     registerGlobalHelpers(handlebarsEnv);
+    registerCustomHelpers(handlebarsEnv);
 
     return handlebarsEnv;
 }
