@@ -3,10 +3,12 @@ package-lock.json
 node_modules/
 
 assets/
-public/
 controller/
+data/
 doc/
+helpers/
 pages/
+public/
 src/
 templates/
 routes.json
