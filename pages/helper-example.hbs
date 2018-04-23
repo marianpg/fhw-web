@@ -5,3 +5,12 @@
 }
 ---
 <p>{{to-lowercase "Hallo"}} {{to-uppercase page.name}}</p>
+<p>{{add 12 21}}</p>
+<p>{{static}}</p>
+
+<!-- Output is false.. -->
+{{#if true-helper}}
+    <p>true</p>
+{{else}}
+    <p>false</p>
+{{/if}}

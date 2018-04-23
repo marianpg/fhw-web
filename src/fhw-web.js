@@ -2,6 +2,7 @@
 
 import express from 'express';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 
 import compile from './compile';
 const { generateErrorPage, NotImplementedError, RessourceNotFoundError, FunctionNotFoundError } = require('./customError');
@@ -50,7 +51,7 @@ function serveStatic(url, res) {
 }
 
 function servePage(pathToPage, params = {}) {
-	const frontmatter = Object.assign({}, params, { global: loadGlobalFrontmatter() });
+	const frontmatter = Object.assign({}, { request: params }, { global: loadGlobalFrontmatter() });
 
 	return new Promise((resolve, reject) => {
 		const html = compile(pathToPage, frontmatter);
@@ -67,9 +68,6 @@ function serveContent() {
 	throw NotImplementedError("Serving plain text content is not implemented");
 }
 
-function controller() {
-	throw NotImplementedError("Controller is not implemented");
-}
 
 function serveController(response, controllerName, functionName, params = {}) {
 	const module = loadDynamicModule(controllerName, 'controller');
@@ -108,7 +106,8 @@ function parseParams(req, route) {
 	let params = {
 		path: {},
 		get: {},
-		post: {}
+		post: {},
+		cookie: req.cookies // TODO: whitelist?
 	};
 
 	// Input
@@ -161,6 +160,7 @@ export function start(userConfig) {
 
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(bodyParser.json());
+	app.use(cookieParser());
 
 	// TODO: therefore there is no favicon in the root directory allowed
 	app.get('/favicon.ico', (req, res) => {
@@ -170,7 +170,6 @@ export function start(userConfig) {
 	});
 
 	app.use((req, res) => {
-		console.log("\nIncomming request", req.originalUrl);
 		prepareRoutes(config)
 			.then(routes => {
 				// loop will stop early, if a route for called url was found

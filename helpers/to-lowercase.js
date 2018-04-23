@@ -1,5 +1,4 @@
-module.exports = function(args) {
-	const greeting = args[0];
+module.exports = function(str) {
 
-	return greeting.toLowerCase();
+	return str.toLowerCase();
 };

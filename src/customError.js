@@ -1,5 +1,6 @@
 'use strict';
 
+import { isDefined } from './helper';
 const htmlEscape = require('html-escape');
 const errorColor = '#b30000';
 
@@ -7,11 +8,7 @@ function wrapInBody(innerHtml = '') {
 	return `<body style="background-color: ${errorColor};">\n${innerHtml}\n</body>`
 }
 
-function styleBody(body) {
-	const regex = /(<body)([\s\S]*)/g;
-	const match = regex.exec(body);
-	const top = match[1];
-	const tail = match[2];
+function styleBody(top, tail) {
 	return `${top} style="background-color: ${errorColor};" ${tail}`;
 }
 
@@ -27,10 +24,12 @@ function generateErrorPage(error) {
 	let stacktrace = error.stack ? error.stack : '';
 	stacktrace = htmlEscape(stacktrace).split('\n').join('<br>');
 
-	if (!html.includes('body')) {
-		html = wrapInBody(html);
+	const regex = /(<body)([\s\S]*)/g;
+	const match = regex.exec(html);
+	if (match && isDefined(match[0]) && isDefined(match[1])) {
+		html = styleBody(match[0], match[1]);
 	} else {
-		html = styleBody(html);
+		html = wrapInBody(html);
 	}
 
 	const description = renderError(`<h1>An ${error.name} occured:</h1>\n<p>${stacktrace}</p>\n<code>${extract}</code>\n`);

@@ -1,5 +1,4 @@
-module.exports = function(args) {
-	const name = args[0];
+module.exports = function(str) {
 
-	return name.toUpperCase();
+	return str.toUpperCase();
 };

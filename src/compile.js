@@ -25,7 +25,7 @@ function registerCustomHelpers(handlebarsEnv) {
 				handlebarsEnv.registerHelper(modulename, function() {
 					const args = [...arguments];
 					args.pop(); // last argument contains an options object, we do not need it here
-					return module(args);
+					return module(...args);
 				});
 			}
 		})
