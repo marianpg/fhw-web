@@ -5,10 +5,19 @@ Erstmaliges Einrichten
 ^^^^^^^^^^^^^^^^^^^^^^
 
 Lege zunächst einen leeren Projektordner an.
-In diesem erstellst du eine `package.json` Datei mit folgendem Inhalt::
+In diesem erstellst du eine `package.json` und eine `server.js` Datei an.
+
+package.json
+""""""""""""
+Hier werden diverse Informationen über das Projekt gespeichert. Es können bspw. Informationen über den Projektnamen,
+Versionsnummer, den Autoren, der Lizenz, etc., angegeben werden. Außerdem wird hier das fhw-web Framework mit einer
+bestimmten Versionsnummer als Abhängigkeit beschrieben.
+Das heißt, dass das Projekt Funktionalitäten eines Moduls namens "fhw-web" benötigt.
+
+Für die erste Übung sollte sollte diese folgendem Inhalt entsprechen::
 
     {
-      "name": "test",
+      "name": "Web-Anwendungen - Übung 01",
       "version": "1.0.0",
       "description": "",
       "main": "server.js",
@@ -19,12 +28,29 @@ In diesem erstellst du eine `package.json` Datei mit folgendem Inhalt::
       "author": "",
       "license": "ISC",
       "dependencies": {
-        "fhw-web": "0.6.1"
+        "fhw-web": "0.6.3"
       }
     }
 
 
-Und anschließend eine `server.js` Datei mit folgendem Inhalt::
+server.js
+"""""""""
+Dies ist das Startskript, also das Skript, welches zum Starten des Servers ausgeführt wird.
+Zunächst wird das fhw-web Framework in das Skript eingebunden, sodass dessen Funktionen verwendet werden können.
+
+Zum Starten des Servers wird die bereitgestellte Funktion `start` aufgerufen. Dieser Funktion kann optional ein
+Konfigurations-Objekt übergeben werden. Aktuell sind folgende Optionen möglich::
+
+    {
+        "port": <Integer> // default 8080
+        "validator": {
+            "html": <Boolean>, // default true
+            "css": <Boolean>   // default true
+        }
+    }
+
+
+Für die erste Übung sollte sollte diese folgendem Inhalt entsprechen::
 
     'use strict';
     var fhWeb = require('fhw-web');
@@ -33,7 +59,10 @@ Und anschließend eine `server.js` Datei mit folgendem Inhalt::
         port: 8080
     });
 
-Zum Herunterladen und Installieren des Frameworks führe über das Terminal folgenden Befehl erstmalig aus::
+
+Framework installieren
+^^^^^^^^^^^^^^^^^^^^^^
+Zum erstmaligen Herunterladen und Installieren des Frameworks führe über das Terminal folgenden Befehl aus::
 
     $ npm install
 
@@ -195,15 +224,20 @@ Bei Verletzung der jeweiligen Definitionen werden `Fehlerseiten` automatisch gen
 Diese zeichnen sich dadurch aus, dass die Hintergrundfarbe der Seite auf ein "dunkelrot" gesetzt wird.
 Eine genauere Fehlerbeschreibung findet sich im HTML-Quelltext.
 
+In Fällen, in denen das erzeugte HTML-Dokument grundlegende Fehler in der Unterteilung des head- und body-Bereichs
+hat, schlägt die Einfärbung fehl. Stattdessen wird auf der Seite an einer Stelle ein `style="background-color: #b30000;"`
+ausgegeben. Dies dient hier ebenfalls als Fehlerindikator.
+
 Um diesen einzusehen empfiehlt es sich die jeweiligen `Developer Tools` der verschiedenen Webbrowser zu verwenden.
 Je nach Webbrowser werden die unterschiedlich betitelt. Meist lassen dich sich im Kontext-Menü unter dem Namen
 "Entwickler-Werkzeuge", "Developer-Tools", etc. finden.
-Hier möchten wir den "Inspector" verwenden und kriegen damit eine interaktive Ansicht zum dargestellten HTML-Quelltext.
+Hier möchten wir den `Inspector` verwenden und kriegen damit eine interaktive Ansicht zum dargestellten HTML-Quelltext.
 
 Vor bzw. nach dem Body-Tag findet sich ein "Error Description" betitelter, versteckter Div-Tag.
-Diesen kannst du "aufklappen" und weitere Informationen zum Fehler wiederfinden.
+Mit einem Doppelklick auf das style-Attribut lässt sich dieser bearbeiten und entfernen, sodass die Fehlernachricht
+angezeigt wird. Alternativ lässt sich die Fehlerbeschreibung auch im Inspector untersuchen.
 
-Bspw. erzeugt ein Aufruf, einer nicht vorhandenen page `http:\\localhost:8080/invalid` folgenden HTML-Quelltext::
+Bspw. erzeugt ein Aufruf, einer nicht vorhandenen page `http://localhost:8080/invalid` folgenden HTML-Quelltext::
 
     <!-- Error Description in hidden div below -->
     <html>
@@ -212,8 +246,9 @@ Bspw. erzeugt ein Aufruf, einer nicht vorhandenen page `http:\\localhost:8080/in
       <body style="background-color: #b30000;">
         <div title="Error Description" style="display: none;">
           <h1>An Error occured:</h1>
-          <p>Error: File invalid.hbs not found in Directory pages/</p>
-          <code>1</code>
+          <code name="stacktrace">Error: File invalid.hbs not found in Directory pages/</code>
+          <pre name="extract"></pre>
+          <div name="raw-extract" style="display: hidden";></div>
         </div>
       </body>
     </html>
@@ -221,6 +256,8 @@ Bspw. erzeugt ein Aufruf, einer nicht vorhandenen page `http:\\localhost:8080/in
 
 Minimales Beispiel
 ^^^^^^^^^^^^^^^^^^
+Das folgende minimale Beispiel enthält eine Website eines Headhunters. Dieser möchte über seine Startseite zu zwei Personen
+ihre Lebensläufe präsentieren.
 
 Folgende Dateien liegen im Projektordner zusätzlich zu der oben beschriebenen `package.json` und `server.js` vor::
 
