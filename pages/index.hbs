@@ -1,19 +1,12 @@
 {
-    "title": "Willkommen"
+    "title": "Willkommen",
+    "template": "full-html"
 }
 ---
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{{page.title}}</title>
-        <link rel="stylesheet" type="text/css" href="assets/style.css">
-    </head>
-    <body>
-        {{include "header"}}
-        <h1>Überschrift</h1>
-        <p>Absatz</p>
-        {{include "footer"}}
-    </body>
-</html>
+{{include "header"}}
+<main>
+    <h1>Überschrift</h1>
+    <p>Absatz</p>
+</main>
+{{include "footer"}}
 
