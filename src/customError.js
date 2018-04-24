@@ -12,15 +12,18 @@ function styleBody(top, tail) {
 	return `${top} style="background-color: ${errorColor};" ${tail}`;
 }
 
-function renderError(html) {
-	return `<!-- Error Description in hidden div below -->\n<div title="Error Description" style="display: none;">${html}</div>`
+function renderError(html, shouldBeHidden) {
+	const style = shouldBeHidden ? 'style="display: none;"' : '';
+
+	return `<!-- Error Description in hidden div below -->\n
+			<div title="Error Description" ${style}>${html}</div>`
 }
 
 function generateErrorPage(error) {
 	let html = error.html ? error.html : '';
 
 	const rawExtract = error.extract ? error.extract : '';
-	const extract = rawExtract.split('\n').map((line, index) => {
+	const extract = rawExtract.length === 0 ? rawExtract : rawExtract.split('\n').map((line, index) => {
 		const lineNo = index + 1;
 		const p = `${lineNo} ${htmlEscape(line)}`;
 
@@ -38,12 +41,14 @@ function generateErrorPage(error) {
 		html = wrapInBody(html);
 	}
 
+	const shouldBeHidden = error.html.length > 0;
+
 	const description = renderError(` 
 		<h1>An ${error.name} occured:</h1>\n 
 		<code name="stacktrace" style="white-space: pre-line">${stacktrace}</code>\n
 		<pre name="extract">${extract}</pre>\n
 		<div name="raw-extract" style="display: none;">${htmlEscape(rawExtract)}</div>
-	`);
+	`, shouldBeHidden);
 
 	return `${description}${html}`;
 }
