@@ -15,7 +15,7 @@ import { isObject, isDefined, isUndefined, isFunction, zip } from './helper';
 
 // use the defaultConfig as a basis
 // overwrite only entries which are user defined
-function combineConfiguration(userConfig) {
+function combineConfiguration(userConfig = {}) {
 	function combineObjects(defaultObj, userObj) {
 		return Object.keys(defaultObj).reduce((acc, key) => {
 
