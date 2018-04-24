@@ -13,14 +13,20 @@ function styleBody(top, tail) {
 }
 
 function renderError(html) {
-	//return `<!--${htmlEscape(html)}-->`
 	return `<!-- Error Description in hidden div below -->\n<div title="Error Description" style="display: none;">${html}</div>`
 }
 
 function generateErrorPage(error) {
 	let html = error.html ? error.html : '';
-	let extract = error.extract ? error.extract : '';
-	extract = htmlEscape(extract.split('\n').map((line, index) => (index+1).toString() + '\t' + line).join('\n'));
+
+	const rawExtract = error.extract ? error.extract : '';
+	const extract = rawExtract.split('\n').map((line, index) => {
+		const lineNo = index + 1;
+		const p = `${lineNo} ${htmlEscape(line)}`;
+
+		return p;
+	}).join('\n');
+
 	let stacktrace = error.stack ? error.stack : '';
 	stacktrace = htmlEscape(stacktrace).split('\n').join('<br>');
 
@@ -32,7 +38,12 @@ function generateErrorPage(error) {
 		html = wrapInBody(html);
 	}
 
-	const description = renderError(`<h1>An ${error.name} occured:</h1>\n<p>${stacktrace}</p>\n<code>${extract}</code>\n`);
+	const description = renderError(` 
+		<h1>An ${error.name} occured:</h1>\n 
+		<code name="stacktrace" style="white-space: pre-line">${stacktrace}</code>\n
+		<pre name="extract">${extract}</pre>\n
+		<div name="raw-extract" style="display: none;">${htmlEscape(rawExtract)}</div>
+	`);
 
 	return `${description}${html}`;
 }
