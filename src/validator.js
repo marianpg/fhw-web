@@ -10,7 +10,7 @@ const { HtmlValidationError, CssValidationError, FileNotFoundError } = require('
 
 export function validateHtml(html) {
 	const options = { format: 'text', data: html };
-	
+
 	return htmlValidator(options)
 		.then(result => {
 
