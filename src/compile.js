@@ -103,7 +103,6 @@ export default function compile(url, frontmatter = {}, dir = 'pages', contentHtm
 		templateName = frontmatterCombined['page']['template'];
 		delete frontmatterCombined['page']['template'];
 	}
-
 	const template = handlebarsEnv.compile(hbs);
 	let htmlCompiled = template(frontmatterCombined);
 
@@ -111,5 +110,5 @@ export default function compile(url, frontmatter = {}, dir = 'pages', contentHtm
 		htmlCompiled = compile(templateName, frontmatterCombined, 'templates', htmlCompiled);
 	}
 
-	return htmlCompiled.trim();
+	return htmlCompiled.length === 0 ? " " : htmlCompiled.trim();
 }
