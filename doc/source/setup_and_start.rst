@@ -17,9 +17,9 @@ Das heißt, dass das Projekt Funktionalitäten eines Moduls namens "fhw-web" ben
 Für die erste Übung sollte sollte diese folgendem Inhalt entsprechen::
 
     {
-      "name": "Web-Anwendungen - Übung 01",
+      "name": "web-uebung-01",
       "version": "1.0.0",
-      "description": "",
+      "description": "Web-Anwendungen - Übung 01",
       "main": "server.js",
       "scripts": {
 
