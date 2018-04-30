@@ -35,8 +35,9 @@ function generateErrorPage(error) {
 
 	const regex = /(<body)([\s\S]*)/g;
 	const match = regex.exec(html);
-	if (match && isDefined(match[0]) && isDefined(match[1])) {
-		html = styleBody(match[0], match[1]);
+
+	if (isDefined(match) && isDefined(match[1]) && isDefined(match[2])) {
+		html = styleBody(match[1], match[2]);
 	} else {
 		html = wrapInBody(html);
 	}
