@@ -6,7 +6,7 @@ export function isObject(obj) {
 }
 
 export function isUndefined(obj) {
-	return typeof obj === 'undefined';
+	return obj == null;
 }
 
 export function isDefined(obj) {
