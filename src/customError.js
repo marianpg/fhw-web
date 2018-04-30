@@ -81,10 +81,14 @@ class RouteDefinitionError extends ExtendableError {}
 class JsonParseError extends ExtendableError {}
 
 
+export function isConnectionError(error) {
+	return (error.code === 'ENOTFOUND') && (error.syscall === 'getaddrinfo');
+}
 
 module.exports = {
 	// Für "übersehene Fehler" - also nicht behandelte bzw. nicht beachtete Fehlerfälle.
 	generateErrorPage,
+	isConnectionError,
 	NotImplementedError(message) { return new NotImplementedError(message, 500); },
 	FileNotFoundError(message) { return new FileNotFoundError(message, 404); },
 	FunctionNotFoundError(message) { return new FunctionNotFoundError(message, 500); },
