@@ -13,3 +13,4 @@ src/
 templates/
 routes.json
 run.js
+sessions/

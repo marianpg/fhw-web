@@ -1,12 +1,12 @@
 {
   "name": "fhw-web",
   "description": "Framework zur Übung 'Web-Anwendungen' an der Fachhochschule Wedel",
-  "version": "0.6.4",
+  "version": "0.7.0",
   "scripts": {
-    "compile": "babel --presets es2015 --plugins transform-runtime -d lib/ src/",
-    "prepublish": "npm run compile",
-    "start": "npm run compile && node run.js",
-    "debug": "node run.js"
+    "git-clone": "rm -rf src/html-validator && mkdir src/html-validator && git clone https://github.com/marianpg/html-validator.git src/html-validator/",
+    "compile": "rm -rf lib && mkdir lib && babel --presets es2015 --plugins transform-runtime -d lib/ src/",
+    "prepublish": "npm run git-clone && npm run compile",
+    "start": "npm run compile && node run.js"
   },
   "dependencies": {
     "babel-runtime": "^6.26.0",
@@ -16,7 +16,9 @@
     "express": "^4.16.2",
     "handlebars": "^4.0.11",
     "html-escape": "^2.0.0",
-    "html-validator": "^2.2.3"
+    "html-validator": "^2.2.3",
+    "url": "^0.11.0",
+    "valid-url": "^1.0.9"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
