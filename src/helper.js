@@ -39,3 +39,7 @@ export function parseJson(str, filename) {
 		throw JsonParseError(`Could not parse JSON in ${filename}. Further error description below:\n ${error.message}`);
 	}
 }
+
+export function copy(obj) {
+	return JSON.parse(JSON.stringify(obj));
+}
