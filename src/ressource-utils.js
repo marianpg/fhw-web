@@ -10,6 +10,16 @@ function toAbsolutePath(p) {
 		: path.join(projectPath, p);
 }
 
+// https://stackoverflow.com/a/34509653
+function ensureDirectoryExistence(filePath) {
+	const dirname = path.dirname(filePath);
+	if (fs.existsSync(dirname)) {
+		return true;
+	}
+	ensureDirectoryExistence(dirname);
+	fs.mkdirSync(dirname);
+}
+
 export function exists(pathToFile) {
 	return fs.existsSync(pathToFile);
 }
@@ -76,6 +86,7 @@ export function saveJson(filename, obj, directory = '/') {
 	const pathToFile = toAbsolutePath(path.join(directory, fname));
 	const jsonStr = JSON.stringify(obj, null, '\t');
 
+	ensureDirectoryExistence(pathToFile);
 	fs.writeFileSync(pathToFile, jsonStr, 'utf8');
 }
 
