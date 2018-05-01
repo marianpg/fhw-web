@@ -42,7 +42,7 @@ function generateErrorPage(error) {
 		html = wrapInBody(html);
 	}
 
-	const shouldBeHidden = error.html.length > 0;
+	const shouldBeHidden = isDefined(error.html) && error.html.length > 0;
 
 	const description = renderError(` 
 		<h1>An ${error.name} occured:</h1>\n 
