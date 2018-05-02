@@ -11,10 +11,11 @@ const { HtmlValidationError, CssValidationError, FileNotFoundError, isConnection
 
 
 export function validateHtml(html) {
-	const options = { format: 'html', data: html };
+	const options = { format: 'text', data: html };
 
 	return htmlValidator(options)
 		.then(result => {
+			console.log(result);
 			if (isDefined(result) && result.includes('Error:')) {
 				throw HtmlValidationError(result, html);
 			} else {
