@@ -136,7 +136,7 @@ export function start(userConfig) {
 						if (isDefined(route.static)) {
 							return serveStatic(req.path, res);
 						}
-						console.log("parse params");
+						
 						const params = parseParams(req, route, res);
 
 						if (isDefined(route.page)) {
