@@ -10,8 +10,8 @@ import { validateHtml, validateCss } from './validator';
 import defaultConfig from './defaultConfig';
 import prepareRoutes from './routes';
 import { loadDynamicModule, loadGlobalFrontmatter, resolveRessource, loadJson as openJson, saveJson as writeJson} from './ressource-utils';
-import { isObject, isDefined, isUndefined, isFunction, zip } from './helper';
-
+import { isObject, isDefined, isUndefined, isFunction } from './helper';
+import { parseParams } from './parameters';
 
 // use the defaultConfig as a basis
 // overwrite only entries which are user defined
@@ -100,54 +100,6 @@ function serveController(response, controllerName, functionName, params = {}) {
 }
 
 
-// TODO: Klären: url "/item/:id/price" würde ohne controller eine Suche nach einer page "/pages/item/id42/price" auslösen.
-function parseParams(req, route) {
-	let url = req.originalUrl;
-	let params = {
-		path: {},
-		get: {},
-		post: {},
-		cookie: req.cookies // TODO: whitelist?
-	};
-
-	// Input
-	// url			::= /item/id42/price?currency=euro
-	// route.url	::= /item/:id/*
-	// route.params ::= { path: ["id"], get: [], post: [] }
-
-	// Extracting Path Parameters
-	const combined = zip([route.url.split('/'), url.split('/')]);
-	combined.forEach(([key, value]) => {
-		if (key.startsWith(':')) {
-			const k = key.substr(1);
-			if (route.params.path.includes(k)) {
-				params.path[k] = value;
-			}
-		}
-	});
-
-	// Extracting Get Parameters
-	// TODO: Array vs. String ("/item/id42/price?currency=euro&sortBy=price&groupBy[]=name&groupBy[]=country")
-	Object.keys(req.query).forEach(key => {
-		if (route.params.get.includes(key) && isDefined(req.query[key])) {
-			params.get[key] = req.query[key];
-		}
-	});
-
-	// Extracting Post Parameters
-	Object.keys(req.body).forEach(key => {
-		if (route.params.post.includes(key) && isDefined(req.body[key])) {
-			params.post[key] = req.body[key];
-		}
-	});
-
-	// Output
-	// url			::= /item/.*/.*
-	// params		::=	{ path: {"id": "id42}, get: {"currency": "euro"}, post: {} }
-	console.log(`Parsed request parameters are: ${JSON.stringify(params)}`);
-	return params;
-}
-
 
 /*
 	userConfig ::= { <port> }
@@ -180,11 +132,12 @@ export function start(userConfig) {
 
 					console.log(`Calling ressource "${req.path}". Does it match route "${route.urlRegex}"? ${isDefinedRoute}. Does it match Method "${route.method}"? ${isDefinedMethod}`);
 					if (isDefinedRoute && isDefinedMethod) {
-						const params = parseParams(req, route);
 
 						if (isDefined(route.static)) {
 							return serveStatic(req.path, res);
 						}
+						console.log("parse params");
+						const params = parseParams(req, route, res);
 
 						if (isDefined(route.page)) {
 							return servePage(req.path, params);
