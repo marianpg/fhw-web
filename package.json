@@ -16,6 +16,7 @@
     "express": "^4.16.2",
     "handlebars": "^4.0.11",
     "html-escape": "^2.0.0",
+    "request": "^2.85.0",
     "url": "^0.11.0",
     "valid-url": "^1.0.9"
   },

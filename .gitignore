@@ -13,3 +13,5 @@ helpers/
 pages/
 sessions/
 templates/
+public/
+routes.json
