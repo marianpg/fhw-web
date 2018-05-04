@@ -5,3 +5,11 @@ lib/
 doc/build/
 
 src/html-validator
+
+assets/
+controller/
+data/
+helpers/
+pages/
+sessions/
+templates/
