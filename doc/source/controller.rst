@@ -58,8 +58,8 @@ Exemplarisch sähe das wie folgt aus::
     function addData(params) {
         /* some implementation */
         return {
-            status: 200,
-            page: "success"
+            status: 303,
+            redirect: "success"
         }
     }
 
@@ -95,7 +95,7 @@ Exemplarisch sähe dies wie folgt aus::
     var saveJson = fhWeb.saveJson;
 
     function add(params) {
-        var guestbookEntries = loadJson('guestbook');
+        var guestbookEntries = loadJson('guestbook') || [];
         var author = params.request.post.author;
         var text = params.request.post.text;
 
