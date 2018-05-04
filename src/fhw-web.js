@@ -10,7 +10,7 @@ import { validateHtml, validateCss } from './validator';
 import defaultConfig from './defaultConfig';
 import prepareRoutes from './routes';
 import { loadDynamicModule, loadGlobalFrontmatter, resolveRessource, loadJson as openJson, saveJson as writeJson} from './ressource-utils';
-import { isObject, isDefined, isUndefined, isFunction } from './helper';
+import { isObject, isDefined, isUndefined, isFunction, copy } from './helper';
 import { parseParams } from './parameters';
 
 // use the defaultConfig as a basis
@@ -75,8 +75,7 @@ function serveController(response, controllerName, functionName, params = {}) {
 	if (isUndefined(module[functionName])) {
 		throw FunctionNotFoundError(`Module ${controllerName} does not exports a function named ${functionName}. Please check the documentation.`);
 	}
-
-	const frontmatter = Object.assign({}, { request: params }, { global: loadGlobalFrontmatter() });
+	const frontmatter = Object.assign({}, { request: copy(params) }, { global: loadGlobalFrontmatter() });
 	const controllerResult = module[functionName](frontmatter);
 
 	// Controller call can return either a Promise or the result directly
