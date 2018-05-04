@@ -10,33 +10,33 @@ import { isDefined } from './helper';
 const { HtmlValidationError, CssValidationError, FileNotFoundError, isConnectionError } = require('./customError.js');
 
 
-export function validateHtml(html) {
-	const options = { format: 'text', data: html };
+export function validateHtml(result) {
+	const options = { format: 'text', data: result.html };
 
 	return htmlValidator(options)
-		.then(result => {
-			console.log(result);
-			if (isDefined(result) && result.includes('Error:')) {
-				throw HtmlValidationError(result, html);
+		.then(evaluation => {
+
+			if (isDefined(evaluation) && (evaluation.includes('Error:') || evaluation.includes('Warning:'))) {
+				throw HtmlValidationError(evaluation, result.html);
 			} else {
-				return Promise.resolve(html);
+				return Promise.resolve(result);
 			}
 		}).catch(error => {
 			if (isDefined(error)) {
 				if (isConnectionError(error)) {
 					console.log("Warning (HTML): could not establish internet connection to the html validator: validation skipped.");
 				} else {
-					throw HtmlValidationError(error, html);
+					throw HtmlValidationError(error, result.html);
 				}
 			}
-			return Promise.resolve(html);
+			return Promise.resolve(result);
 		});
 }
 
-export function validateCss(html) {
+export function validateCss(result) {
 	const regex = /(<link.*href=\")(.*.css)(\")/g;
-	let match = regex.exec(html);
-	let queue = Promise.resolve(html);
+	let match = regex.exec(result.html);
+	let queue = Promise.resolve(result.html);
 
 	while (match != null) {
 		const pathToFile = match[2];
@@ -46,19 +46,19 @@ export function validateCss(html) {
 				const file = openFile(pathToFile);
 
 				queue = queue.then(_  => new Promise((resolve, reject) => {
-					cssValidator(file, (error, result) => {
-						if (isDefined(error) && !isConnectionError(error)) {
+					cssValidator(file, (error, evaluation) => {
+						if (isDefined(error)) {
 							if (isConnectionError(error)) {
 								console.log("Warning (CSS): could not establish internet connection to the css validator: validation skipped.");
-								resolve(html);
+								resolve(result);
 							} else {
-								reject(CssValidationError(error, html));
+								reject(CssValidationError(error, result.html));
 							}
-						} else if (isDefined(result) && !result.validity) {
-							const msg = result.errors.map(err => `${err.message.trim()} in line ${err.line}.`).join('\n');
-							reject(CssValidationError(msg, html, file));
+						} else if (isDefined(evaluation) && !evaluation.validity) {
+							const msg = evaluation.errors.map(err => `${err.message.trim()} in line ${err.line}.`).join('\n');
+							reject(CssValidationError(msg, result.html, file));
 						} else {
-							resolve(html);
+							resolve(result);
 						}
 					});
 				}));
@@ -68,7 +68,7 @@ export function validateCss(html) {
 			}
 		}
 
-		match = regex.exec(html);
+		match = regex.exec(result.html);
 	}
 
 	return queue;

@@ -21,7 +21,9 @@ function openSession(id) {
 			'timestamp': now,
 			'url': ''
 		},
-		'data': {}
+		'data': {
+			'session-id': id
+		}
 	};
 
 	const loadedSession = loadJson(id, resDir);
@@ -34,17 +36,21 @@ function openSession(id) {
 		}
 	}
 
-	console.log("open session-id", id, session);
+	console.log(`Opened session with id "${id}": ${session}"`);
 
 	return session;
 }
 
 function saveSession(session, path, get, post) {
-	const data = Object.assign({}, session.data, get, post);
+	const data = Object.assign({}, session.data, get, post, { 'session-id': session.id });
 	const toSave = copy(session);
 
-	toSave.lastAccess.timestamp = dateNow();
-	toSave.lastAccess.url = path;
+	toSave.id = session.id;
+	toSave.createdAt = session.createdAt;
+	toSave.lastAccess = {
+		timestamp: dateNow(),
+		url: path
+	};
 	toSave.data = data;
 
 	saveJson(toSave.id, toSave, resDir);
@@ -73,7 +79,7 @@ export function parseParams(req, route, res) {
 		path: {},
 		get: {},
 		post: {},
-		cookies: {}
+		session: {}
 	};
 
 	// Input
@@ -107,11 +113,10 @@ export function parseParams(req, route, res) {
 		}
 	});
 
-	// Extract Cookies
-	// disabled until version 0.7.0
-	// const session = parseCookie(req, res, params.get, params.post);
-	// params.cookies = session;
-
+	// Extracting Session from Set-Cookies' session-id
+	// If no session-id is provided, a new session will be opened
+	 const session = parseCookie(req, res, params.get, params.post);
+	 params.session = session;
 
 	// Output
 	// url			::= /item/.*/.*

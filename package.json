@@ -1,7 +1,7 @@
 {
   "name": "fhw-web",
   "description": "Framework zur Übung 'Web-Anwendungen' an der Fachhochschule Wedel",
-  "version": "0.6.5",
+  "version": "0.7.1",
   "scripts": {
     "git-clone": "rm -rf src/html-validator && mkdir src/html-validator && git clone https://github.com/marianpg/html-validator.git src/html-validator/",
     "compile": "rm -rf lib && mkdir lib && babel --presets es2015 --plugins transform-runtime -d lib/ src/",
@@ -16,7 +16,6 @@
     "express": "^4.16.2",
     "handlebars": "^4.0.11",
     "html-escape": "^2.0.0",
-    "html-validator": "^2.2.3",
     "url": "^0.11.0",
     "valid-url": "^1.0.9"
   },

@@ -50,12 +50,12 @@ function serveStatic(url, res) {
 	});
 }
 
-function servePage(pathToPage, params = {}) {
-	const frontmatter = Object.assign({}, { request: params }, { global: loadGlobalFrontmatter() });
+function servePage(pathToPage, params = {}, data = {}, status = 200) {
+	const frontmatter = Object.assign({}, { request: params }, { global: loadGlobalFrontmatter() }, { page: data });
 
 	return new Promise((resolve, reject) => {
 		const html = compile(pathToPage, frontmatter);
-		resolve(html);
+		resolve({html, status});
 	});
 }
 
@@ -71,23 +71,27 @@ function serveContent() {
 
 function serveController(response, controllerName, functionName, params = {}) {
 	const module = loadDynamicModule(controllerName, 'controller');
-	const frontmatter = Object.assign({}, { request: params }, { global: loadGlobalFrontmatter() });
 
 	if (isUndefined(module[functionName])) {
 		throw FunctionNotFoundError(`Module ${controllerName} does not exports a function named ${functionName}. Please check the documentation.`);
 	}
 
-	// Controller call can return either a Promise or the result directly
+	const frontmatter = Object.assign({}, { request: params }, { global: loadGlobalFrontmatter() });
 	const controllerResult = module[functionName](frontmatter);
+
+	// Controller call can return either a Promise or the result directly
 	function resolveControllerCall(result) {
 		if (isDefined(result.page)) {
-			return servePage(result.page, frontmatter);
+			return servePage(result.page, params, result.data, result.status);
 
 		} else if (isDefined(result.json)) {
 			return serveJson(response, JSON.stringify(result.json), result.status);
 
 		} else if (isDefined(result.content)) {
 			return serveContent();
+
+		} else if (isDefined(result.redirect)) {
+			return response.redirect(result.status || 301, result.redirect);
 
 		} else {
 			return Promise.reject("Return Value of Controller does not fulfill the required syntax. Please check the documentation.");
@@ -123,7 +127,7 @@ export function start(userConfig) {
 
 	app.use((req, res) => {
 		prepareRoutes(config)
-			.then(routes => {
+			.then(routes => { //TODO fallback, if no route found
 				// loop will stop early, if a route for called url was found
 				for (let index = 0; index < routes.length; ++index) {
 					const route = routes[index];
@@ -136,7 +140,7 @@ export function start(userConfig) {
 						if (isDefined(route.static)) {
 							return serveStatic(req.path, res);
 						}
-						
+
 						const params = parseParams(req, route, res);
 
 						if (isDefined(route.page)) {
@@ -147,28 +151,28 @@ export function start(userConfig) {
 						}
 					}
 				}
-			}).then(html => {
-				if (!res.finished && html && config.validator.html) {
-					return validateHtml(html);
+			}).then(result => {
+				if (!res.finished && result && result.html && config.validator.html) {
+					return validateHtml(result);
 				} else {
-					return Promise.resolve(html);
+					return Promise.resolve(result);
 				}
-			}).then(html => {
-				if (!res.finished && html && config.validator.css) {
-					return validateCss(html);
+			}).then(result => {
+				if (!res.finished && result && result.html && config.validator.css) {
+					return validateCss(result);
 				} else {
-					return Promise.resolve(html);
+					return Promise.resolve(result);
 				}
-			}).then(html => {
+			}).then(result => {
 				// check, if result was already sent
 				//   i.e. when serving static content
 				//   express' function "sendFile" already handles the response
 				if (!res.finished) {
-					if (html) {
-						res.status(200);
-						res.send(html);
+					if (result && result.html) {
+						res.status(result.status || 200);
+						res.send(result.html);
 					} else {
-						throw RessourceNotFoundError(`Could not find ressource "${req.originalUrl}"`);
+						throw RessourceNotFoundError(`Could not find ressource "${req.originalUrl}" with requeset method "${req.method}".`);
 					}
 				}
 			}).catch(error => {
