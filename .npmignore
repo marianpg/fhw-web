@@ -1,6 +1,9 @@
 .idea/
+.git
+.gitignore
 package-lock.json
 node_modules/
+
 
 assets/
 controller/
@@ -9,8 +12,8 @@ doc/
 helpers/
 pages/
 public/
+sessions/
 src/
 templates/
 routes.json
 run.js
-sessions/
