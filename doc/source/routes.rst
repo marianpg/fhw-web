@@ -146,15 +146,8 @@ Es findet somit an dieser Stelle eine Definition statt, welche Parameter erlaubt
 Anders benannte werden verworfen.
 
 Die ausgelesenen Parameter werden in das Frontmatter eingespeist. Dort sind die dann
-nicht über das page, sondern über das *request*-Objekt zugreifbar. Bspw. zum Ausgeben
-einer Liste von Gästebucheinträgen sähe eine page wie folgt aus::
+nicht über das page, sondern über das *request*-Objekt zugreifbar. Bspw. ließe
+sich ein per Post-Request übergebener Name wie folgt auslesen::
 
 
-    {{#each request.post.guestbookEntries}}
-
-        <p>{{this.author}}: {{this.text}}</p>
-
-    {{/each}}
-
-In diesem Beispiel werden alle Einträge per Post-Request in der Variablen "guestbookEntries"
-übergeben.
+    <p>Hallo {{request.post.name}}</p>

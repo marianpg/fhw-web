@@ -15,5 +15,7 @@ Für Übung 01 ist *ausschließlich* das Kapitel "Erste Schritte" maßgeblich.
     :maxdepth: 2
 
     setup_and_start
+    helper
     routes
     controller
+    sessions

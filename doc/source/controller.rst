@@ -12,8 +12,23 @@ und andere Verarbeitsungsschritte unternimmt.
 Controllerdefinition
 ^^^^^^^^^^^^^^^^^^^^
 
-Der Controller muss im Ordner *"Projektordner/controller/"* als Javascript-Datei (*.js)
+Der Controller muss im Ordner *"<Projektordner>/controller/"* als Javascript-Datei (\*.js)
 abgelegt sein. In dieser können beliebig viele benannte Funktionen definiert werden.
+
+Eingabewert
+"""""""""""
+Jede Controller-Funktion erhält als ersten Parameter ein Objekt, welches die GET, POST, PATH
+und Session Daten enthält. Eine nähere Erläuterung zu der *Session* erfolgt in einem späteren
+Kapitel.
+Auf die verschiedenen Parameter lassen sich dann wie auf gewohnte js-Objekte zugreifen::
+
+    /* Eine Controller-Funktion */
+    function printParams(params) {
+        console.log(params.get.name); // gibt den Inhalt der Variable "name" der GET-Parameter
+        console.log(params.post.name); // gibt den Inhalt der Variable "name" der POST-Parameter
+        console.log(params.path.name); // gibt den Inhalt der Variable "name" der PATH-Parameter
+        console.log(params.session.name); // gibt den Inhalt der Variable "name" der Session
+    }
 
 
 Rückgabewert
@@ -21,18 +36,14 @@ Rückgabewert
 
 Das Resultat einer Funktion muss dabei einem der folgenden definierten entsprechen::
 
-    | Return            ::= <pageResult> | <jsonResult> | <contentResult>
+    | Return            ::= <pageResult> | <redirect>
     |
-    | <pageResult>      ::= { <statusCode>, <page>, <data> }
-    | <jsonResult>      ::= { <statusCode>, <json>, <redirect>? }
-    | <contentResult>   ::= { <statusCode>, <content>, <redirect>? }
+    | <pageResult>      ::= { <statusCode>, <page>, <data> } // liefert direkt eine Seite <page> aus mit evtl. zusätzlichen <data> Daten
+    | <redirect>        ::= { <statusCode>, <page> } // eine URL bzw. Seite, auf die der Browser nach der Verarbeitung weitergeleitet werden soll
     |
-    | <statusCode>      ::= <integer> // entspricht dem HTTP-Status-Code
+    | <statusCode>      ::= <integer> // entspricht dem HTTP-Status-Code, insb. wichtig bei der Weiterleitung
     | <page>            ::= <string> // Dateiname der page, enthalten im page-Ordner
-    | <data>            ::= <object> // zusätzliche Daten, die im Frontmatter über ein request-Objekt sichtbar sind
-    | <json>            ::= <jsonString> // Resultat im json-Format, welches direkt an den Browser zurückgegeben wird
-    | <content>         ::= <content>
-    | <redirect>?       ::= <string> // optional: eine URL, auf die der Browser nach der Verarbeitung permanent weitergeleitet werden soll
+    | <data>            ::= <object> // zusätzliche Daten, die im Frontmatter über das page-Objekt sichtbar sind
 
 
 Dateiinhalt
@@ -41,8 +52,8 @@ Dateiinhalt
 Am Ende der Datei jedoch müssen die Funktionen, die nach außen hin sichtbar sein sollen, exportiet werden.
 Exemplarisch sähe das wie folgt aus::
 
-    // *file controller/guestbook.js*
-    function addData(entries) {
+    // file controller/guestbook.js
+    function addData(params) {
         /* some implementation */
         return {
             status: 200,
@@ -81,10 +92,10 @@ Exemplarisch sähe dies wie folgt aus::
     var loadJson = fhWeb.loadJson;
     var saveJson = fhWeb.saveJson;
 
-    function add(data) {
+    function add(params) {
         var guestbookEntries = loadJson('guestbook');
-        var author = data.request.post.author;
-        var text = data.request.post.text;
+        var author = params.post.author;
+        var text = params.post.text;
 
         guestbookEntries.push({
             author: author,
