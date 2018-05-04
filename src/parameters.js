@@ -36,7 +36,7 @@ function openSession(id) {
 		}
 	}
 
-	console.log(`Opened session with id "${id}": ${session}"`);
+	console.log(`Opened session with id "${id}".`);
 
 	return session;
 }
