@@ -17,17 +17,19 @@ abgelegt sein. In dieser können beliebig viele benannte Funktionen definiert we
 
 Eingabewert
 """""""""""
-Jede Controller-Funktion erhält als ersten Parameter ein Objekt, welches die GET, POST, PATH
-und Session Daten enthält. Eine nähere Erläuterung zu der *Session* erfolgt in einem späteren
+Jede Controller-Funktion erhält als ersten Parameter ein Objekt, welches die Daten aus den Request-Parametern
+und der global.json enthält. Im Request-Objekt selbst befinden sich die GET, POST, PATH und Session Daten.
+Eine nähere Erläuterung zu der *Session* erfolgt in einem späteren
 Kapitel.
 Auf die verschiedenen Parameter lassen sich dann wie auf gewohnte js-Objekte zugreifen::
 
     /* Eine Controller-Funktion */
     function printParams(params) {
-        console.log(params.get.name); // gibt den Inhalt der Variable "name" der GET-Parameter
-        console.log(params.post.name); // gibt den Inhalt der Variable "name" der POST-Parameter
-        console.log(params.path.name); // gibt den Inhalt der Variable "name" der PATH-Parameter
-        console.log(params.session.name); // gibt den Inhalt der Variable "name" der Session
+        console.log(params.request.get.name); // gibt den Inhalt der Variable "name" der GET-Parameter
+        console.log(params.request.post.name); // gibt den Inhalt der Variable "name" der POST-Parameter
+        console.log(params.request.path.name); // gibt den Inhalt der Variable "name" der PATH-Parameter
+        console.log(params.request.session.name); // gibt den Inhalt der Variable "name" der Session
+        console.log(params.global.name); // gibt den Inhalt der Variable "name" aus der global.json
     }
 
 
@@ -94,8 +96,8 @@ Exemplarisch sähe dies wie folgt aus::
 
     function add(params) {
         var guestbookEntries = loadJson('guestbook');
-        var author = params.post.author;
-        var text = params.post.text;
+        var author = params.request.post.author;
+        var text = params.request.post.text;
 
         guestbookEntries.push({
             author: author,

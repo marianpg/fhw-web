@@ -36,7 +36,7 @@ Verwendung
 
 Der Zugriff auf die Session erfolgt im Handlebars-Quelltext über das request-Objekt::
 
-    <!-- pages/example-session -->
+    <!-- pages/example-session.hbs -->
     {
     }
     ---
@@ -50,6 +50,11 @@ Analog erfolgt im Controller der Zugriff auf die Session wie folgt::
 
     /* Eine Controller-Funktion */
     function printSession(params) {
-        console.log(params.session.session-id); // gibt den Inhalt der Variable "session-id" der Session
+        console.log(params.session.['session-id']); // gibt den Inhalt der Variable "session-id" der Session
         console.log(params.session.name); // gibt den Inhalt der Variable "name" der Session
     }
+
+*Hinweis:* Die Zeichenkette "session-id" stellt aufgrund des Bindestrichs keinen gültigen Javascript-Bezeichner dar.
+Deswegen erfolgt der Zugriff auf den Wert von "session-id" nicht mit der "Punktnotation" sondern per *Klammernotation*.
+Näheres dazu unter `Property Accessors
+<https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Operators/Property_Accessors/>`_.

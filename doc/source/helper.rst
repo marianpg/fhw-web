@@ -21,7 +21,7 @@ Beispiel zu 1)
 """"""""""""""
 ::
 
-    <!-- pages/helper-example-current-time -->
+    <!-- pages/helper-example-current-time.hbs -->
     {
     }
     ---
@@ -38,21 +38,21 @@ Beispiel zu 2)
 """"""""""""""
 ::
 
-    <!-- pages/helper-example-if-expression -->
+    <!-- pages/helper-example-if-expression.hbs -->
     {
-        "condition-one": true,
-        "condition-two": false
+        "conditionOne": true,
+        "conditionTwo": false
     }
     ---
-    {{#if (logic-and page.condition-one page.condition-two)}}
+    {{#if (logic-and page.conditionOne page.conditionTwo)}}
         <p>Wahr</p>
     {{else}}
         <p>Falsch</p>
     {{/if}}
 
     <!-- helpers/logic-and.js -->
-    module.exports = function(cond-one, cond-two) {
-        return cond-one && cond-two;
+    module.exports = function(condOne, condTwo) {
+	    return condOne && condTwo;
     };
 
 
@@ -60,7 +60,7 @@ Beispiel zu 3)
 """"""""""""""
 ::
 
-    <!-- pages/helper-example-if-expression -->
+    <!-- pages/helper-example-format -->
     {
         "name": "Marcus"
     }
@@ -84,8 +84,8 @@ Es kann nur ein Helper je Datei hinterlegt sein.
 Diese Javascript-Datei exportiert dann eine Funktion::
 
     <!-- helpers/logic-and.js -->
-    module.exports = function(cond-one, cond-two) {
-        return cond-one && cond-two;
+    module.exports = function(condOne, condTwo) {
+        return condOne && condTwo;
     };
 
 
@@ -117,13 +117,13 @@ in *runden Klammern* erfolgt.::
     <p>Zahl zwischen 0 und 100: {{min 100 (max page.number 0)}}</p>
 
     <!-- helpers/min.js -->
-    module.exports = function(num-one, num-two) {
-        return Math.min(num-one, num-two);
+    modmodule.exports = function(numOne, numTwo) {
+        return Math.min(numOne, numTwo);
     };
 
     <!-- helpers/max.js -->
-    module.exports = function(num-one, num-two) {
-        return Math.max(num-one, num-two);
+    module.exports = function(numOne, numTwo) {
+        return Math.max(numOne, numTwo);
     };
 
 
@@ -139,17 +139,17 @@ hier die Logik der Helperschachtelung greift::
 
     <!-- pages/helper-example-if-expression -->
     {
-        "condition-one": true,
-        "condition-two": false
+        "conditionOne": true,
+        "conditionTwo": false
     }
     ---
-    {{#if (logic-and page.condition-one page.condition-two)}}
+    {{#if (logic-and page.conditionOne page.conditionTwo)}}
         <p>Wahr</p>
     {{else}}
         <p>Falsch</p>
     {{/if}}
 
     <!-- helpers/logic-and.js -->
-    module.exports = function(cond-one, cond-two) {
-        return cond-one && cond-two;
+    module.exports = function(condOne, condTwo) {
+        return condOne && condTwo;
     };
