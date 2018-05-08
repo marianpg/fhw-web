@@ -1,7 +1,7 @@
 'use strict';
 
-import htmlValidator from './html-validator';
-import cssValidator from 'css-validator';
+import htmlValidator from 'html-validator';
+import cssValidator from 'w3c-css';
 
 
 import { exists, openFile } from './ressource-utils';
@@ -39,14 +39,18 @@ export function validateCss(result) {
 	let queue = Promise.resolve(result.html);
 
 	while (match != null) {
-		const pathToFile = match[2];
+		const pathToFile = match[2].startsWith('/') ? match[2].substr(1) : match[2];
 
 		if (!pathToFile.includes('http')) {
 			if (exists(pathToFile)) {
 				const file = openFile(pathToFile);
+				const cssValidatorOptions = {
+					text: file,
+					profile: "css3"
+				};
 
 				queue = queue.then(_  => new Promise((resolve, reject) => {
-					cssValidator(file, (error, evaluation) => {
+					cssValidator.validate(cssValidatorOptions, (error, evaluation) => {
 						if (isDefined(error)) {
 							if (isConnectionError(error)) {
 								console.log("Warning (CSS): could not establish internet connection to the css validator: validation skipped.");
@@ -54,7 +58,11 @@ export function validateCss(result) {
 							} else {
 								reject(CssValidationError(error, result.html));
 							}
-						} else if (isDefined(evaluation) && !evaluation.validity) {
+						} else if (isDefined(evaluation) && isDefined(evaluation.errors) && evaluation.errors.length > 0) {
+							const msg = evaluation.errors.map(err => `${err.message.trim()} in line ${err.line}.`).join('\n');
+							reject(CssValidationError(msg, result.html, file));
+						} else if (isDefined(evaluation) && isDefined(evaluation.warnings) && evaluation.warnings.length > 0) {
+							// TODO: render Warning Page
 							const msg = evaluation.errors.map(err => `${err.message.trim()} in line ${err.line}.`).join('\n');
 							reject(CssValidationError(msg, result.html, file));
 						} else {
