@@ -1,7 +1,7 @@
 import { loadJson } from "./ressource-utils";
 const { RouteDefinitionError } = require('./customError');
 
-import { isDefined, isUndefined, isArray } from './helper';
+import { isDefined, isUndefined, isArray, copy } from './helper';
 
 
 
@@ -27,7 +27,7 @@ export default function prepareRoutes(config) {
 	// TODO: URL-String sowie PAGE-String validieren
 
 	const routes = routeDefinitions.map((definition, index) => {
-		let modified = definition;
+		let modified = copy(definition);
 
 		if (isUndefined(definition.url)) {
 			throw RouteDefinitionError(`Route no. ${index}: missing url definition.`);
@@ -81,6 +81,7 @@ export default function prepareRoutes(config) {
 				throw RouteDefinitionError(`Route no. ${index}: controller definition is wrong.`);
 			}
 		}
+
 		const pathParams = [];
 		let urlRegex = definition.url;
 
@@ -94,7 +95,7 @@ export default function prepareRoutes(config) {
 				return '[^\/]*';
 			})
 			: urlRegex;
-		urlRegex = urlRegex + '$'; //TODO: Kluhck?
+		urlRegex = `^${urlRegex}$`;
 		modified.urlRegex = urlRegex;
 		modified.params.path = pathParams;
 

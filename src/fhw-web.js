@@ -9,7 +9,7 @@ const { generateErrorPage, NotImplementedError, RessourceNotFoundError, Function
 import { validateHtml, validateCss } from './validator';
 import defaultConfig from './defaultConfig';
 import prepareRoutes from './routes';
-import { loadDynamicModule, loadGlobalFrontmatter, resolveRessource, loadJson as openJson, saveJson as writeJson} from './ressource-utils';
+import { toAbsolutePath, loadDynamicModule, loadGlobalFrontmatter, resolveRessource, loadJson as openJson, saveJson as writeJson} from './ressource-utils';
 import { isObject, isDefined, isUndefined, isFunction, copy } from './helper';
 import { parseParams } from './parameters';
 
@@ -36,26 +36,58 @@ function combineConfiguration(userConfig = {}) {
 	return combineObjects(defaultConfig, userConfig);
 }
 
-function serveStatic(url, res) {
-	const pathToStatic = resolveRessource(url);
+const exampleStatics = [
+	{
+		"url": "/assets/style.css",
+		"dir": "assets/*"
+	},
+	{
+		"url": "assets/style.css",
+		"dir": "assets/*"
+	},
+	{
+		"url": "assets/style.css",
+		"dir": "public/*"
+	},
+	{
+		"url": "/assets/style.css",
+		"dir": "public/*"
+	},
+	{
+		"url": "/assets/sub/style.css",
+		"dir": "public/*"
+	},
+	{
+		"url": "/assets/style.css",
+		"dir": "public/sub/*"
+	},
+	{
+		"url": "/assets/sub/style.css",
+		"dir": "public/sub/*"
+	}
+];
+
+
+function serveStatic(pathToFile, params, reponse) {
+	const pathToStatic = toAbsolutePath(pathToFile);
 
 	return new Promise((resolve, reject) => {
-		res.sendFile(pathToStatic, error => {
+		reponse.sendFile(pathToStatic, error => {
 			if (error) {
 				return reject(error); //TODO: CustomError Class?
 			} else {
-				return resolve(true);
+				return resolve({ html: false, pathToFile, params});
 			}
 		})
 	});
 }
 
-function servePage(pathToPage, params = {}, data = {}, status = 200) {
+function servePage(pathToFile, params = {}, data = {}, status = 200) {
 	const frontmatter = Object.assign({}, { request: params }, { global: loadGlobalFrontmatter() }, { page: data });
 
 	return new Promise((resolve, reject) => {
-		const html = compile(pathToPage, frontmatter);
-		resolve({html, status});
+		const html = compile(pathToFile, frontmatter);
+		resolve({html, status, pathToFile, params});
 	});
 }
 
@@ -113,6 +145,7 @@ export function start(userConfig) {
 	const app = express();
 	let config = combineConfiguration(userConfig);
 
+
 	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use(bodyParser.json());
 	app.use(cookieParser());
@@ -125,31 +158,37 @@ export function start(userConfig) {
 	});
 
 	app.use((req, res) => {
+		const calledUrl = req.path;
+		console.log(`\n\nCalling ressource "${calledUrl} with method ${req.method}".`);
+
 		prepareRoutes(config)
-			.then(routes => { //TODO fallback, if no route found
+			.then(routes => { //TODO different error msg, if no route found
+
 				// loop will stop early, if a route for called url was found
 				for (let index = 0; index < routes.length; ++index) {
 					const route = routes[index];
-					const isDefinedRoute = new RegExp(route.urlRegex).test(req.path);
+					const isDefinedRoute = new RegExp(route.urlRegex).test(calledUrl);
 					const isDefinedMethod = route.method.includes(req.method.toLowerCase());
 
-					console.log(`Calling ressource "${req.path}". Does it match route "${route.urlRegex}"? ${isDefinedRoute}. Does it match Method "${route.method}"? ${isDefinedMethod}`);
 					if (isDefinedRoute && isDefinedMethod) {
-
-						if (isDefined(route.static)) {
-							return serveStatic(req.path, res);
-						}
-
+						console.log(`Found matching route with index ${index}`);
 						const params = parseParams(req, route, res);
 
+						if (isDefined(route.static)) {
+							const pathToFile = resolveRessource(calledUrl, route.static);
+							return serveStatic(pathToFile, params, res);
+						}
+
 						if (isDefined(route.page)) {
-							return servePage(req.path, params);
+							const pathToFile = resolveRessource(calledUrl, route.page);
+							return servePage(pathToFile, params);
 						}
 						if (isDefined(route.controller)) {
 							return serveController(res, route.controller.file, route.controller.function, params);
 						}
 					}
 				}
+				console.log("Could not find any matching route definition.")
 			}).then(result => {
 				if (!res.finished && result && result.html && config.validator.html) {
 					return validateHtml(result);
@@ -165,7 +204,7 @@ export function start(userConfig) {
 			}).then(result => {
 				// check, if result was already sent
 				//   i.e. when serving static content
-				//   express' function "sendFile" already handles the response
+				//        express' function "sendFile" already handles the response
 				if (!res.finished) {
 					if (result && result.html) {
 						res.status(result.status || 200);

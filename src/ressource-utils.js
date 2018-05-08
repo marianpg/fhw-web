@@ -1,13 +1,20 @@
 import fs from 'fs';
 import path from 'path';
 
+import { zip } from './helper';
+
+
 const projectPath = process.cwd();
 
-// TODO: use properly
-function toAbsolutePath(p) {
+export function toAbsolutePath(p) {
+	return p.includes(projectPath)
+		? p
+		: path.join(projectPath, p);
+	/*
 	return path.isAbsolute(p)
 		? p
 		: path.join(projectPath, p);
+	*/
 }
 
 // https://stackoverflow.com/a/34509653
@@ -20,8 +27,8 @@ function ensureDirectoryExistence(filePath) {
 	fs.mkdirSync(dirname);
 }
 
-export function exists(pathToFile) {
-	return fs.existsSync(pathToFile);
+export function exists(anyPath) {
+	return fs.existsSync(anyPath);
 }
 
 // prüft, ob ein Ordner eine bestimmte Datei enthält
@@ -108,7 +115,30 @@ export function loadDynamicModule(name, dir = '/') {
 	}
 }
 
-export function resolveRessource(url, dir = '/') {
+// TODO: Sonderfall 'pages'
+/*
 
-	return path.join(projectPath, dir, url);
+ */
+export function resolveRessource(calledUrl, location = '/') {
+	// skip leading '/' if present
+	const relUrl = calledUrl.startsWith('/') ? calledUrl.substr(1) : calledUrl;
+	const relLocation = location.startsWith('/') ? location.substr(1) : location;
+
+	const parsedLocation = path.parse(relLocation);
+	const ext = '.hbs';
+	let dir = parsedLocation.dir;
+	let file = parsedLocation.base.includes('.hbs') ? parsedLocation.base : `${parsedLocation.base}${ext}`;
+
+	if (file.length > ext.length ) {
+		if (!contains(path.join('pages', dir), file)) {
+			dir = `${dir}/${file}`;
+		}
+	} else {
+		file = 'index.hbs';
+	}
+
+	const pathToFile = path.join(dir, file);
+
+
+	return pathToFile;
 }

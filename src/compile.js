@@ -60,6 +60,8 @@ function prepareCompile(url, startDir, frontmatter) {
 	const filename = path.basename(preparedUrl);
 	const directory = path.join(startDir, path.dirname(preparedUrl));
 
+	console.log(`Going to compile file ${filename} from directory ${directory}`);
+
 	if (exists(directory) && contains(directory, filename)) {
 
 		const file = fs.readFileSync(path.join(directory, filename), 'utf8');
@@ -77,12 +79,11 @@ function prepareCompile(url, startDir, frontmatter) {
 		console.log(`Complete JSON    : ${JSON.stringify(frontmatterCombined)}`);
 		console.log('\n');
 
-		return { hbs, frontmatterCombined}
+		return { hbs, frontmatterCombined }
 	} else {
 	    throw FileNotFoundError(`File ${filename} not found in Directory ${directory}`);
     }
 }
-
 
 export default function compile(url, frontmatter = {}, dir = 'pages', contentHtml = '') {
     const { hbs, frontmatterCombined } = prepareCompile(url, dir, frontmatter);
