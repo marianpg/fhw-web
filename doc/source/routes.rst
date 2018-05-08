@@ -6,6 +6,35 @@ erst im Projektordner angelegt werden. Existiert keine, verwendet das Framework 
 *magische Routen*.
 
 
+Relative Pfade <> Absolute Pfade
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Vorweg ist das Verständnis von `relativen und absoluten Pfadangaben
+<https://webanwendungen.fh-wedel.de/lectures/01-grundlagen.html#relative-und-absolute-angaben>`_
+vorausgesetzt. Folgender `Artikel
+<https://medium.com/creative-web/absolute-vs-relative-pfade-889b962d32e5>`_
+beschäftigt sich tiefergehend mit dem Thema.
+
+Das Framework erlaubt in den Pfadangaben keine *".."*.
+Das heißt, ein *nach oben navigieren* ist an dieser Stelle nicht möglich.
+
+Nichtsdestotrotz können absolute und relative Pfade in Referenzen im HTML
+Quellcode verwendet werden. Empfehlenswert ist die relative Pfadangabe, die
+von der Wurzel der Pfadhierarchie aus, also vom Projektordner, geht.
+
+Beispiel für einen relativen Pfad::
+
+    <link rel="stylesheet" href="assets/style.css">
+
+Beispiel für einen relativen Pfad, der relativ zum Wurzelknoten steht::
+
+    <link rel="stylesheet" href="/assets/style.css">
+
+
+Wären beide Beispiele Bestandteil einer *pages/categories/crime.hbs* würde das
+erste Beispiel versuchen *<Projektordner>/categories/assets/style.css* auszuliefern (da relativ zur pages-Datei),
+während das zweite Beispiel die *<Projektordner>/assets/style.css* ausliefern würde.
+
 Magische Routen
 ^^^^^^^^^^^^^^^
 
@@ -70,7 +99,7 @@ Datenstruktur
     | <pageRoute>         ::= {<url>, <page>, <method>, <params>}
     | <controllerRoute>   ::= {<url>, <controller>, <method>, <params>}
     |
-    | <url>               ::= <string> // die aufrufende URL
+    | <url>               ::= <string> // die aufgerufene URL
     | <static>            ::= <string> // relativer Ordnerpfad ab "Projektordner/"
     | <page>              ::= <string> // relativer Ordnerpfad ab "Projektordner/pages/"
     |
@@ -81,8 +110,7 @@ Datenstruktur
     | <method>            ::= [<httpMethod>]
     | <httpMethod>        ::= "get" | "post" | "put" | "patch" | "delete"
     |
-    | <params>            ::= {<pathParams>, <getParams>, <postParams>}
-    | <pathParams>        ::= [<string>]
+    | <params>            ::= {<getParams>, <postParams>}
     | <getParams>         ::= [<string>]
     | <postParams>        ::= [<string>]
 
@@ -107,8 +135,20 @@ Eine weitere Beschreibung zu Parametern findet sich unten im Abschnitt *Paramete
 Static und Page Route
 """""""""""""""""""""
 
-`<static>` und `<page>` geben an, welche Dateien geliefert werden sollen. Auch hier ist es möglich,
-ähnlich der URL-Angabe, mit einem *\** eine whitelist zu definieren.
+`<static>` und `<page>` geben entweder einen Ordner oder eine konkrete Datei an,
+welche ausgeliefert werden soll. Wird ein Ordner angegeben, wird der Dateiname aus
+der URL hergeleitet.
+
+Ordnerangaben müssen als solches mit einem abschließenden *\\\** gekennzeichnet werden.
+Nachstehend verdeutlichen zwei Beispiele diese Regel:
+
+Folgender Pfad führt zu einem *Ordner*::
+
+    "page": "pages/*"
+
+Folgender Pfad führt zu einer *Datei*::
+
+    "page": "pages/impressum"
 
 
 Controller Route
