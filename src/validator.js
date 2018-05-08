@@ -51,6 +51,8 @@ export function validateCss(result) {
 
 				queue = queue.then(_  => new Promise((resolve, reject) => {
 					cssValidator.validate(cssValidatorOptions, (error, evaluation) => {
+						console.log("css error", error);
+						console.log("css eval", evaluation);
 						if (isDefined(error)) {
 							if (isConnectionError(error)) {
 								console.log("Warning (CSS): could not establish internet connection to the css validator: validation skipped.");
@@ -58,13 +60,16 @@ export function validateCss(result) {
 							} else {
 								reject(CssValidationError(error, result.html));
 							}
+
 						} else if (isDefined(evaluation) && isDefined(evaluation.errors) && evaluation.errors.length > 0) {
-							const msg = evaluation.errors.map(err => `${err.message.trim()} in line ${err.line}.`).join('\n');
+							const msg = evaluation.errors.map(err => `${err.message.trim()} (in line ${err.line})`).join('\n');
 							reject(CssValidationError(msg, result.html, file));
+
 						} else if (isDefined(evaluation) && isDefined(evaluation.warnings) && evaluation.warnings.length > 0) {
 							// TODO: render Warning Page
-							const msg = evaluation.errors.map(err => `${err.message.trim()} in line ${err.line}.`).join('\n');
+							const msg = evaluation.warnings.map(err => `${err.message.trim()} (in line ${err.line})`).join('\n');
 							reject(CssValidationError(msg, result.html, file));
+
 						} else {
 							resolve(result);
 						}
