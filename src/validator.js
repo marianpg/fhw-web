@@ -51,8 +51,6 @@ export function validateCss(result) {
 
 				queue = queue.then(_  => new Promise((resolve, reject) => {
 					cssValidator.validate(cssValidatorOptions, (error, evaluation) => {
-						console.log("css error", error);
-						console.log("css eval", evaluation);
 						if (isDefined(error)) {
 							if (isConnectionError(error)) {
 								console.log("Warning (CSS): could not establish internet connection to the css validator: validation skipped.");
