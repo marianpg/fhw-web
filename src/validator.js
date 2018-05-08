@@ -33,6 +33,7 @@ export function validateHtml(result) {
 		});
 }
 
+//TODO: Breaks, if contains relative paths
 export function validateCss(result) {
 	const regex = /(<link.*href=\")(.*.css)(\")/g;
 	let match = regex.exec(result.html);

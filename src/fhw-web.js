@@ -9,7 +9,7 @@ const { generateErrorPage, NotImplementedError, RessourceNotFoundError, Function
 import { validateHtml, validateCss } from './validator';
 import defaultConfig from './defaultConfig';
 import prepareRoutes from './routes';
-import { toAbsolutePath, loadDynamicModule, loadGlobalFrontmatter, resolveRessource, loadJson as openJson, saveJson as writeJson} from './ressource-utils';
+import { toAbsolutePath, loadDynamicModule, loadGlobalFrontmatter, resolvePage, resolveStatic, loadJson as openJson, saveJson as writeJson} from './ressource-utils';
 import { isObject, isDefined, isUndefined, isFunction, copy } from './helper';
 import { parseParams } from './parameters';
 
@@ -36,47 +36,16 @@ function combineConfiguration(userConfig = {}) {
 	return combineObjects(defaultConfig, userConfig);
 }
 
-const exampleStatics = [
-	{
-		"url": "/assets/style.css",
-		"dir": "assets/*"
-	},
-	{
-		"url": "assets/style.css",
-		"dir": "assets/*"
-	},
-	{
-		"url": "assets/style.css",
-		"dir": "public/*"
-	},
-	{
-		"url": "/assets/style.css",
-		"dir": "public/*"
-	},
-	{
-		"url": "/assets/sub/style.css",
-		"dir": "public/*"
-	},
-	{
-		"url": "/assets/style.css",
-		"dir": "public/sub/*"
-	},
-	{
-		"url": "/assets/sub/style.css",
-		"dir": "public/sub/*"
-	}
-];
 
-
-function serveStatic(pathToFile, params, reponse) {
+function serveStatic(pathToFile, params, response) {
 	const pathToStatic = toAbsolutePath(pathToFile);
 
 	return new Promise((resolve, reject) => {
-		reponse.sendFile(pathToStatic, error => {
+		response.sendFile(pathToStatic, error => {
 			if (error) {
 				return reject(error); //TODO: CustomError Class?
 			} else {
-				return resolve({ html: false, pathToFile, params});
+				return resolve({ html: false, pathToFile, params });
 			}
 		})
 	});
@@ -175,12 +144,12 @@ export function start(userConfig) {
 						const params = parseParams(req, route, res);
 
 						if (isDefined(route.static)) {
-							const pathToFile = resolveRessource(calledUrl, route.static);
+							const pathToFile = resolveStatic(calledUrl, route.static);
 							return serveStatic(pathToFile, params, res);
 						}
 
 						if (isDefined(route.page)) {
-							const pathToFile = resolveRessource(calledUrl, route.page);
+							const pathToFile = resolvePage(calledUrl, route.page, 'pages', '.hbs');
 							return servePage(pathToFile, params);
 						}
 						if (isDefined(route.controller)) {

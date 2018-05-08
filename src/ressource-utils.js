@@ -1,13 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 
-import { zip } from './helper';
+import { FileNotFoundError } from './customError';
 
 
 const projectPath = process.cwd();
 
 export function toAbsolutePath(p) {
-	return p.includes(projectPath)
+	return p && p.includes(projectPath)
 		? p
 		: path.join(projectPath, p);
 	/*
@@ -29,6 +29,10 @@ function ensureDirectoryExistence(filePath) {
 
 export function exists(anyPath) {
 	return fs.existsSync(anyPath);
+}
+
+export function isFile(anyPath) {
+	return exists(anyPath) && fs.lstatSync(toAbsolutePath(anyPath)).isFile();
 }
 
 // prüft, ob ein Ordner eine bestimmte Datei enthält
@@ -115,30 +119,45 @@ export function loadDynamicModule(name, dir = '/') {
 	}
 }
 
-// TODO: Sonderfall 'pages'
-/*
+export function resolvePage(calledUrl, routePath) {
+	const parsedUrl = path.parse(calledUrl.startsWith('/') ? calledUrl.substr(1) : calledUrl);
+	const parsedPath = path.parse(routePath.startsWith('/') ? routePath.substr(1) : routePath);
 
- */
-export function resolveRessource(calledUrl, location = '/') {
-	// skip leading '/' if present
-	const relUrl = calledUrl.startsWith('/') ? calledUrl.substr(1) : calledUrl;
-	const relLocation = location.startsWith('/') ? location.substr(1) : location;
+	let fname = parsedPath.base === '*'
+		? parsedUrl.base
+		: parsedPath.base;
+	fname = fname.length === 0 ? 'index' : fname;
+	fname = fname.includes('.hbs') ? fname : `${fname}.hbs`;
 
-	const parsedLocation = path.parse(relLocation);
-	const ext = '.hbs';
-	let dir = parsedLocation.dir;
-	let file = parsedLocation.base.includes('.hbs') ? parsedLocation.base : `${parsedLocation.base}${ext}`;
+	const dir = parsedPath.dir;
 
-	if (file.length > ext.length ) {
-		if (!contains(path.join('pages', dir), file)) {
-			dir = `${dir}/${file}`;
-		}
-	} else {
-		file = 'index.hbs';
+	const pathToFile = path.join(dir, fname);
+
+	if (!isFile(path.join('pages', pathToFile))) {
+		throw FileNotFoundError(`Can not find file "${fname}" in directory "pages/${dir}"`);
 	}
 
-	const pathToFile = path.join(dir, file);
+	return pathToFile;
+}
 
+export function resolveStatic(calledUrl, routePath) {
+	const parsedUrl = path.parse(calledUrl.startsWith('/') ? calledUrl.substr(1) : calledUrl);
+	const parsedPath = path.parse(routePath.startsWith('/') ? routePath.substr(1) : routePath);
+
+	const fname = parsedPath.base === '*'
+		? parsedUrl.base
+		: parsedPath.base;
+
+	const dir = parsedPath.dir;
+
+	if (fname.length === 0) {
+		throw FileNotFoundError(`Missing filename for called static ressource ${calledUrl}`);
+	}
+	const pathToFile = path.resolve(path.join(dir, fname));
+
+	if (!isFile(pathToFile)) {
+		throw FileNotFoundError(`Can not find file "${fname}" in directory "${dir}"`);
+	}
 
 	return pathToFile;
 }
