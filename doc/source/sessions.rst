@@ -30,6 +30,13 @@ Eine Session-Datei ist wie folgt aufgebaut::
         }
     }
 
+Bei den Angaben *id*, *createdAt* sowie *lastAccess* handelt es sich um Meta-Daten, die während der Entwicklung
+als hilfreiche Debug-Information gedacht sind. Auf diese Information lässt sich nicht in einer page oder einem
+controller zugreifen. Die zugreifbaren Daten sind im Objekt "data" enthalten.
+
+*Sonderfall session-id:* Nichtsdestotrotz kann es hilfreich sein seitens einer page oder einem controller Zugriff auf
+die session-id zu haben. Diese wird automatisch in das data-Objekt gepackt, wodurch ein Auslesen der session-id möglich ist.
+
 
 Verwendung
 ^^^^^^^^^^
@@ -50,11 +57,11 @@ Analog erfolgt im Controller der Zugriff auf die Session wie folgt::
 
     /* Eine Controller-Funktion */
     function printSession(params) {
-        console.log(params.session.['session-id']); // gibt den Inhalt der Variable "session-id" der Session
-        console.log(params.session.name); // gibt den Inhalt der Variable "name" der Session
+        console.log(params.request.session.['session-id']); // gibt den Inhalt der Variable "session-id" der Session
+        console.log(params.request.session.name); // gibt den Inhalt der Variable "name" der Session
     }
 
 *Hinweis:* Die Zeichenkette "session-id" stellt aufgrund des Bindestrichs keinen gültigen Javascript-Bezeichner dar.
-Deswegen erfolgt der Zugriff auf den Wert von "session-id" nicht mit der "Punktnotation" sondern per *Klammernotation*.
+Deswegen erfolgt der Zugriff auf den Wert von *session-id* nicht mit der "Punktnotation" sondern per *Klammernotation*.
 Näheres dazu unter `Property Accessors
 <https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Operators/Property_Accessors/>`_.

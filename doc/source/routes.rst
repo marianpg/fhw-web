@@ -141,9 +141,11 @@ Es ist möglich eine oder mehrere HTTP-Methoden bei einem Routen-Objekt zu defin
 Parameter
 """""""""
 
-Bei `<params>` kann wieder eine whitelist von Parametern übergeben werden.
-Es findet somit an dieser Stelle eine Definition statt, welche Parameter erlaubt sind.
+Für POST und GET Parameter ist eine Deklaration notwendig, welche Parameterbezeichner erwartet werden.
+Dies geschieht in der `<params>` Angabe und stellt somit eine whitelist von erlaubten Parametern dar.
 Anders benannte werden verworfen.
+PATH Parameter sind von der Whitelist ausgenommen. Diese werden durch einen korrekten Aufruf implizit als
+existierende Parameter gefordert.
 
 Die ausgelesenen Parameter werden in das Frontmatter eingespeist. Dort sind die dann
 nicht über das page, sondern über das *request*-Objekt zugreifbar. Bspw. ließe
