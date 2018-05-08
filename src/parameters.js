@@ -92,9 +92,7 @@ export function parseParams(req, route, res) {
 	combined.forEach(([key, value]) => {
 		if (key.startsWith(':')) {
 			const k = key.substr(1);
-			if (route.params.path.includes(k)) {
-				params.path[k] = value;
-			}
+			params.path[k] = value;
 		}
 	});
 
