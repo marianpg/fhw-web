@@ -8,7 +8,8 @@ Eine Session ist dabei solange gültig, bis der Browser geschlossen wird.
 
 Die Session wird automatisch mit den übergebenen GET- und POST-Daten gefüllt.
 Sollten GET-Parameter und POST-Parameter gleichbenannt sein, überwiegt der POST-Parameter,
-sodass der von GET in der Session überdeckt wird.
+sodass der von GET Definierte in der Session überdeckt wird.
+
 
 Dateiinhalt
 ^^^^^^^^^^^
@@ -41,27 +42,71 @@ die session-id zu haben. Diese wird automatisch in das data-Objekt gepackt, wodu
 Verwendung
 ^^^^^^^^^^
 
-Der Zugriff auf die Session erfolgt im Handlebars-Quelltext über das request-Objekt::
+Der Zugriff auf die Session erfolgt im Handlebars-Quelltext über das session-Objekt::
 
     <!-- pages/example-session.hbs -->
     {
     }
     ---
-    <p>Session-Id: {{request.session.session-id}}</p>
-    <!-- Sofern an irgendeiner Stelle auf der Website ein "name" per GET oder POST übergeben wurde. -->
+    <!-- Liefert die Session-Id aus: -->
+    <p>Session-Id: {{session.session-id}}</p>
+
+    <!-- Sofern der Website ein "name" per GET oder POST übergeben wurde. -->
     <!-- Ansonsten enthält diese Variable keine Daten: -->
-    <p>Name: {{request.session.name}}</p>
+    <p>Name: {{session.name}}</p>
 
 
 Analog erfolgt im Controller der Zugriff auf die Session wie folgt::
 
     /* Eine Controller-Funktion */
-    function printSession(params) {
-        console.log(params.request.session.['session-id']); // gibt den Inhalt der Variable "session-id" der Session
-        console.log(params.request.session.name); // gibt den Inhalt der Variable "name" der Session
+    function printSession(data) {
+        console.log(data.session.['session-id']); // gibt den Inhalt der Variable "session-id" der Session
+        console.log(data.session.name); // gibt den Inhalt der Variable "name" der Session
     }
 
 *Hinweis:* Die Zeichenkette "session-id" stellt aufgrund des Bindestrichs keinen gültigen Javascript-Bezeichner dar.
 Deswegen erfolgt der Zugriff auf den Wert von *session-id* nicht mit der "Punktnotation" sondern per *Klammernotation*.
 Näheres dazu unter `Property Accessors
 <https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Operators/Property_Accessors/>`_.
+
+
+Schreibender Zugriff
+""""""""""""""""""""
+
+Im Controller ist es möglich die Daten einer Session zu bearbeiten. Änderungen an diesem Objekt werden automatisch
+übernommen und gespeichert. Folgender Beispiel-Controller zählt bei jedem Seitenaufruf einen Zähler hoch::
+
+    /* file routes.json */
+    [{
+      "url": "/example-session-write",
+      "controller": {
+        "file": "example-session-write",
+        "function": "welcomePage"
+      }
+    }]
+
+    /* file controller/example-session-write.js */
+    function welcomePage(data) {
+        if (typeof data.session.aufrufe === 'undefined') {
+            data.session.aufrufe = 0;
+        }
+        data.session.aufrufe += 1;
+
+        return {
+            status: 200,
+            page: 'example-session-write'
+        }
+    }
+    module.exports = {
+        welcomePage: welcomePage
+    };
+
+    /* file pages/example-session-write.hbs */
+    {
+        "template": "full-html",
+        "title": "Meine Hobbies"
+    }
+    ---
+    <h1>Willkommen auf meiner Seite</h1>
+    <p>Du hast die Seite während einer Sitzung bereits {{session.aufrufe}} Mal aufgerufen.</p>
+

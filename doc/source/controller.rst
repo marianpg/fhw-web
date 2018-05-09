@@ -18,20 +18,23 @@ abgelegt sein. In dieser können beliebig viele benannte Funktionen definiert we
 Eingabewert
 """""""""""
 Jede Controller-Funktion erhält als ersten Parameter ein Objekt, welches die Daten aus den Request-Parametern
-und der global.json enthält. Im Request-Objekt selbst befinden sich die GET, POST, PATH und Session Daten.
-Eine nähere Erläuterung zu der *Session* erfolgt in einem späteren
+und der global.json enthält. Im Request-Objekt selbst befinden sich die GET, POST und PATH Parameter.
+Zusätzlich gibt es dort Session Daten. Eine nähere Erläuterung zu der *Session* erfolgt in einem späteren
 Kapitel.
 Auf die verschiedenen Parameter lassen sich dann wie auf gewohnte js-Objekte zugreifen::
 
     /* Eine Controller-Funktion */
-    function printParams(params) {
-        console.log(params.request.get.name); // gibt den Inhalt der Variable "name" der GET-Parameter
-        console.log(params.request.post.name); // gibt den Inhalt der Variable "name" der POST-Parameter
-        console.log(params.request.path.name); // gibt den Inhalt der Variable "name" der PATH-Parameter
-        console.log(params.request.session.name); // gibt den Inhalt der Variable "name" der Session
-        console.log(params.global.name); // gibt den Inhalt der Variable "name" aus der global.json
+    function printParams(data) {
+        console.log(data.request.get.name); // gibt den Inhalt der Variable "name" der GET-Parameter
+        console.log(data.request.post.name); // gibt den Inhalt der Variable "name" der POST-Parameter
+        console.log(data.request.path.name); // gibt den Inhalt der Variable "name" der PATH-Parameter
+        console.log(data.session.name); // gibt den Inhalt der Variable "name" der Session
+        console.log(data.global.name); // gibt den Inhalt der Variable "name" aus der global.json
     }
 
+
+Das Schreiben auf die *data.request* sowie auf *data.global* hat keine Auswirkungen nach außen hin. Das heißt, Änderungen
+sind für die *page* nicht sichtbar.
 
 Rückgabewert
 """"""""""""
