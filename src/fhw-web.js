@@ -11,7 +11,7 @@ import defaultConfig from './defaultConfig';
 import prepareRoutes from './routes';
 import { toAbsolutePath, loadDynamicModule, loadGlobalFrontmatter, resolvePage, resolveStatic, loadJson as openJson, saveJson as writeJson} from './ressource-utils';
 import { isObject, isDefined, isUndefined, isFunction, copy } from './helper';
-import { parseParams } from './parameters';
+import { parseParams, saveSessionData } from './parameters';
 
 // use the defaultConfig as a basis
 // overwrite only entries which are user defined
@@ -70,17 +70,19 @@ function serveContent() {
 }
 
 
-function serveController(response, controllerName, functionName, params = {}) {
+function serveController(response, controllerName, functionName, params = {}, session = {}) {
 	const module = loadDynamicModule(controllerName, 'controller');
 
 	if (isUndefined(module[functionName])) {
 		throw FunctionNotFoundError(`Module ${controllerName} does not exports a function named ${functionName}. Please check the documentation.`);
 	}
-	const frontmatter = Object.assign({}, { request: copy(params) }, { global: loadGlobalFrontmatter() });
+	const frontmatter = Object.assign({}, { request: copy(params) }, { session: session }, { global: loadGlobalFrontmatter() });
 	const controllerResult = module[functionName](frontmatter);
 
 	// Controller call can return either a Promise or the result directly
 	function resolveControllerCall(result) {
+		// Controller could edit the session data; so save the session!
+		saveSessionData(session);
 		if (isDefined(result.page)) {
 			return servePage(result.page, params, result.data, result.status);
 
@@ -141,7 +143,7 @@ export function start(userConfig) {
 
 					if (isDefinedRoute && isDefinedMethod) {
 						console.log(`Found matching route with index ${index}`);
-						const params = parseParams(req, route, res);
+						const { params, session } = parseParams(req, route, res);
 
 						if (isDefined(route.static)) {
 							const pathToFile = resolveStatic(calledUrl, route.static);
@@ -150,10 +152,10 @@ export function start(userConfig) {
 
 						if (isDefined(route.page)) {
 							const pathToFile = resolvePage(calledUrl, route.page, 'pages', '.hbs');
-							return servePage(pathToFile, params);
+							return servePage(pathToFile, params, session);
 						}
 						if (isDefined(route.controller)) {
-							return serveController(res, route.controller.file, route.controller.function, params);
+							return serveController(res, route.controller.file, route.controller.function, params, session);
 						}
 					}
 				}

@@ -1,5 +1,6 @@
 import { isDefined, isUndefined, zip, copy } from "./helper";
 import { saveJson, loadJson, contains } from './ressource-utils';
+import { SessionSaveError } from './customError';
 
 const resDir = 'sessions';
 
@@ -36,20 +37,28 @@ function openSession(id) {
 		}
 	}
 
-	console.log(`Opened session with id "${id}".`);
-
 	return session;
 }
 
-function saveSession(session, path, get, post) {
-	const data = Object.assign({}, session.data, get, post, { 'session-id': session.id });
-	const toSave = copy(session);
+export function saveSessionData(data) {
+	if (isUndefined(data['session-id'])) {
+		throw SessionSaveError(`Session Id is undefined. Could not save session: ${JSON.stringify(data)}. Make sure you do not overwrite the session-id in a controller.`);
+	}
+	const session = Object.assign({}, openSession(data['session-id']), { data: data });
 
-	toSave.id = session.id;
-	toSave.createdAt = session.createdAt;
+	saveSession(session);
+}
+
+function saveSession(session, get = {}, post = {}, path = '') {
+	const persistentSession = Object.assign({}, openSession(session.id), session);
+	const data = Object.assign({}, persistentSession.data, get, post, { 'session-id': persistentSession.id });
+	const toSave = copy(persistentSession);
+
+	toSave.id = persistentSession.id;
+	toSave.createdAt = persistentSession.createdAt;
 	toSave.lastAccess = {
 		timestamp: dateNow(),
-		url: path
+		url: path.length > 0 ? path : persistentSession.lastAccess.url
 	};
 	toSave.data = data;
 
@@ -67,7 +76,7 @@ function parseCookie(req, res, get, post) {
 	}
 
 	const session = openSession(sessionId);
-	saveSession(session, req.path, get, post);
+	saveSession(session, get, post, req.path);
 
 	return session.data;
 }
@@ -78,9 +87,9 @@ export function parseParams(req, route, res) {
 	let params = {
 		path: {},
 		get: {},
-		post: {},
-		session: {}
+		post: {}
 	};
+	let session = {};
 
 	// Input
 	// url			::= /item/id42/price?currency=euro
@@ -113,12 +122,14 @@ export function parseParams(req, route, res) {
 
 	// Extracting Session from Set-Cookies' session-id
 	// If no session-id is provided, a new session will be opened
-	 params.session = parseCookie(req, res, params.get, params.post);
+	session = parseCookie(req, res, params.get, params.post);
+	console.log(`Opened session with id "${session['session-id']}".`);
 
 	// Output
 	// url			::= /item/.*/.*
 	// params		::=	{ path: {"id": "id42}, get: {"currency": "euro"}, post: {} }
 	console.log(`Parsed request parameters are: ${JSON.stringify(params)}`);
+	console.log(`Parsed Session is: ${JSON.stringify(session)}`);
 	console.log("Consider to define a <params> object in your route if expected parameters are missing. See full description here: http://fhw-web.readthedocs.io/de/latest/routes.html#parameter");
-	return params;
+	return { params, session };
 }

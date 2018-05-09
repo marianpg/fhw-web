@@ -80,6 +80,7 @@ class HtmlValidationError extends ExtendableError {}
 class CssValidationError extends ExtendableError {}
 class RouteDefinitionError extends ExtendableError {}
 class JsonParseError extends ExtendableError {}
+class SessionSaveError extends ExtendableError {}
 
 
 export function isConnectionError(error) {
@@ -98,5 +99,6 @@ module.exports = {
 	CssValidationError(message, html, extract) { return new CssValidationError(message, 500, html, extract); },
 	RouteDefinitionError(message) { return new RouteDefinitionError(message, 500); },
 	JsonParseError(message) { return new JsonParseError(message, 500); },
+	SessionSaveError(message) { return new SessionSaveError(message, 500); },
 };
 
