@@ -51,8 +51,8 @@ function serveStatic(pathToFile, params, response) {
 	});
 }
 
-function servePage(pathToFile, params = {}, data = {}, status = 200) {
-	const frontmatter = Object.assign({}, { request: params }, { global: loadGlobalFrontmatter() }, { page: data });
+function servePage(pathToFile, params = {}, sessionData = {}, pageData = {}, status = 200) {
+	const frontmatter = Object.assign({}, { request: params }, { global: loadGlobalFrontmatter() }, { page: pageData }, { session: sessionData });
 
 	return new Promise((resolve, reject) => {
 		const html = compile(pathToFile, frontmatter);
@@ -70,21 +70,22 @@ function serveContent() {
 }
 
 
-function serveController(response, controllerName, functionName, params = {}, session = {}) {
+function serveController(response, controllerName, functionName, params = {}, sessionData = {}) {
 	const module = loadDynamicModule(controllerName, 'controller');
 
 	if (isUndefined(module[functionName])) {
 		throw FunctionNotFoundError(`Module ${controllerName} does not exports a function named ${functionName}. Please check the documentation.`);
 	}
-	const frontmatter = Object.assign({}, { request: copy(params) }, { session: session }, { global: loadGlobalFrontmatter() });
+	const frontmatter = Object.assign({}, { request: copy(params) }, { session: sessionData }, { global: loadGlobalFrontmatter() });
 	const controllerResult = module[functionName](frontmatter);
 
 	// Controller call can return either a Promise or the result directly
 	function resolveControllerCall(result) {
 		// Controller could edit the session data; so save the session!
-		saveSessionData(session);
+		saveSessionData(sessionData);
+
 		if (isDefined(result.page)) {
-			return servePage(result.page, params, result.data, result.status);
+			return servePage(result.page, params, sessionData, result.data, result.status);
 
 		} else if (isDefined(result.json)) {
 			return serveJson(response, JSON.stringify(result.json), result.status);
@@ -143,7 +144,7 @@ export function start(userConfig) {
 
 					if (isDefinedRoute && isDefinedMethod) {
 						console.log(`Found matching route with index ${index}`);
-						const { params, session } = parseParams(req, route, res);
+						const { params, sessionData } = parseParams(req, route, res);
 
 						if (isDefined(route.static)) {
 							const pathToFile = resolveStatic(calledUrl, route.static);
@@ -152,10 +153,10 @@ export function start(userConfig) {
 
 						if (isDefined(route.page)) {
 							const pathToFile = resolvePage(calledUrl, route.page, 'pages', '.hbs');
-							return servePage(pathToFile, params, session);
+							return servePage(pathToFile, params, sessionData);
 						}
 						if (isDefined(route.controller)) {
-							return serveController(res, route.controller.file, route.controller.function, params, session);
+							return serveController(res, route.controller.file, route.controller.function, params, sessionData);
 						}
 					}
 				}

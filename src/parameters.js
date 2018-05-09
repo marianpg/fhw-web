@@ -78,7 +78,7 @@ function parseCookie(req, res, get, post) {
 	const session = openSession(sessionId);
 	saveSession(session, get, post, req.path);
 
-	return session.data;
+	return session;
 }
 
 // TODO: Klären: url "/item/:id/price" würde ohne controller eine Suche nach einer page "/pages/item/id42/price" auslösen.
@@ -123,13 +123,13 @@ export function parseParams(req, route, res) {
 	// Extracting Session from Set-Cookies' session-id
 	// If no session-id is provided, a new session will be opened
 	session = parseCookie(req, res, params.get, params.post);
-	console.log(`Opened session with id "${session['session-id']}".`);
+	console.log(`Opened session with id "${session.id}".`);
 
 	// Output
 	// url			::= /item/.*/.*
 	// params		::=	{ path: {"id": "id42}, get: {"currency": "euro"}, post: {} }
 	console.log(`Parsed request parameters are: ${JSON.stringify(params)}`);
-	console.log(`Parsed Session is: ${JSON.stringify(session)}`);
+	console.log(`Parsed Session Data is: ${JSON.stringify(session.data)}`);
 	console.log("Consider to define a <params> object in your route if expected parameters are missing. See full description here: http://fhw-web.readthedocs.io/de/latest/routes.html#parameter");
-	return { params, session };
+	return { params, sessionData: session.data };
 }

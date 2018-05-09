@@ -72,7 +72,7 @@ function prepareCompile(url, startDir, frontmatter) {
 
 		const frontmatterLocal = parseJson(json, filename);
 		const page = Object.assign({}, frontmatter.page, frontmatterLocal);
-		const frontmatterCombined = Object.assign({}, { page: page }, { global: frontmatter.global }, { request: frontmatter.request });
+		const frontmatterCombined = Object.assign({}, { page: page }, { global: frontmatter.global }, { request: frontmatter.request }, { session: frontmatter.session });
 
 		console.log(`Output for       : ${url}`);
 		console.log(`Frontmatter JSON : ${JSON.stringify(frontmatterLocal)}`);
