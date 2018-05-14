@@ -82,13 +82,24 @@ export function openFile(pathToFile, encoding = 'utf8') {
 	return fs.readFileSync(pathToFile, encoding);
 }
 
+// from https://gist.github.com/pbakondy/f5045eff725193dad9c7
+function stripBOM (content) {
+	content = content.toString();
+	// Remove byte order marker. This catches EF BB BF (the UTF-8 BOM)
+	// because the buffer-to-string conversion in `fs.readFileSync()`
+	// translates it to FEFF, the UTF-16 BOM.
+	if (content.charCodeAt(0) === 0xFEFF) {
+		content = content.slice(1);
+	}
+	return content
+}
 
 export function loadJson(filename, directory = '/') {
 	const fname = filename.split(".")[0] + '.json';
 	const pathToFile = path.join(projectPath, directory, fname);
 
 	return fs.existsSync(pathToFile)
-		? JSON.parse(fs.readFileSync(pathToFile, 'utf8'))
+		? JSON.parse(stripBOM(fs.readFileSync(pathToFile, 'utf8')))
 		: undefined;
 }
 
