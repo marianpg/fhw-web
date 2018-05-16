@@ -99,6 +99,9 @@ Eine solche Javascript-Datei exportiert dann eine Objekt mit benannten Funktione
     function and(condOne, condTwo) {
         return condOne && condTwo;
     };
+    function or(condOne, condTwo) {
+        return condOne || condTwo;
+    };
     module.exports = {
         "logic-and": and,
         "logic-or": or
