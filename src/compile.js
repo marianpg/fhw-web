@@ -3,11 +3,10 @@
 import fs from 'fs';
 import path from 'path';
 import handlebars from 'handlebars';
-const { FileNotFoundError } = require('./customError');
+const { FileNotFoundError, HelperAlreadyDeclared } = require('./customError');
 
 import {exists, contains, convert, listFiles, loadDynamicModule } from './ressource-utils';
 import { parseJson } from './helper';
-
 
 
 function registerCustomHelpers(handlebarsEnv) {
@@ -15,6 +14,7 @@ function registerCustomHelpers(handlebarsEnv) {
 	const regex = /(.+)(.js)/; // only *.js files with at least one character filenames
 
 	if (exists(helpersDirectory)) {
+        let allHelpers = []; // element := { modulename, funcname }
 		listFiles(helpersDirectory).forEach(filename => {
 			const match = regex.exec(filename);
 
@@ -22,11 +22,23 @@ function registerCustomHelpers(handlebarsEnv) {
 				const modulename = match[1];
 				const module = loadDynamicModule(modulename, helpersDirectory);
 
-				handlebarsEnv.registerHelper(modulename, function() {
-					const args = [...arguments];
-					args.pop(); // last argument contains an options object, we do not need it here
-					return module(...args);
+				Object.keys(module).forEach(funcname => {
+                    const newHelper = {modulename, funcname};
+
+                    allHelpers.forEach(cur => {
+                        if (cur.funcname === newHelper.funcname) {
+                            throw HelperAlreadyDeclared(`Helper "${newHelper.funcname}" declared in "${newHelper.modulename}.js" already declared in "${cur.modulename}.js"`);
+                        }
+                    });
+                    allHelpers.push(newHelper);
+
+                    handlebarsEnv.registerHelper(funcname, function() {
+                        const args = [...arguments];
+                        args.pop(); // last argument contains an options object, we do not need it here
+                        return module[funcname](...args);
+                    });
 				});
+
 			}
 		})
 	}

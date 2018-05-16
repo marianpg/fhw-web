@@ -27,11 +27,14 @@ Beispiel zu 1)
     ---
     <p>Uhrzeit: {{print-current-time}}</p>
 
-    <!-- helpers/print-current-time.js -->
-    module.exports = function() {
+    <!-- helpers/time.js -->
+    function current() {
         var date = new Date();
         return date.toLocaleTimeString();
     };
+    module.exports = {
+        "print-current-time": current
+    }
 
 
 Beispiel zu 2)
@@ -50,10 +53,13 @@ Beispiel zu 2)
         <p>Falsch</p>
     {{/if}}
 
-    <!-- helpers/logic-and.js -->
-    module.exports = function(condOne, condTwo) {
+    <!-- helpers/logic.js -->
+    function and(condOne, condTwo) {
 	    return condOne && condTwo;
     };
+    module.exports = {
+        "logic-and": and
+    }
 
 
 Beispiel zu 3)
@@ -67,10 +73,13 @@ Beispiel zu 3)
     ---
     <p>Hallo {{to-uppercase page.name}}</p>
 
-    <!-- helpers/to-uppercase.js -->
-    module.exports = function(str) {
+    <!-- helpers/string.js -->
+    function toUpperCase(str) {
         return str.toUpperCase();
     };
+    module.exports =  {
+        "to-uppercase": toUpperCase
+    }
 
 
 Helperdefinition
@@ -78,16 +87,25 @@ Helperdefinition
 
 Helper anlegen
 """"""""""""""
-Ein Helper muss im Ordner *"<Projektordner>/helpers/"* als Javascript-Datei (\*.js)
-abgelegt sein. In diesem Ordner können beliebig viele Helper definiert werden.
-Es kann nur ein Helper je Datei hinterlegt sein.
-Diese Javascript-Datei exportiert dann eine Funktion::
+Um Helper zu definieren, müssen gleichartige Helper in einem Modul zusammengefasst werden.
+Diese Module sind dann als Javascript-Dateien (\*.js) im Ordner *"<Projektordner>/helpers/"* anzulegen.
+Es können mehrere Helper je Datei definiert werden. Dies ist sinnvoll, um thematisch gleichartige Routinen
+zusammenzufassen. Bspw. würden Helper, die mathematische Ausdrücke auswerten, in einer Datei *math.js*,
+wohingegen Routinen, die Zeit- und Datumsangaben bereitstellen, in einer Datei *datetime.js* hinterlegt werden.
 
-    <!-- helpers/logic-and.js -->
-    module.exports = function(condOne, condTwo) {
+Eine solche Javascript-Datei exportiert dann eine Objekt mit benannten Funktionen::
+
+    <!-- helpers/logic.js -->
+    function and(condOne, condTwo) {
         return condOne && condTwo;
     };
+    module.exports = {
+        "logic-and": and,
+        "logic-or": or
+    }
 
+An diesem Beispiel wird deutlich, dass der Funktionsname in einem Modul nicht mit der Helper-Bezeichnung übereinstimmen
+muss, die letzten Endes nach außen hin exportiert wird.
 
 Helper verwenden
 """"""""""""""""
@@ -131,7 +149,7 @@ Auswertung von Ausdrücken
 """""""""""""""""""""""""
 Ähnlich dem Schachteln von Helpern, lassen sich so auch in if-Bedingungen Ausdrücke formulieren, die durch
 einen Helper ausgewertet werden.
-Beispiel 1) hat bereits die Funktionsweise beschrieben und ist an dieser Stelle nochmals dargestellt.
+Beispiel 2) hat bereits die Funktionsweise beschrieben und ist an dieser Stelle nochmals dargestellt.
 Zu beachten gilt aber, dass auch hier die Auswertung des Helpers in *runden Klammern* erfolgt, sodass
 das if seinen Rückgabewert auswerten kann.
 Tatsächlich handelt es sich bei dem verwendeten if um einen von Handlebars vordefinierten Helper, weswegen

@@ -81,6 +81,7 @@ class CssValidationError extends ExtendableError {}
 class RouteDefinitionError extends ExtendableError {}
 class JsonParseError extends ExtendableError {}
 class SessionSaveError extends ExtendableError {}
+class HelperAlreadyDeclared extends ExtendableError {}
 
 
 export function isConnectionError(error) {
@@ -100,5 +101,6 @@ module.exports = {
 	RouteDefinitionError(message) { return new RouteDefinitionError(message, 500); },
 	JsonParseError(message) { return new JsonParseError(message, 500); },
 	SessionSaveError(message) { return new SessionSaveError(message, 500); },
+    HelperAlreadyDeclared(message) { return new HelperAlreadyDeclared(message, 500); }
 };
 
