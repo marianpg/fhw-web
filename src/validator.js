@@ -37,7 +37,7 @@ export function validateHtml(result) {
 export function validateCss(result) {
 	const regex = /(<link.*href=\")(.*.css)(\")/g;
 	let match = regex.exec(result.html);
-	let queue = Promise.resolve(result.html);
+	let queue = Promise.resolve(result);
 
 	while (match != null) {
 		const pathToFile = match[2].startsWith('/') ? match[2].substr(1) : match[2];
@@ -47,7 +47,8 @@ export function validateCss(result) {
 				const file = openFile(pathToFile);
 				const cssValidatorOptions = {
 					text: file,
-					profile: "css3"
+					profile: "css3",
+					warning: 1
 				};
 
 				queue = queue.then(_  => new Promise((resolve, reject) => {
