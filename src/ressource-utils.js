@@ -152,6 +152,10 @@ export function resolvePage(calledUrl, routePath) {
 }
 
 export function resolveStatic(calledUrl, routePath) {
+	// just for "magic routes"
+	// TODO: remove it, if not necessary
+	return calledUrl;
+
 	const parsedUrl = path.parse(calledUrl.startsWith('/') ? calledUrl.substr(1) : calledUrl);
 	const parsedPath = path.parse(routePath.startsWith('/') ? routePath.substr(1) : routePath);
 
