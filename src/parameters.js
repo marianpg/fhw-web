@@ -114,14 +114,14 @@ export function parseParams(req, route, res) {
 	// Extracting Get Parameters
 	// TODO: Array vs. String ("/item/id42/price?currency=euro&sortBy=price&groupBy[]=name&groupBy[]=country")
 	Object.keys(req.query).forEach(key => {
-		if (route.params.get.includes(key) && isDefined(req.query[key])) {
+		if ((route.params.get.length === 0) || (route.params.get.includes(key) && isDefined(req.query[key]))) {
 			params.get[key] = req.query[key];
 		}
 	});
 
 	// Extracting Post Parameters
 	Object.keys(req.body).forEach(key => {
-		if (route.params.post.includes(key) && isDefined(req.body[key])) {
+		if ((route.params.post.length === 0) || (route.params.post.includes(key) && isDefined(req.body[key]))) {
 			params.post[key] = req.body[key];
 		}
 	});
