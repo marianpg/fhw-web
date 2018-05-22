@@ -1,4 +1,4 @@
-const { JsonParseError } = require('./customError');
+import { JsonParseError } from './customError';
 
 
 export function isObject(obj) {
@@ -36,7 +36,7 @@ export function parseJson(str, filename) {
 	try {
 		return JSON.parse(str);
 	} catch(error) {
-		throw JsonParseError(`Could not parse JSON in ${filename}. Further error description below:\n ${error.message}`);
+		throw JsonParseError(filename, error.message);
 	}
 }
 

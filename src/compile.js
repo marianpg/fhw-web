@@ -3,9 +3,9 @@
 import fs from 'fs';
 import path from 'path';
 import handlebars from 'handlebars';
-const { FileNotFoundError, HelperAlreadyDeclared } = require('./customError');
+import { FileNotFoundError, HelperAlreadyDeclared } from './customError';
 
-import {exists, contains, convert, listFiles, loadDynamicModule } from './ressource-utils';
+import { exists, contains, convert, listFiles, loadDynamicModule } from './ressource-utils';
 import { parseJson } from './helper';
 
 

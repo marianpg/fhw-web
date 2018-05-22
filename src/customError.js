@@ -1,7 +1,8 @@
 'use strict';
 
 import { isDefined } from './helper';
-const htmlEscape = require('html-escape');
+//const htmlEscape = require('html-escape');
+import htmlEscape from 'html-escape';
 const errorColor = '#b30000';
 
 function wrapInBody(innerHtml = '') {
@@ -19,7 +20,7 @@ function renderError(html, shouldBeHidden) {
 			<div title="Error Description" ${style}>${html}</div>`
 }
 
-function generateErrorPage(error) {
+export function generateErrorPage(error) {
 	let html = error.html ? error.html : '';
 
 	const rawExtract = error.extract ? error.extract : '';
@@ -63,6 +64,8 @@ class ExtendableError extends Error {
 		this.html = html;
 		this.extract = extract;
 
+        console.log(`${this.name}: ${message}`);
+
 		if (typeof Error.captureStackTrace === 'function') {
 			Error.captureStackTrace(this, this.constructor);
 		} else {
@@ -82,25 +85,24 @@ class RouteDefinitionError extends ExtendableError {}
 class JsonParseError extends ExtendableError {}
 class SessionSaveError extends ExtendableError {}
 class HelperAlreadyDeclared extends ExtendableError {}
+class ModuleNotFound extends ExtendableError {}
+class DataSaveError extends ExtendableError {}
 
 
 export function isConnectionError(error) {
 	return (error.code === 'ENOTFOUND') && (error.syscall === 'getaddrinfo');
 }
 
-module.exports = {
-	// Für "übersehene Fehler" - also nicht behandelte bzw. nicht beachtete Fehlerfälle.
-	generateErrorPage,
-	isConnectionError,
-	NotImplementedError(message) { return new NotImplementedError(message, 500); },
-	FileNotFoundError(message) { return new FileNotFoundError(message, 404); },
-	FunctionNotFoundError(message) { return new FunctionNotFoundError(message, 500); },
-	RessourceNotFoundError(message) { return new RessourceNotFoundError(message, 404); },
-	HtmlValidationError(message, html, extract = html) { return new HtmlValidationError(message, 500, html, extract); },
-	CssValidationError(message, html, extract) { return new CssValidationError(message, 500, html, extract); },
-	RouteDefinitionError(message) { return new RouteDefinitionError(message, 500); },
-	JsonParseError(message) { return new JsonParseError(message, 500); },
-	SessionSaveError(message) { return new SessionSaveError(message, 500); },
-    HelperAlreadyDeclared(message) { return new HelperAlreadyDeclared(message, 500); }
-};
+export function NotImplementedError(message) { return new NotImplementedError(message, 500); }
+export function FileNotFoundError(message) { return new FileNotFoundError(message, 404); }
+export function FunctionNotFoundError(message) { return new FunctionNotFoundError(message, 500); }
+export function RessourceNotFoundError(message) { return new RessourceNotFoundError(message, 404); }
+export function HtmlValidationError(message, html, extract = html) { return new HtmlValidationError(message, 500, html, extract); }
+export function CssValidationError(message, html, extract) { return new CssValidationError(message, 500, html, extract); }
+export function RouteDefinitionError(message) { return new RouteDefinitionError(message, 500); }
+export function JsonParseError(filename, message) { return new JsonParseError(`JsonParseError in file ${filename}: ${message}`, 500); }
+export function SessionSaveError(message) { return new SessionSaveError(message, 500); }
+export function HelperAlreadyDeclared(message) { return new HelperAlreadyDeclared(message, 500); }
+export function ModuleNotFound(message) { return new ModuleNotFound(message, 500); }
+export function DataSaveError(filename, data, message) { return new DataSaveError(`DataSaveError: could not save ${filename} with data ${data}: ${message}`, 500); }
 

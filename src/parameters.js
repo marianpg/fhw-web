@@ -1,6 +1,6 @@
 import { isDefined, isUndefined, zip, copy } from "./helper";
 import { saveJson, loadJson, contains } from './ressource-utils';
-import { SessionSaveError } from './customError';
+import { SessionSaveError, JsonParseError } from './customError';
 
 const resDir = 'sessions';
 
@@ -27,7 +27,13 @@ function openSession(id) {
 		}
 	};
 
-	const loadedSession = loadJson(id, resDir);
+    let loadedSession = undefined;
+    try {
+        loadedSession = loadJson(id, resDir);
+	} catch(error) {
+    	throw JsonParseError(`sessions/${id}.json`, error.message);
+	}
+
 	if (isDefined(loadedSession)) {
 		session.createdAt = loadedSession.createdAt || session.createdAt;
 		session.data = loadedSession.data || session.data;

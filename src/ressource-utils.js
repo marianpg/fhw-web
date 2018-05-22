@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { FileNotFoundError } from './customError';
+import { FileNotFoundError, JsonParseError, ModuleNotFound } from './customError';
 
 
 const projectPath = process.cwd();
@@ -94,6 +94,7 @@ function stripBOM (content) {
 	return content
 }
 
+// throws Exception
 export function loadJson(filename, directory = '/') {
 	const fname = filename.split(".")[0] + '.json';
 	const pathToFile = path.join(projectPath, directory, fname);
@@ -113,7 +114,11 @@ export function saveJson(filename, obj, directory = '/') {
 }
 
 export function loadGlobalFrontmatter() {
-	return loadJson('global.json') || {};
+	try {
+        return loadJson('global.json') || {};
+	} catch(error) {
+        throw JsonParseError('global.json', error.message);
+	}
 }
 
 
@@ -126,7 +131,7 @@ export function loadDynamicModule(name, dir = '/') {
 	if (contains(directory, filename)) {
 		return require(toAbsolutePath(path.join(directory, filename)));
 	} else {
-		throw new Error(`Module ${name} not found.`);
+		throw ModuleNotFound(`Module ${name} not found.`);
 	}
 }
 

@@ -7,7 +7,7 @@ import cssValidator from 'w3c-css';
 import { exists, openFile } from './ressource-utils';
 import { isDefined } from './helper';
 
-const { HtmlValidationError, CssValidationError, FileNotFoundError, isConnectionError } = require('./customError.js');
+import { HtmlValidationError, CssValidationError, FileNotFoundError, isConnectionError } from './customError.js';
 
 
 export function validateHtml(result) {

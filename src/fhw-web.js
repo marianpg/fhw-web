@@ -5,7 +5,13 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 
 import compile from './compile';
-const { generateErrorPage, NotImplementedError, RessourceNotFoundError, FunctionNotFoundError } = require('./customError');
+import {
+    generateErrorPage,
+    NotImplementedError,
+    RessourceNotFoundError,
+    FunctionNotFoundError,
+    JsonParseError
+} from './customError';
 import { validateHtml, validateCss } from './validator';
 import defaultConfig from './defaultConfig';
 import prepareRoutes from './routes';
@@ -43,6 +49,7 @@ function serveStatic(pathToFile, params, response) {
 	return new Promise((resolve, reject) => {
 		response.sendFile(pathToStatic, error => {
 			if (error) {
+				console.log("Error in serving static ressource:", error.message);
 				return reject(error); //TODO: CustomError Class?
 			} else {
 				return resolve({ html: false, pathToFile, params });
@@ -52,12 +59,11 @@ function serveStatic(pathToFile, params, response) {
 }
 
 function servePage(pathToFile, params = {}, sessionData = {}, pageData = {}, status = 200) {
-	const frontmatter = Object.assign({}, { request: params }, { global: loadGlobalFrontmatter() }, { page: pageData }, { session: sessionData });
-
+    const frontmatter = Object.assign({}, { request: params }, { global: loadGlobalFrontmatter() }, { page: pageData }, { session: sessionData });
 	return new Promise((resolve, reject) => {
-		const html = compile(pathToFile, frontmatter);
-		resolve({html, status, pathToFile, params});
-	});
+        const html = compile(pathToFile, frontmatter);
+        resolve({html, status, pathToFile, params});
+    })
 }
 
 function serveJson(response, json, status) {
@@ -205,9 +211,17 @@ export function start(userConfig) {
 }
 
 export function loadJson(documentName) {
-	return openJson(documentName, 'data');
+	try {
+        return openJson(documentName, 'data');
+	} catch(error) {
+		throw JsonParseError(`data/${documentName}.json`, error.message);
+	}
 }
 
 export function saveJson(documentName, obj) {
-	return writeJson(documentName, obj, 'data');
+    try {
+        return writeJson(documentName, obj, 'data');
+    } catch(error) {
+        throw JsonParseError(`data/${documentName}.json`, obj, error.message);
+    }
 }

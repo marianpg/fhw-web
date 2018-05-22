@@ -1,5 +1,5 @@
 import { loadJson } from "./ressource-utils";
-const { RouteDefinitionError } = require('./customError');
+import { RouteDefinitionError, JsonParseError } from './customError';
 
 import { isDefined, isUndefined, isArray, copy } from './helper';
 
@@ -20,9 +20,16 @@ const magicRoutes = [
 
 // TODO: bei jedem Request Routes neu einlesen
 export default function prepareRoutes(config) {
-	const routeDefinitions = loadJson('routes.json') || JSON.parse(JSON.stringify(magicRoutes));
+	let routeDefinitions = undefined;
+	try {
+        routeDefinitions = loadJson('routes.json');
+	} catch(error) {
+        throw JsonParseError('routes.json', error.message);
+	}
+	routeDefinitions = routeDefinitions || JSON.parse(JSON.stringify(magicRoutes));
 
-	// TODO: Mit Sternchen umgehen
+
+    // TODO: Mit Sternchen umgehen
 	// TODO: was, wenn url === "" ? Ist das schlimm?
 	// TODO: URL-String sowie PAGE-String validieren
 
