@@ -17,7 +17,7 @@ import defaultConfig from './defaultConfig';
 import prepareRoutes from './routes';
 import { toAbsolutePath, loadDynamicModule, loadGlobalFrontmatter, resolvePage, resolveStatic, loadJson as openJson, saveJson as writeJson} from './ressource-utils';
 import { isObject, isDefined, isUndefined, isFunction, copy } from './helper';
-import { parseParams, saveSessionData } from './parameters';
+import { parseParams, parseSession, saveSessionData } from './parameters';
 
 // use the defaultConfig as a basis
 // overwrite only entries which are user defined
@@ -150,12 +150,13 @@ export function start(userConfig) {
 
 					if (isDefinedRoute && isDefinedMethod) {
 						console.log(`Found matching route with index ${index}`);
-						const { params, sessionData } = parseParams(req, route, res);
+						const params = parseParams(req, route, res);
 
 						if (isDefined(route.static)) {
 							const pathToFile = resolveStatic(calledUrl, route.static);
 							return serveStatic(pathToFile, params, res);
 						}
+                        const sessionData = parseSession(req, res, params);
 
 						if (isDefined(route.page)) {
 							const pathToFile = resolvePage(calledUrl, route.page, 'pages', '.hbs');
