@@ -129,7 +129,9 @@ export function loadDynamicModule(name, dir = '/') {
 	const directory = toAbsolutePath(dir);
 
 	if (contains(directory, filename)) {
-		return require(toAbsolutePath(path.join(directory, filename)));
+		const modulePath = toAbsolutePath(path.join(directory, filename));
+		delete require.cache[require.resolve(modulePath)];
+		return require(modulePath);
 	} else {
 		throw ModuleNotFound(`Module ${name} not found.`);
 	}
