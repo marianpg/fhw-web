@@ -87,6 +87,7 @@ class SessionSaveError extends ExtendableError {}
 class HelperAlreadyDeclared extends ExtendableError {}
 class ModuleNotFound extends ExtendableError {}
 class DataSaveError extends ExtendableError {}
+class ControllerReturnValueError extends ExtendableError {}
 
 
 export function isConnectionError(error) {
@@ -105,4 +106,5 @@ export function SessionSaveError(message) { return new SessionSaveError(message,
 export function HelperAlreadyDeclared(message) { return new HelperAlreadyDeclared(message, 500); }
 export function ModuleNotFound(message) { return new ModuleNotFound(message, 500); }
 export function DataSaveError(filename, data, message) { return new DataSaveError(`DataSaveError: could not save ${filename} with data ${data}: ${message}`, 500); }
+export function ControllerReturnValueError(message) { return new ControllerReturnValueError(message, 500); }
 

@@ -10,7 +10,8 @@ import {
     NotImplementedError,
     RessourceNotFoundError,
     FunctionNotFoundError,
-    JsonParseError
+    JsonParseError,
+    ControllerReturnValueError
 } from './customError';
 import { validateHtml, validateCss } from './validator';
 import defaultConfig from './defaultConfig';
@@ -18,6 +19,11 @@ import prepareRoutes from './routes';
 import { toAbsolutePath, loadDynamicModule, loadGlobalFrontmatter, resolvePage, resolveStatic, loadJson as openJson, saveJson as writeJson} from './ressource-utils';
 import { isObject, isDefined, isUndefined, isFunction, copy } from './helper';
 import { parseParams, parseSession, saveSessionData } from './parameters';
+
+const noValidation = {
+	html: false,
+	css: false
+};
 
 // use the defaultConfig as a basis
 // overwrite only entries which are user defined
@@ -52,7 +58,7 @@ function serveStatic(pathToFile, params, response) {
 				console.log("Error in serving static ressource:", error.message);
 				return reject(error); //TODO: CustomError Class?
 			} else {
-				return resolve({ html: false, pathToFile, params });
+				return resolve({ html: false, validation: noValidation});
 			}
 		})
 	});
@@ -62,17 +68,32 @@ function servePage(pathToFile, params = {}, sessionData = {}, pageData = {}, sta
     const frontmatter = Object.assign({}, { request: params }, { global: loadGlobalFrontmatter() }, { page: pageData }, { session: sessionData });
 	return new Promise((resolve, reject) => {
         const html = compile(pathToFile, frontmatter);
-        resolve({html, status, pathToFile, params});
+        resolve({html, status});
+    })
+}
+
+function serveFragment(pathToFile, params = {}, sessionData = {}, pageData = {}, status = 200) {
+    const frontmatter = Object.assign({}, { request: params }, { global: loadGlobalFrontmatter() }, { page: pageData }, { session: sessionData });
+    return new Promise((resolve, reject) => {
+        const html = compile(pathToFile, frontmatter, 'templates');
+        resolve({html, status, validation: noValidation});
     })
 }
 
 function serveJson(response, json, status) {
-	response.status(status);
-	response.json(json);
+    return new Promise((resolve, reject) => {
+        response.status(status);
+        response.json(json);
+        resolve({html: false, validation: noValidation});
+    })
 }
 
-function serveContent() {
-	throw NotImplementedError("Serving plain text content is not implemented");
+function serveText(response, text, status) {
+    return new Promise((resolve, reject) => {
+        response.status(status || 200);
+        response.send(text);
+        resolve({html: false, status, validation: noValidation});
+    })
 }
 
 
@@ -93,17 +114,20 @@ function serveController(response, controllerName, functionName, params = {}, se
 		if (isDefined(result.page)) {
 			return servePage(result.page, params, sessionData, result.data, result.status);
 
-		} else if (isDefined(result.json)) {
+		} else if(isDefined(result.fragment)) {
+            return serveFragment(result.fragment, params, sessionData, result.data, result.status);
+
+        } else if (isDefined(result.json)) {
 			return serveJson(response, JSON.stringify(result.json), result.status);
 
-		} else if (isDefined(result.content)) {
-			return serveContent();
+		} else if (isDefined(result.text)) {
+			return serveText(response, result.text, result.status);
 
 		} else if (isDefined(result.redirect)) {
 			return response.redirect(result.status || 301, result.redirect);
 
 		} else {
-			return Promise.reject("Return Value of Controller does not fulfill the required syntax. Please check the documentation.");
+			throw ControllerReturnValueError("Return Value of Controller does not fulfill the required syntax. Please check the documentation.");
 		}
 	}
 
@@ -169,13 +193,19 @@ export function start(userConfig) {
 				}
 				console.log("Could not find any matching route definition.")
 			}).then(result => {
-				if (!res.finished && result && result.html && config.validator.html) {
+				const validate = (isDefined(result.validation) && result.validation.html)
+					|| (!isDefined(result.validation) && config.validator.html);
+
+				if (!res.finished && result && result.html && validate) {
 					return validateHtml(result);
 				} else {
 					return Promise.resolve(result);
 				}
 			}).then(result => {
-				if (!res.finished && result && result.html && config.validator.css) {
+            const validate = (isDefined(result.validation) && result.validation.css)
+                || (!isDefined(result.validation) && config.validator.css);
+
+				if (!res.finished && result && result.html && validate) {
 					return validateCss(result);
 				} else {
 					return Promise.resolve(result);
