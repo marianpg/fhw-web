@@ -41,13 +41,14 @@ Rückgabewert
 
 Das Resultat einer Funktion muss dabei einem der folgenden definierten entsprechen::
 
-    | Return            ::= <pageResult> | <redirect>
+    | Return            ::= <pageResult> | <redirectResult>
     |
-    | <pageResult>      ::= { <statusCode>, <page>, <data> } // liefert direkt eine Seite <page> aus mit evtl. zusätzlichen <data> Daten
-    | <redirect>        ::= { <statusCode>, <page> } // eine URL bzw. Seite, auf die der Browser nach der Verarbeitung weitergeleitet werden soll
+    | <pageResult>      ::= { <status>, <page>, <data> } // liefert direkt eine Seite <page> aus mit evtl. zusätzlichen <data> Daten
+    | <redirectResult>  ::= { <status>, <page|redirect> } // eine URL bzw. Seite, auf die der Browser nach der Verarbeitung weitergeleitet werden soll
     |
-    | <statusCode>      ::= <integer> // entspricht dem HTTP-Status-Code, insb. wichtig bei der Weiterleitung
+    | <status>          ::= <integer> // entspricht dem HTTP-Status-Code, insb. wichtig bei der Weiterleitung
     | <page>            ::= <string> // Dateiname der page, enthalten im page-Ordner
+    | <redirect>        ::= <string> // URL oder Dateiname der page, enthalten im page-Ordner
     | <data>            ::= <object> // zusätzliche Daten, die im Frontmatter über das page-Objekt sichtbar sind
 
 
