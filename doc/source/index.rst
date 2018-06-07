@@ -19,3 +19,4 @@ Für Übung 01 ist *ausschließlich* das Kapitel "Erste Schritte" maßgeblich.
     routes
     controller
     sessions
+    exercise03
