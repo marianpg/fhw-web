@@ -1,7 +1,7 @@
 Sessions
 ========
 
-Jeder Seitenaufruf bewirkt das Eröffnen eine bereits existierenden oder einer neuen Session.
+Jeder Seitenaufruf bewirkt das Eröffnen einer bereits existierenden oder einer neuen Session.
 Identifiziert werden die Sessions über die *session-id* und werden als solche benannt
 als json-Dateien im Ordner <Projektordner>/sessions abgelegt.
 Eine Session ist dabei solange gültig, bis der Browser geschlossen wird.
@@ -14,7 +14,7 @@ sodass der von GET Definierte in der Session überdeckt wird.
 Dateiinhalt
 ^^^^^^^^^^^
 
-Eine Session-Datei ist wie folgt aufgebaut::
+Eine exemplarische Session-Datei ist wie folgt aufgebaut::
 
     <!-- sessions/_pfyod45zxn9.json -->
     {
@@ -65,7 +65,7 @@ Analog erfolgt im Controller der Zugriff auf die Session wie folgt::
     }
 
 *Hinweis:* Die Zeichenkette "session-id" stellt aufgrund des Bindestrichs keinen gültigen Javascript-Bezeichner dar.
-Deswegen erfolgt der Zugriff auf den Wert von *session-id* nicht mit der "Punktnotation" sondern per *Klammernotation*.
+Deswegen erfolgt der Zugriff auf den Wert von *session-id* nicht mit der *Punktnotation* sondern per *Klammernotation*.
 Näheres dazu unter `Property Accessors
 <https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Operators/Property_Accessors/>`_.
 
@@ -74,19 +74,22 @@ Schreibender Zugriff
 """"""""""""""""""""
 
 Im Controller ist es möglich die Daten einer Session zu bearbeiten. Änderungen an diesem Objekt werden automatisch
-übernommen und gespeichert. Folgender Beispiel-Controller zählt bei jedem Seitenaufruf einen Zähler hoch::
+übernommen und gespeichert. Folgender Beispiel-Controller zählt bei jedem Seitenaufruf einen Zähler hoch
 
-    /* file routes.json */
+- routes.json:: 
+
     [{
       "url": "/example-session-write",
       "controller": {
         "file": "example-session-write",
-        "function": "welcomePage"
+        "function": "renderWelcomePage"
       }
     }]
 
-    /* file controller/example-session-write.js */
-    function welcomePage(data) {
+
+- controller/example-session-write.js::
+
+    function renderWelcomePage(data) {
         if (typeof data.session.aufrufe === 'undefined') {
             data.session.aufrufe = 0;
         }
@@ -98,10 +101,12 @@ Im Controller ist es möglich die Daten einer Session zu bearbeiten. Änderungen
         }
     }
     module.exports = {
-        welcomePage: welcomePage
+        renderWelcomePage: welcomePage
     };
 
-    /* file pages/example-session-write.hbs */
+
+- pages/example-session-write.hbs::
+
     {
         "template": "full-html",
         "title": "Meine Hobbies"

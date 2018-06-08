@@ -70,7 +70,7 @@ Routen-Objekte verwendet werden können:
 
 - statische Inhalte
 
-  Wird im wesentlichen benötigt, sobald Seiten zusätzliche Dateien, bspw. Stylesheets,
+  Wird im wesentlichen benötigt, sobald Seiten zusätzliche, statische Dateien, bspw. Stylesheets,
   Bilder oder Javascript, einbinden.
 
 
@@ -83,7 +83,7 @@ Routen-Objekte verwendet werden können:
   Ruft bei einer Request eine bestimmte Funktion auf, sodass eine individuelle
   Verarbeitung gesendeter Daten möglich ist; bspw. Validierung, Speichern der Daten, Laden zusätzlicher
   Daten.
-  Ein Controller kann selbst wieder eine Seite oder Json zurückgeben. Näheres dazu im Abschnitt *Controller*.
+  Ein Controller kann selbst wieder unter anderem eine Seite zurückgeben. Näheres dazu im Abschnitt *Controller*.
 
 
 
@@ -110,9 +110,9 @@ Datenstruktur
     | <method>            ::= [<httpMethod>]
     | <httpMethod>        ::= "get" | "post" | "put" | "patch" | "delete"
     |
-    | <params>            ::= {<getParams>, <postParams>}
-    | <getParams>         ::= [<string>]
-    | <postParams>        ::= [<string>]
+    | <params>            ::= {<get>, <post>}
+    | <get>               ::= [<string>] // Eine Liste von erlaubten bzw. erwarteten GET-Parametern
+    | <post>              ::= [<string>] // Eine Liste von erlaubten bzw. erwarteten POST-Parametern
 
 
 URL
@@ -124,8 +124,8 @@ URLs zu entsprechen. Mit der Verwendung eines *\** werden beliebig viele, versch
 bei der Zuordnung berücksichtigt (whitelist). Bspw. */\** oder */2018-04-\**. Ersteres kommt bei den
 magischen Routen zum Einsatz; Letzteres würde URLs entsprechen, die mit "/2018-04-" beginnen.
 
-Zusätzlich lassen sich *Pfadparameter* angeben. Bspw. enthält die URL-Definition
-*/guestbook_entries/:year/:month/* zwei Pfadparameter "year" und "month".
+Zusätzlich lassen sich *benannte Pfad-Segmente* bzw. Pfadparameter angeben. Bspw. enthält die URL-Definition
+*/guestbook_entries/:year/:month/* zwei benannte Pfad-Segmente "year" und "month".
 Eine konkrete aufrufende URL könnte wie folgt aussehen *http:localhost:8080/guestbook_entries/2018/04*.
 Durch die Angabe der Pfadparameter in der URL-Definition werden die Variablen "year" und "month"
 mit den jeweiligen Werten "2018" und "04" im Frontmatter zugreifbar.
@@ -139,7 +139,7 @@ Static und Page Route
 welche ausgeliefert werden soll. Wird ein Ordner angegeben, wird der Dateiname aus
 der URL hergeleitet.
 
-Ordnerangaben müssen als solches mit einem abschließenden *\\\** gekennzeichnet werden.
+Ordnerangaben müssen als solches mit einem abschließenden */\** gekennzeichnet werden.
 Nachstehend verdeutlichen zwei Beispiele diese Regel:
 
 Folgender Pfad führt zu einem *Ordner*::
@@ -164,8 +164,8 @@ Controller Route
         }
     }
 
-Soll auf eine Route nicht gleich eine Seite geliefert, sondern erst eine Funktion aufgerufen werden,
-wird diese Controller Definition verwendet.
+Soll auf eine Route nicht gleich eine Seite ausgeliefert, sondern erst eine Funktion aufgerufen werden,
+wird diese Controller-Definition verwendet.
 Diese setzt sich aus der Angabe des Dateinamens sowie des Funktionsnamens zusammen, wobei die Datei im Ordner
 *controller* enthalten sein muss.
 
@@ -175,7 +175,7 @@ Im Abschnitt *Controller* werden diese näher beschrieben.
 HTTP Methoden
 """""""""""""
 
-Es ist möglich eine oder mehrere HTTP-Methoden bei einem Routen-Objekt zu definieren.
+Es ist möglich eine oder mehrere HTTP-Methoden bzw. HTTP-Verben bei einem Routen-Objekt zu definieren.
 
 
 Parameter
@@ -184,12 +184,49 @@ Parameter
 Für POST und GET Parameter ist eine Deklaration notwendig, welche Parameterbezeichner erwartet werden.
 Dies geschieht in der `<params>` Angabe und stellt somit eine whitelist von erlaubten Parametern dar.
 Anders benannte werden verworfen.
-PATH Parameter sind von der Whitelist ausgenommen. Diese werden durch einen korrekten Aufruf implizit als
-existierende Parameter gefordert.
+
+Benannte Pfad-Segmente (PATH Parameter) sind von der Whitelist ausgenommen.
+Diese werden durch einen korrekten Aufruf implizit als existierende Parameter gefordert.::
+
+    [
+        {
+            "url": "/guestbook/entry/add",
+            "method": ["put"],
+            "params": {
+                "post": ["author", "email", "text"]
+            }, "controller": {
+                "file": "guestbook",
+                "function": "addEntry"
+            }
+        }, {
+            "url": "/guestbook/entry/:id",
+            "method": ["get"],
+            "controller": {
+                "file": "guestbook",
+                "function": "getEntry"
+            }
+        }, {
+            "url": "/guestbook/entry/:id/change",
+            "method": ["post"],
+            "params": {
+                "post": ["author", "email", "text"]
+            }, "controller": {
+                "file": "guestbook",
+                "function": "changeEntry"
+            }
+        }
+    ]
+
+Am obigen Beispiel lässt sich ebenfalls die Auswertungsreihenfolge der Routendefinitionen diskutieren.
+So *muss* die Route */guestbook/entry/add* vor der */guestbook/entry/:id* definiert sein.
+Bei einer umgekehrten Reihenfolge würde ein Aufruf der URL mit */add* auf die Definition mit *:id*
+zutreffen.
 
 Die ausgelesenen Parameter werden in das Frontmatter eingespeist. Dort sind die dann
 nicht über das page, sondern über das *request*-Objekt zugreifbar. Bspw. ließe
-sich ein per Post-Request übergebener Name wie folgt auslesen::
+sich ein per Post-Request übergebene E-Mail wie folgt auslesen::
 
 
-    <p>Hallo {{request.post.name}}</p>
+    <p>Hallo {{request.post.email}}</p>
+
+Wie Controller auf die Parameter zugreifen wird im folgenden Abschnitt *Controller* beschrieben.

@@ -8,7 +8,7 @@ Konkret lassen sich damit
 
 1. Inhalte zusammenstellen, die sich nicht direkt aus dem HTML und Frontmatter Kontext ergeben oder herleiten lassen
 2. Ausdrücke in if-Bedingungen auswerten
-3. Eingaben formatieren
+3. Werte formatieren
 
 
 Anwendungsbeispiele
@@ -27,7 +27,9 @@ Beispiel zu 1)
     ---
     <p>Uhrzeit: {{print-current-time}}</p>
 
-    <!-- helpers/time.js -->
+::
+
+    // helpers/time.js
     function current() {
         var date = new Date();
         return date.toLocaleTimeString();
@@ -53,7 +55,9 @@ Beispiel zu 2)
         <p>Falsch</p>
     {{/if}}
 
-    <!-- helpers/logic.js -->
+::
+
+    // helpers/logic.js
     function and(condOne, condTwo) {
 	    return condOne && condTwo;
     };
@@ -73,7 +77,9 @@ Beispiel zu 3)
     ---
     <p>Hallo {{to-uppercase page.name}}</p>
 
-    <!-- helpers/string.js -->
+::
+
+    // helpers/string.js
     function toUpperCase(str) {
         return str.toUpperCase();
     };
@@ -93,7 +99,7 @@ Es können mehrere Helper je Datei definiert werden. Dies ist sinnvoll, um thema
 zusammenzufassen. Bspw. würden Helper, die mathematische Ausdrücke auswerten, in einer Datei *math.js*,
 wohingegen Routinen, die Zeit- und Datumsangaben bereitstellen, in einer Datei *datetime.js* hinterlegt werden.
 
-Eine solche Javascript-Datei exportiert dann eine Objekt mit benannten Funktionen::
+Eine solche Javascript-Datei exportiert dann ein Objekt mit benannten Funktionen::
 
     <!-- helpers/logic.js -->
     function and(condOne, condTwo) {
@@ -124,7 +130,7 @@ Es können auch Helper definiert werdne, die keine Parameter erwarten. Entsprech
 
 
 Schachteln von Helpern
-""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^
 Es lassen sich ebenfalls Helper-Funktionen schachteln. Das heißt, der Ergebniswert
 eines *inneren* Helpers wird als Eingabewert für einen *äußeren* Helper verwendet.
 Die Besonderheit hier ist, dass der innere Aufruf, also die Auswertung des inneren Konstrukts,
@@ -137,26 +143,38 @@ in *runden Klammern* erfolgt.::
     ---
     <p>Zahl zwischen 0 und 100: {{min 100 (max page.number 0)}}</p>
 
-    <!-- helpers/min.js -->
-    modmodule.exports = function(numOne, numTwo) {
-        return Math.min(numOne, numTwo);
-    };
+::
 
-    <!-- helpers/max.js -->
-    module.exports = function(numOne, numTwo) {
-        return Math.max(numOne, numTwo);
-    };
+    // helpers/math.js
+    modmodule.exports = {
+        "min": function(numOne, numTwo) {
+            let result = numOne;
 
+            if (result > numTwo) {
+                result = numTwo;
+            }
+
+            return result;
+        },
+        "max": function(numOne, numTwo) {
+            let result = numOne;
+
+            if (result < numTwo) {
+                result = numTwo;
+            }
+            
+            return result;
+        }
+    }
+    
 
 Auswertung von Ausdrücken
-"""""""""""""""""""""""""
+^^^^^^^^^^^^^^^^^^^^^^^^^
 Ähnlich dem Schachteln von Helpern, lassen sich so auch in if-Bedingungen Ausdrücke formulieren, die durch
 einen Helper ausgewertet werden.
-Beispiel 2) hat bereits die Funktionsweise beschrieben und ist an dieser Stelle nochmals dargestellt.
+Beispiel 2) hat bereits die Funktionsweise dargestellt und ist an dieser Stelle tiefgehender beschrieben.
 Zu beachten gilt aber, dass auch hier die Auswertung des Helpers in *runden Klammern* erfolgt, sodass
-das if seinen Rückgabewert auswerten kann.
-Tatsächlich handelt es sich bei dem verwendeten if um einen von Handlebars vordefinierten Helper, weswegen
-hier die Logik der Helperschachtelung greift::
+das if seinen Rückgabewert auswerten kann.::
 
     <!-- pages/helper-example-if-expression -->
     {
@@ -174,3 +192,6 @@ hier die Logik der Helperschachtelung greift::
     module.exports = function(condOne, condTwo) {
         return condOne && condTwo;
     };
+
+Tatsächlich handelt es sich bei dem verwendeten if um einen von Handlebars vordefinierten Helper, weswegen
+hier die Logik der Helperschachtelung greift.

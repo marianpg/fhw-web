@@ -17,10 +17,11 @@ abgelegt sein. In dieser können beliebig viele benannte Funktionen definiert we
 
 Eingabewert
 """""""""""
-Jede Controller-Funktion erhält als ersten Parameter ein Objekt, welches die Daten aus den Request-Parametern
-und der global.json enthält. Im Request-Objekt selbst befinden sich die GET, POST und PATH Parameter.
-Zusätzlich gibt es dort Session Daten. Eine nähere Erläuterung zu der *Session* erfolgt in einem späteren
+Jede Controller-Funktion erhält als ersten Parameter ein Objekt, welches die Daten aus den Request-Parametern,
+der Session und der global.json enthält. Im Request-Objekt selbst befinden sich die GET, POST und PATH Parameter
+(benannte Pfad-Segmente). Bezüglich des vorzufindenden *Session*-Objekts erfolgt eine nähere Erläuterung im nächsten
 Kapitel.
+
 Auf die verschiedenen Parameter lassen sich dann wie auf gewohnte js-Objekte zugreifen::
 
     /* Eine Controller-Funktion */
@@ -41,13 +42,14 @@ Rückgabewert
 
 Das Resultat einer Funktion muss dabei einem der folgenden definierten entsprechen::
 
-    | Return            ::= <pageResult> | <redirect>
+    | Return            ::= <pageResult> | <redirectResult>
     |
-    | <pageResult>      ::= { <statusCode>, <page>, <data> } // liefert direkt eine Seite <page> aus mit evtl. zusätzlichen <data> Daten
-    | <redirect>        ::= { <statusCode>, <page> } // eine URL bzw. Seite, auf die der Browser nach der Verarbeitung weitergeleitet werden soll
+    | <pageResult>      ::= { <status>, <page>, <data> } // liefert direkt eine Seite <page> aus mit evtl. zusätzlichen <data> Daten
+    | <redirectResult>  ::= { <status>, <redirect> }
     |
-    | <statusCode>      ::= <integer> // entspricht dem HTTP-Status-Code, insb. wichtig bei der Weiterleitung
+    | <status>          ::= <integer> // entspricht dem HTTP-Status-Code, insb. wichtig bei der Weiterleitung
     | <page>            ::= <string> // Dateiname der page, enthalten im page-Ordner
+    | <redirect>        ::= <string> // eine URL,  auf die der Browser nach der Verarbeitung weitergeleitet werden soll
     | <data>            ::= <object> // zusätzliche Daten, die im Frontmatter über das page-Objekt sichtbar sind
 
 
@@ -58,20 +60,24 @@ Am Ende der Datei jedoch müssen die Funktionen, die nach außen hin sichtbar se
 Exemplarisch sähe das wie folgt aus::
 
     // file controller/guestbook.js
-    function addData(params) {
+    function addData(data) {
         /* some implementation */
         return {
             status: 303,
-            redirect: "success"
+            redirect: "/success"
         }
     }
 
     function listAll() {
         /* some implementation */
+        let allEntries = []; // should contain all guestbook entries
+
         return {
             status: 200,
             page: "guestbook",
-            data: entries
+            data: {
+                entries: allEntries
+            }
         }
     }
 
@@ -88,7 +94,7 @@ Wir arbeiten hier mit einer einfachen Form einer "Datenbank". Dies wird durch ei
 json-Dokumenten im Ordner *data* dargestellt.
 Die einzigen Funktionen unserer Datenbank sind *loadJson* und *saveJson*.
 
-Die Funktion *loadJson* erwartet als einzigen Parameter den Dateinamen. Die Funktion *saveJson* benötigt
+Die Funktion *loadJson* erwartet als einzigen Parameter den Dateinamen. Die Prozedur *saveJson* benötigt
 zusätzlich zum Dateinamen einen zweiten Parameter, nämlich das Objekt, welches gespeichert werden soll.
 
 Exemplarisch sähe dies wie folgt aus::
@@ -97,10 +103,10 @@ Exemplarisch sähe dies wie folgt aus::
     var loadJson = fhWeb.loadJson;
     var saveJson = fhWeb.saveJson;
 
-    function add(params) {
+    function add(data) {
         var guestbookEntries = loadJson('guestbook') || [];
-        var author = params.request.post.author;
-        var text = params.request.post.text;
+        var author = data.request.post.author;
+        var text = data.request.post.text;
 
         guestbookEntries.push({
             author: author,
@@ -109,5 +115,12 @@ Exemplarisch sähe dies wie folgt aus::
 
         saveJson('guestbook', guestbookEntries);
 
-        /* more implementation */
+        return {
+            status: 303,
+            redirect: "/success"
+        }
     }
+
+    module.exports = {
+        add: addData
+    };
