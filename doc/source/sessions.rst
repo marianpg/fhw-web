@@ -60,7 +60,7 @@ Analog erfolgt im Controller der Zugriff auf die Session wie folgt::
 
     /* Eine Controller-Funktion */
     function printSession(data) {
-        console.log(data.session.['session-id']); // gibt den Inhalt der Variable "session-id" der Session
+        console.log(data.session['session-id']); // gibt den Inhalt der Variable "session-id" der Session
         console.log(data.session.name); // gibt den Inhalt der Variable "name" der Session
     }
 
