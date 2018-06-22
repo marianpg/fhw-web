@@ -182,7 +182,7 @@ Parameter
 """""""""
 
 Für POST und GET Parameter ist eine Deklaration der erwarteten Parameterbezeichner möglich.
-Mit dieser (freiwilligen) zentralen Definition soll die Konzeptentwicklung und die Fehlersuche unterstützen.
+Mit dieser (freiwilligen) zentralen Definition soll die Konzeptentwicklung und die Fehlersuche unterstützt werden.
 
 Die Definition geschieht in der `<params>` Angabe und stellt somit eine whitelist von erlaubten Parametern dar.
 Anders benannte werden dann verworfen.
