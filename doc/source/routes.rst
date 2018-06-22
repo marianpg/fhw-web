@@ -181,9 +181,12 @@ Es ist möglich eine oder mehrere HTTP-Methoden bzw. HTTP-Verben bei einem Route
 Parameter
 """""""""
 
-Für POST und GET Parameter ist eine Deklaration notwendig, welche Parameterbezeichner erwartet werden.
-Dies geschieht in der `<params>` Angabe und stellt somit eine whitelist von erlaubten Parametern dar.
-Anders benannte werden verworfen.
+Für POST und GET Parameter ist eine Deklaration der erwarteten Parameterbezeichner möglich.
+Mit dieser (freiwilligen) zentralen Definition soll die Konzeptentwicklung und die Fehlersuche unterstützen.
+
+Die Definition geschieht in der `<params>` Angabe und stellt somit eine whitelist von erlaubten Parametern dar.
+Anders benannte werden dann verworfen.
+Wird die "params" Angabe ausgelassen, werden alle Parameter akzeptiert.
 
 Benannte Pfad-Segmente (PATH Parameter) sind von der Whitelist ausgenommen.
 Diese werden durch einen korrekten Aufruf implizit als existierende Parameter gefordert.::
