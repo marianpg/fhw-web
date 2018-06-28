@@ -1,7 +1,7 @@
 {
   "name": "fhw-web",
   "description": "Framework zur Übung 'Web-Anwendungen' an der Fachhochschule Wedel",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "scripts": {
     "compile": "rm -rf lib && mkdir lib && babel --presets es2015 --plugins transform-runtime -d lib/ src/",
     "prepublish": "npm run compile",
@@ -15,6 +15,7 @@
     "handlebars": "^4.0.11",
     "html-escape": "^2.0.0",
     "html-validator": "^3.0.1",
+    "multer": "^1.3.0",
     "request": "^2.85.0",
     "url": "^0.11.0",
     "valid-url": "^1.0.9",

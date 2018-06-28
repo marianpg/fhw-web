@@ -15,6 +15,7 @@ public/
 sessions/
 src/
 templates/
+webapp/
 routes.json
 run.js
 todo.md

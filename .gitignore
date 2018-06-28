@@ -14,5 +14,6 @@ pages/
 sessions/
 templates/
 public/
+webapp/
 routes.json
 global.json

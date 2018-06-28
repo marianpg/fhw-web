@@ -3,6 +3,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
+import multer from 'multer';
 
 import compile from './compile';
 import {
@@ -137,7 +138,6 @@ function serveController(response, controllerName, functionName, params = {}, se
 }
 
 
-
 /*
 	userConfig ::= { <port> }
 
@@ -158,6 +158,11 @@ export function start(userConfig) {
 		res.status(204);
 		res.send();
 	});
+
+	/* parse multipart/form-data (provided by a XMLHttpRequest with FormData) */
+    app.use(multer().fields([]), (req, res, next) => {
+    	next();
+    });
 
 	app.use((req, res) => {
 		const calledUrl = req.path;
