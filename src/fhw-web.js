@@ -168,7 +168,7 @@ export function start(userConfig) {
 		const calledUrl = req.path;
 		console.log(`\n\nCalling ressource "${calledUrl} with method ${req.method}".`);
 
-		prepareRoutes(config)
+		prepareRoutes()
 			.then(routes => { //TODO different error msg, if no route found
 
 				// loop will stop early, if a route for called url was found
@@ -176,13 +176,13 @@ export function start(userConfig) {
 					const route = routes[index];
 					const isDefinedRoute = new RegExp(route.urlRegex).test(calledUrl);
 					const isDefinedMethod = route.method.includes(req.method.toLowerCase());
-
+					
 					if (isDefinedRoute && isDefinedMethod) {
 						console.log(`Found matching route with index ${index}`);
 						const params = parseParams(req, route, res);
 
 						if (isDefined(route.static)) {
-							const pathToFile = resolveStatic(calledUrl, route.static);
+							const pathToFile = resolveStatic(calledUrl, route);
 							return serveStatic(pathToFile, params, res);
 						}
                         const sessionData = parseSession(req, res, params);

@@ -158,28 +158,15 @@ export function resolvePage(calledUrl, routePath) {
 	return pathToFile;
 }
 
-export function resolveStatic(calledUrl, routePath) {
-	// just for "magic routes"
-	// TODO: remove it, if not necessary
-	return calledUrl;
 
-	const parsedUrl = path.parse(calledUrl.startsWith('/') ? calledUrl.substr(1) : calledUrl);
-	const parsedPath = path.parse(routePath.startsWith('/') ? routePath.substr(1) : routePath);
+export function resolveStatic(calledUrl, route) {
+	let result = route.static; // default: serve specific file
 
-	const fname = parsedPath.base === '*'
-		? parsedUrl.base
-		: parsedPath.base;
-
-	const dir = parsedPath.dir;
-
-	if (fname.length === 0) {
-		throw FileNotFoundError(`Missing filename for called static ressource ${calledUrl}`);
-	}
-	const pathToFile = path.resolve(path.join(dir, fname));
-
-	if (!isFile(pathToFile)) {
-		throw FileNotFoundError(`Can not find file "${fname}" in directory "${dir}"`);
+	// if route is not a specific file, determine the correct path
+	if (path.parse(route.static).ext.length === 0) {
+		const urlPath = new RegExp(route.urlRegex).exec(calledUrl)[1];
+		result = `${route.static.split('*')[0]}${urlPath}`;
 	}
 
-	return pathToFile;
+	return result;
 }

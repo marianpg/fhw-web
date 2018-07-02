@@ -19,12 +19,15 @@ const magicRoutes = [
 ];
 
 // TODO: bei jedem Request Routes neu einlesen
-export default function prepareRoutes(config) {
-	let routeDefinitions = undefined;
-	try {
-        routeDefinitions = loadJson('routes.json');
-	} catch(error) {
-        throw JsonParseError('routes.json', error.message);
+export default function prepareRoutes(routeDef = null) {
+	let routeDefinitions = routeDef;
+
+	if (routeDef == null) {
+		try {
+			routeDefinitions = loadJson('routes.json');
+		} catch(error) {
+			throw JsonParseError('routes.json', error.message);
+		}
 	}
 	routeDefinitions = routeDefinitions || JSON.parse(JSON.stringify(magicRoutes));
 
@@ -38,6 +41,8 @@ export default function prepareRoutes(config) {
 
 		if (isUndefined(definition.url)) {
 			throw RouteDefinitionError(`Route no. ${index}: missing url definition.`);
+		} else if (definition.url.split('*').length > 2) {
+			throw RouteDefinitionError(`Route no. ${index}: url definition contains more than one wildecard "*".`);
 		}
 		if (isDefined(definition.method)) {
 			if (!isArray(definition.method)) {
@@ -64,6 +69,9 @@ export default function prepareRoutes(config) {
 		}
 		if (isDefined(definition.page) && isDefined(definition.controller)) {
 			throw RouteDefinitionError(`Route no. ${index}: both, "page" and "controller" are declared, but only one of those definitions one the same route are supported.`);
+		}
+		if (isDefined(definition.static)) {
+			modified.static = definition.static[0] === '/' ? definition.static : `/${definition.static}`;
 		}
 		if (isDefined(definition.params)) {
 			if (isDefined(definition.params.get)) {
@@ -93,7 +101,7 @@ export default function prepareRoutes(config) {
 		let urlRegex = definition.url;
 
 		urlRegex = urlRegex.includes('*')
-			? urlRegex.replace('*', _ => '.*')
+			? urlRegex.replace('*', _ => '(.*)')
 			: urlRegex;
 
 		urlRegex = urlRegex.includes(':')
