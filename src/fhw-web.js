@@ -8,11 +8,11 @@ import multer from 'multer';
 import compile from './compile';
 import {
     generateErrorPage,
-    NotImplementedError,
     RessourceNotFoundError,
     FunctionNotFoundError,
     JsonParseError,
-    ControllerReturnValueError
+	ControllerReturnValueError,
+	RouteNotFoundError
 } from './customError';
 import { validateHtml, validateCss } from './validator';
 import defaultConfig from './defaultConfig';
@@ -51,6 +51,9 @@ function combineConfiguration(userConfig = {}) {
 
 
 function serveStatic(pathToFile, params, response) {
+	if (pathToFile instanceof Error) {
+		return pathToFile;
+	}
 	const pathToStatic = toAbsolutePath(pathToFile);
 
 	return new Promise((resolve, reject) => {
@@ -66,6 +69,9 @@ function serveStatic(pathToFile, params, response) {
 }
 
 function servePage(pathToFile, params = {}, sessionData = {}, pageData = {}, status = 200) {
+	if (pathToFile instanceof Error) {
+		return pathToFile;
+	}
     const frontmatter = Object.assign({}, { request: params }, { global: loadGlobalFrontmatter() }, { page: pageData }, { session: sessionData });
 	return new Promise((resolve, reject) => {
         const html = compile(pathToFile, frontmatter);
@@ -100,6 +106,10 @@ function serveText(response, text, status) {
 
 function serveController(response, controllerName, functionName, params = {}, sessionData = {}) {
 	const module = loadDynamicModule(controllerName, 'controller');
+
+	if (module instanceof Error) {
+		return module;
+	}
 
 	if (isUndefined(module[functionName])) {
 		throw FunctionNotFoundError(`Module ${controllerName} does not exports a function named ${functionName}. Please check the documentation.`);
@@ -179,24 +189,30 @@ export function start(userConfig) {
 					
 					if (isDefinedRoute && isDefinedMethod) {
 						console.log(`Found matching route with index ${index}`);
+						let result = {};
 						const params = parseParams(req, route, res);
 
 						if (isDefined(route.static)) {
 							const pathToFile = resolveStatic(calledUrl, route);
-							return serveStatic(pathToFile, params, res);
+							result = serveStatic(pathToFile, params, res);
 						}
                         const sessionData = parseSession(req, res, params);
 
 						if (isDefined(route.page)) {
 							const pathToFile = resolvePage(calledUrl, route.page, 'pages', '.hbs');
-							return servePage(pathToFile, params, sessionData);
+							result = servePage(pathToFile, params, sessionData);
 						}
 						if (isDefined(route.controller)) {
-							return serveController(res, route.controller.file, route.controller.function, params, sessionData);
+							result = serveController(res, route.controller.file, route.controller.function, params, sessionData);
+						}
+
+						if (!(result instanceof Error)) {
+							return result;
 						}
 					}
 				}
-				console.log("Could not find any matching route definition.")
+				throw RouteNotFoundError(`Could not find any matching route definition for called url ${calledUrl}.`);
+
 			}).then(result => {
 				const validate = (isDefined(result.validation) && result.validation.html)
 					|| (!isDefined(result.validation) && config.validator.html);

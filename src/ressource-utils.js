@@ -133,11 +133,11 @@ export function loadDynamicModule(name, dir = '/') {
 		delete require.cache[require.resolve(modulePath)];
 		return require(modulePath);
 	} else {
-		throw ModuleNotFound(`Module ${name} not found.`);
+		return ModuleNotFound(`Module ${name} not found.`);
 	}
 }
 
-export function resolvePage(calledUrl, routePath) {
+export function resolvePageOld(calledUrl, routePath) {
 	const parsedUrl = path.parse(calledUrl.startsWith('/') ? calledUrl.substr(1) : calledUrl);
 	const parsedPath = path.parse(routePath.startsWith('/') ? routePath.substr(1) : routePath);
 
@@ -152,12 +152,11 @@ export function resolvePage(calledUrl, routePath) {
 	const pathToFile = path.join(dir, fname);
 
 	if (!isFile(path.join('pages', pathToFile))) {
-		throw FileNotFoundError(`Can not find file "${fname}" in directory "pages/${dir}"`);
+		return FileNotFoundError(`Can not find file "${fname}" in directory "pages/${dir}"`);
 	}
 
 	return pathToFile;
 }
-
 
 export function resolveStatic(calledUrl, route) {
 	let result = route.static; // default: serve specific file
@@ -166,6 +165,10 @@ export function resolveStatic(calledUrl, route) {
 	if (path.parse(route.static).ext.length === 0) {
 		const urlPath = new RegExp(route.urlRegex).exec(calledUrl)[1];
 		result = `${route.static.split('*')[0]}${urlPath}`;
+	}
+	
+	if (!isFile(toAbsolutePath(result))) {
+		return FileNotFoundError(`Can not find static file "${result}".`);
 	}
 
 	return result;

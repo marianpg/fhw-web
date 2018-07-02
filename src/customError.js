@@ -82,6 +82,7 @@ class FunctionNotFoundError extends ExtendableError {}
 class HtmlValidationError extends ExtendableError {}
 class CssValidationError extends ExtendableError {}
 class RouteDefinitionError extends ExtendableError {}
+class RouteNotFoundError extends ExtendableError {}
 class JsonParseError extends ExtendableError {}
 class SessionSaveError extends ExtendableError {}
 class HelperAlreadyDeclared extends ExtendableError {}
@@ -101,6 +102,7 @@ export function RessourceNotFoundError(message) { return new RessourceNotFoundEr
 export function HtmlValidationError(message, html, extract = html) { return new HtmlValidationError(message, 500, html, extract); }
 export function CssValidationError(message, html, extract) { return new CssValidationError(message, 500, html, extract); }
 export function RouteDefinitionError(message) { return new RouteDefinitionError(message, 500); }
+export function RouteNotFoundError(message) { return new RouteNotFoundError(message, 500); }
 export function JsonParseError(filename, message) { return new JsonParseError(`JsonParseError in file ${filename}: ${message}`, 500); }
 export function SessionSaveError(message) { return new SessionSaveError(message, 500); }
 export function HelperAlreadyDeclared(message) { return new HelperAlreadyDeclared(message, 500); }

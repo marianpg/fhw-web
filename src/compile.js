@@ -21,6 +21,9 @@ function registerCustomHelpers(handlebarsEnv) {
 			if (match) {
 				const modulename = match[1];
 				const module = loadDynamicModule(modulename, helpersDirectory);
+				if (module instanceof Error) {
+					throw module;
+				}
 
 				Object.keys(module).forEach(funcname => {
                     const newHelper = {modulename, funcname};
