@@ -119,7 +119,7 @@ function serveController(response, controllerName, functionName, params = {}, se
             return serveFragment(result.fragment, params, sessionData, result.data, result.status);
 
         } else if (isDefined(result.json)) {
-			return serveJson(response, JSON.stringify(result.json), result.status);
+			return serveJson(response, result.json, result.status);
 
 		} else if (isDefined(result.text)) {
 			return serveText(response, result.text, result.status);
