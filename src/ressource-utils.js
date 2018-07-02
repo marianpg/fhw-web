@@ -137,7 +137,7 @@ export function loadDynamicModule(name, dir = '/') {
 	}
 }
 
-export function resolvePageOld(calledUrl, routePath) {
+export function resolvePage(calledUrl, routePath) {
 	const parsedUrl = path.parse(calledUrl.startsWith('/') ? calledUrl.substr(1) : calledUrl);
 	const parsedPath = path.parse(routePath.startsWith('/') ? routePath.substr(1) : routePath);
 
