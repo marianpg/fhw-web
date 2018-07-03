@@ -20,3 +20,4 @@ Für Übung 01 ist *ausschließlich* das Kapitel "Erste Schritte" maßgeblich.
     controller
     sessions
     exercise03
+    exercise04
