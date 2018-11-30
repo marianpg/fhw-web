@@ -158,7 +158,7 @@ export function resolvePage(calledUrl, routePath) {
 	return pathToFile;
 }
 
-export function resolveStatic(calledUrl, route) {
+export function resolveStatic(calledUrl, route, ignoreExistence) {
 	let result = route.static; // default: serve specific file
 
 	// if route is not a specific file, determine the correct path
@@ -167,7 +167,7 @@ export function resolveStatic(calledUrl, route) {
 		result = `${route.static.split('*')[0]}${urlPath}`;
 	}
 	
-	if (!isFile(toAbsolutePath(result))) {
+	if (!ignoreExistence && !isFile(toAbsolutePath(result))) {
 		return FileNotFoundError(`Can not find static file "${result}".`);
 	}
 

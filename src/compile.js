@@ -2,11 +2,13 @@
 
 import fs from 'fs';
 import path from 'path';
+import promisedHandlebars from 'promised-handlebars';
 import handlebars from 'handlebars';
-import { FileNotFoundError, HelperAlreadyDeclared } from './customError';
+import { FileNotFoundError, HelperAlreadyDeclared, WrongFiletypeError } from './customError';
 
-import { exists, contains, convert, listFiles, loadDynamicModule } from './ressource-utils';
-import { parseJson } from './helper';
+import { exists, contains, convert, listFiles, loadDynamicModule, toAbsolutePath } from './ressource-utils';
+import { objectFlatMap, isJson, isYaml, parseJson, parseYaml } from './helper';
+const sqlite3 = require('sqlite3').verbose();
 
 
 function registerCustomHelpers(handlebarsEnv) {
@@ -61,12 +63,102 @@ function registerGlobalHelpers(handlebarsEnv) {
 }
 
 function createHandlebarsEnv() {
-    const handlebarsEnv = handlebars.create();
+    //const handlebarsEnv = handlebars.create();
+    const handlebarsEnv = promisedHandlebars(handlebars);
 
     registerGlobalHelpers(handlebarsEnv);
     registerCustomHelpers(handlebarsEnv);
 
     return handlebarsEnv;
+}
+
+let sqliteDB = null;
+// TODO: legt eine sql-Datei im selben Ordner an
+export function connectToDatabase() {
+    return new Promise((resolve, reject) => {
+        sqliteDB = new sqlite3.Database(toAbsolutePath('/data/database.db'), (err) => {
+            if (err) {
+            	reject('Database Error: ' + err.message); // TODO Custom Error Class
+            }
+            console.log('Connected to database.');
+            resolve(true);
+        });
+	})
+}
+
+export function disconectFromSQLDatabase() {
+    return new Promise((resolve, reject) => {
+        if (sqliteDB) {
+            sqliteDB.close((err) => {
+                if (err) {
+                    reject('Database Error: ' + err.message); // TODO Custom Error Class
+                }
+                console.log('Close the database connection.'); //TODO
+                sqliteDB = null;
+                resolve(true);
+            });
+        } else {
+            resolve(true);
+        }
+    })
+}
+
+function executeSql(key, value) {
+    return new Promise((resolve, reject) => {
+        sqliteDB.all(value, [], (err, rows) => {
+           if (err) {
+               console.log('maybe sql error:', err);
+               resolve({[key]: value});
+           }
+           resolve({[key]: rows});
+        });
+    });
+}
+
+function parseSql(maybeSql, requestParams) {
+    const regex = /\$(get|post|path).([\w]+)/g;
+    let match, httpMethod, key;
+
+    while (match = regex.exec(maybeSql))
+    {
+        httpMethod = match[1];
+        key = match[2];
+        maybeSql = maybeSql.replace(match[0], requestParams[httpMethod][key]);
+    }
+
+    return maybeSql;
+}
+
+// TODO: Zurzeit wird eine "/data/database.sql" Datei erwartet. Mehrere Dateien erlauben? Wie sinnvoll verknüpfen?
+function parseAndExecuteSql(frontmatter, requestParams) {
+    return new Promise((resolve, reject) => {
+
+        let promises = Object.keys(frontmatter).map(key => {
+            let maybeSql = parseSql(frontmatter[key], requestParams);
+            return executeSql(key, maybeSql);
+        });
+
+        Promise.all(promises).then(values => {
+            resolve(objectFlatMap(values));
+        });
+    });
+}
+
+// Todo: global configuration "onlyJson"/"onlyYaml"/"both"
+export function parseFrontmatter(frontmatter, filename, requestParams) {
+	let result = {};
+
+	if (isJson(frontmatter)) {
+        result= parseJson(frontmatter, filename);
+	} else if (isYaml(frontmatter)) {
+        result = parseYaml(frontmatter, filename);
+	} else {
+        throw WrongFiletypeError(`Wrong filestructure in file ${filename}. It neither contains well-formed json or yaml.`);
+	}
+
+	result = parseAndExecuteSql(result, requestParams);
+
+	return result;
 }
 
 // kein 'precompile' von Handlebars!
@@ -82,49 +174,56 @@ function prepareCompile(url, startDir, frontmatter) {
 		const file = fs.readFileSync(path.join(directory, filename), 'utf8');
 		const fileSplitted = file.split('---');
 
-		const json = fileSplitted.length > 1 ? fileSplitted[0] : '{}';
+		const fmatter = fileSplitted.length > 1 ? fileSplitted[0] : '{}';
 		const hbs = fileSplitted.length > 1 ? fileSplitted[1] : fileSplitted[0] ;
 
-		const frontmatterLocal = parseJson(json, filename);
-		const page = Object.assign({}, frontmatter.page, frontmatterLocal);
-		const frontmatterCombined = Object.assign({}, { page: page }, { global: frontmatter.global }, { request: frontmatter.request }, { session: frontmatter.session });
+		return parseFrontmatter(fmatter, filename, frontmatter.request).then(frontmatterLocal => {
+            const page = Object.assign({}, frontmatter.page, frontmatterLocal);
+            const frontmatterCombined = Object.assign({}, { page: page }, { global: frontmatter.global }, { request: frontmatter.request }, { session: frontmatter.session });
 
-		console.log(`Output for       : ${url}`);
-		console.log(`Frontmatter JSON : ${JSON.stringify(frontmatterLocal)}`);
-		console.log(`Complete JSON    : ${JSON.stringify(frontmatterCombined)}`);
-		console.log('\n');
+            console.log(`Output for       : ${url}`);
+            console.log(`Frontmatter JSON : ${JSON.stringify(frontmatterLocal)}`);
+            console.log(`Complete JSON    : ${JSON.stringify(frontmatterCombined)}`);
+            console.log('\n');
 
-		return { hbs, frontmatterCombined }
+            return Promise.resolve({hbs, frontmatterCombined});
+        });
 	} else {
 	    throw FileNotFoundError(`File ${filename} not found in Directory ${directory}`);
     }
 }
 
-export default function compile(url, frontmatter = {}, dir = 'pages', contentHtml = '') {
-    const { hbs, frontmatterCombined } = prepareCompile(url, dir, frontmatter);
-    const handlebarsEnv = createHandlebarsEnv();
+export function compile(url, frontmatter = {}, dir = 'pages', contentHtml = '') {
+    return prepareCompile(url, dir, frontmatter)
+		.then(compiled => {
+			const { hbs, frontmatterCombined} = compiled;
 
-	handlebarsEnv.registerHelper('content', function() {
-		return new handlebarsEnv.SafeString(contentHtml);
-	});
+            const handlebarsEnv = createHandlebarsEnv();
 
+            handlebarsEnv.registerHelper('content', function() {
+                return new handlebarsEnv.SafeString(contentHtml);
+            });
 
-	handlebarsEnv.registerHelper('include', function(fname) {
-		const html = compile(fname, frontmatterCombined, 'templates');
-		return new handlebarsEnv.SafeString(html);
-    });
+            handlebarsEnv.registerHelper('include', function(fname) {
+                return compile(fname, frontmatterCombined, 'templates')
+                    .then(html => new handlebarsEnv.SafeString(html))
+            });
 
-	let templateName = '';
-	if ('template' in frontmatterCombined['page']) {
-		templateName = frontmatterCombined['page']['template'];
-		delete frontmatterCombined['page']['template'];
-	}
-	const template = handlebarsEnv.compile(hbs);
-	let htmlCompiled = template(frontmatterCombined);
+            let templateName = '';
+            if ('template' in frontmatterCombined['page']) {
+                templateName = frontmatterCombined['page']['template'];
+                delete frontmatterCombined['page']['template'];
+            }
 
-	if (templateName !== '') {
-		htmlCompiled = compile(templateName, frontmatterCombined, 'templates', htmlCompiled);
-	}
-
-	return htmlCompiled.length === 0 ? " " : htmlCompiled.trim();
+            const template = handlebarsEnv.compile(hbs);
+            return template(frontmatterCombined).then(htmlCompiled => {
+                if (templateName !== '') {
+                    return compile(templateName, frontmatterCombined, 'templates', htmlCompiled);
+                } else {
+                    return Promise.resolve(htmlCompiled);
+                }
+            }).then(htmlCompiled => {
+                return Promise.resolve(htmlCompiled.length === 0 ? " " : htmlCompiled.trim());
+            });
+		});
 }

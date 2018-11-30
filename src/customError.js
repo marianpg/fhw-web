@@ -84,11 +84,13 @@ class CssValidationError extends ExtendableError {}
 class RouteDefinitionError extends ExtendableError {}
 class RouteNotFoundError extends ExtendableError {}
 class JsonParseError extends ExtendableError {}
+class YamlParseError extends ExtendableError {}
 class SessionSaveError extends ExtendableError {}
 class HelperAlreadyDeclared extends ExtendableError {}
 class ModuleNotFound extends ExtendableError {}
 class DataSaveError extends ExtendableError {}
 class ControllerReturnValueError extends ExtendableError {}
+class WrongFiletypeError extends ExtendableError {}
 
 
 export function isConnectionError(error) {
@@ -104,9 +106,11 @@ export function CssValidationError(message, html, extract) { return new CssValid
 export function RouteDefinitionError(message) { return new RouteDefinitionError(message, 500); }
 export function RouteNotFoundError(message) { return new RouteNotFoundError(message, 500); }
 export function JsonParseError(filename, message) { return new JsonParseError(`JsonParseError in file ${filename}: ${message}`, 500); }
+export function YamlParseError(filename, message) { return new YamlParseError(`YamlParseError in file ${filename}: ${message}`, 500); }
 export function SessionSaveError(message) { return new SessionSaveError(message, 500); }
 export function HelperAlreadyDeclared(message) { return new HelperAlreadyDeclared(message, 500); }
 export function ModuleNotFound(message) { return new ModuleNotFound(message, 500); }
 export function DataSaveError(filename, data, message) { return new DataSaveError(`DataSaveError: could not save ${filename} with data ${data}: ${message}`, 500); }
 export function ControllerReturnValueError(message) { return new ControllerReturnValueError(message, 500); }
+export function WrongFiletypeError(message) { return new WrongFiletypeError(message, 500); }
 

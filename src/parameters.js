@@ -82,7 +82,6 @@ function parseCookie(req, res, get, post) {
 	}
 
 	const session = openSession(sessionId);
-	saveSession(session, get, post, req.path);
 
 	return session;
 }

@@ -19,18 +19,16 @@ const magicRoutes = [
 ];
 
 // TODO: bei jedem Request Routes neu einlesen
-export default function prepareRoutes(routeDef = null) {
-	let routeDefinitions = routeDef;
+export default function prepareRoutes() {
+	let routeDefinitions = {};
 
-	if (routeDef == null) {
-		try {
+	try {
 			routeDefinitions = loadJson('routes.json');
 		} catch(error) {
 			throw JsonParseError('routes.json', error.message);
 		}
-	}
-	routeDefinitions = routeDefinitions || JSON.parse(JSON.stringify(magicRoutes));
 
+	routeDefinitions = routeDefinitions || JSON.parse(JSON.stringify(magicRoutes));
 
     // TODO: Mit Sternchen umgehen
 	// TODO: was, wenn url === "" ? Ist das schlimm?

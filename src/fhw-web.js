@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import multer from 'multer';
 
-import compile from './compile';
+import { compile, connectToDatabase, disconectFromSQLDatabase } from './compile';
 import {
     generateErrorPage,
     RessourceNotFoundError,
@@ -14,6 +14,7 @@ import {
 	ControllerReturnValueError,
 	RouteNotFoundError
 } from './customError';
+
 import { validateHtml, validateCss } from './validator';
 import defaultConfig from './defaultConfig';
 import prepareRoutes from './routes';
@@ -73,18 +74,16 @@ function servePage(pathToFile, params = {}, sessionData = {}, pageData = {}, sta
 		return pathToFile;
 	}
     const frontmatter = Object.assign({}, { request: params }, { global: loadGlobalFrontmatter() }, { page: pageData }, { session: sessionData });
-	return new Promise((resolve, reject) => {
-        const html = compile(pathToFile, frontmatter);
-        resolve({html, status});
-    })
+
+	return compile(pathToFile, frontmatter)
+		.then(html => Promise.resolve({html, status}));
 }
 
 function serveFragment(pathToFile, params = {}, sessionData = {}, pageData = {}, status = 200) {
     const frontmatter = Object.assign({}, { request: params }, { global: loadGlobalFrontmatter() }, { page: pageData }, { session: sessionData });
-    return new Promise((resolve, reject) => {
-        const html = compile(pathToFile, frontmatter, 'templates');
-        resolve({html, status, validation: noValidation});
-    })
+
+    return compile(pathToFile, frontmatter, 'templates')
+		.then(html => Promise.resolve({html, status, validation: noValidation}));
 }
 
 function serveJson(response, json, status) {
@@ -178,7 +177,8 @@ export function start(userConfig) {
 		const calledUrl = req.path;
 		console.log(`\n\nCalling ressource "${calledUrl} with method ${req.method}".`);
 
-		prepareRoutes()
+        connectToDatabase()
+			.then(prepareRoutes)
 			.then(routes => { //TODO different error msg, if no route found
 
 				// loop will stop early, if a route for called url was found
@@ -191,7 +191,7 @@ export function start(userConfig) {
 						console.log(`Found matching route with index ${index}`);
 						let result = {};
 						const params = parseParams(req, route, res);
-
+						
 						if (isDefined(route.static)) {
 							const pathToFile = resolveStatic(calledUrl, route);
 							result = serveStatic(pathToFile, params, res);
@@ -251,7 +251,7 @@ export function start(userConfig) {
 				} else {
 					console.log("Unexpected Server Error with Code 1. Please send a report to mpg@fh-wedel.de.");
 				}
-			});
+			}).finally(disconectFromSQLDatabase);
 	});
 
 	// TODO: do a server restart if configuration (i.e. port) has changed

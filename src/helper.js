@@ -1,4 +1,5 @@
-import { JsonParseError } from './customError';
+import YAML from 'yaml';
+import { JsonParseError, YamlParseError } from './customError';
 
 
 export function isObject(obj) {
@@ -40,6 +41,49 @@ export function parseJson(str, filename) {
 	}
 }
 
+export function parseYaml(str, filename) {
+    try {
+        return YAML.parse(str);
+    } catch(error) {
+        throw YamlParseError(filename, error.message);
+    }
+}
+
+export function isJson(str) {
+	try {
+		JSON.parse(str);
+	} catch(error) {
+		return false;
+	}
+
+	return true;
+}
+
+export function isYaml(str) {
+    try {
+        YAML.parse(str);
+    } catch(error) {
+        return false;
+    }
+
+    return true;
+}
+
+
 export function copy(obj) {
 	return JSON.parse(JSON.stringify(obj));
+}
+
+/*
+	Merges an array of objects of the following style
+	[{key: value}]
+	into one object of all containing keys.
+	notice: no key-collision handling included
+ */
+export function objectFlatMap(arrOfObjects) {
+	return arrOfObjects.reduce((result, anObject) => {
+		let key = Object.keys(anObject)[0];
+		result[key] = anObject[key];
+		return result;
+	}, {});
 }
