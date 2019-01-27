@@ -161,9 +161,9 @@ export function resolvePage(calledUrl, routePath) {
 
 	while (!fileFound && extensions.length > 0) {
 		ext = extensions.pop();
-		fname = fname.includes('.') ? fname : `${fname}.${ext}`;
+		const qfname = fname.includes('.') ? fname : `${fname}.${ext}`;
 		dir = parsedPath.dir;
-		pathToFile = path.join(dir, fname);
+		pathToFile = path.join(dir, qfname);
 		fileFound = isFile(path.join('pages', pathToFile));
 	}
 
