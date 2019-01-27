@@ -72,47 +72,21 @@ function createHandlebarsEnv() {
 }
 
 const Sequelize = require('sequelize');
-let sequelize = null;
-
-// TODO: legt eine sql-Datei im selben Ordner an
-export function connectToDatabase() {
-    return new Promise((resolve, reject) => {
-    	if (!sequelize) {
-			sequelize = new Sequelize('database', null, null, {
-				dialect: 'sqlite',
-				storage: 'data/database.db'
-			});
-
-			sequelize
-				.authenticate()
-				.then( _ => {
-					console.log('Connected to database.');
-					resolve(true);
-				})
-				.catch(error => {
-					// fails, if connection is already established
-					resolve(true);
-				});
-    	}
-	})
-}
-export function disconectFromSQLDatabase() {
-	return new Promise((resolve, reject) => {
-		if (sequelize) {
-			sequelize.close()
-				.then(_ => {
-					console.log('Database connection closed.'); //TODO
-					resolve(true);
-				})
-				.catch(error => {
-					// fails, if no connection is established
-					resolve(true);
-				})
-				.finally(_ => {
-					sequelize = null;
-			});
-		}
+const sequelize = new Sequelize('database', null, null, {
+	dialect: 'sqlite',
+	storage: 'data/database.db'
+});
+sequelize
+	.authenticate()
+	.then( _ => {
+		console.log('Connected to database.');
 	});
+
+// TODO: figure out how to reload database only if database is for a page/fragment request needed. Otherwise t
+export function reloadDatabase() {
+    return new Promise((resolve, reject) => {
+		resolve(true);
+	})
 }
 
 function runSql(key, maybeSql, params) {
@@ -162,6 +136,7 @@ export function parseFrontmatter(frontmatter, filename, requestParams) {
 
 // kein 'precompile' von Handlebars!
 function prepareCompile(url, startDir, frontmatter) {
+	console.log('prepareCompile', url);
 	const preparedUrl = convert(url);
 	const filename = path.basename(preparedUrl);
 	const directory = path.join(startDir, path.dirname(preparedUrl));

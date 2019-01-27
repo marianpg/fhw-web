@@ -5,6 +5,11 @@ import { FileNotFoundError, JsonParseError, ModuleNotFound } from './customError
 
 
 const projectPath = process.cwd();
+const DEFAULTS = {
+	get indexExtensions() {
+		return ['hbs', 'html'];
+	}
+};
 
 export function toAbsolutePath(p) {
 	return p && p.includes(projectPath)
@@ -44,7 +49,7 @@ export function contains(directory, entry) {
 		.map( aEntry => aEntry === entry )
 		.reduce( (val, cur) => val || cur, false );
 
-	return found
+	return found;
 }
 
 export function listFiles(directory) {
@@ -56,22 +61,24 @@ export function listFiles(directory) {
 }
 
 
-// TODO: Weitere Dateierweiterungen
 // TODO: Andere Zeichen erlauben (bspw. "_")
+// TODO: mit 'resolvePage' zusammenführen
+// Liefert eine Liste von infrage kommenden Dateien.
+//
 // Entfernt Anker
 // Entfernt Query-Parameter
-// Ergänzt Ordnerpfade um ein 'index.hbs'
-// Ergänzt fehlende Dateierweiterung um '.hbs'
+// Ergänzt Ordnerpfade um ein 'index', sofern keine Datei angegeben wurde
+// Ergänzt fehlende Dateierweiterung um ['.html', '.hbs']
 export function convert(url) {
 	let result = url === '' ? '/' : url;
 
 	result = result.match(/([\/\.0-9a-zA-Z-_]+)(?=[\?#])?/g)[0] || result;
 
 	if (result.slice(-1) === '/') {
-		result += 'index.hbs';
+		result += 'index';
 	}
 
-	if (result.indexOf('.hbs') === -1) {
+	if (result.indexOf('.') === -1) {
 		result += '.hbs';
 	}
 
@@ -145,17 +152,22 @@ export function resolvePage(calledUrl, routePath) {
 		? parsedUrl.base
 		: parsedPath.base;
 	fname = fname.length === 0 ? 'index' : fname;
-	fname = fname.includes('.hbs') ? fname : `${fname}.hbs`;
 
-	const dir = parsedPath.dir;
+	let fileFound = false;
+	let extensions = DEFAULTS.indexExtensions;
+	let pathToFile = '';
+	let ext = '';
+	let dir = '';
 
-	const pathToFile = path.join(dir, fname);
-
-	if (!isFile(path.join('pages', pathToFile))) {
-		return FileNotFoundError(`Can not find file "${fname}" in directory "pages/${dir}"`);
+	while (!fileFound && extensions.length > 0) {
+		ext = extensions.pop();
+		fname = fname.includes('.') ? fname : `${fname}.${ext}`;
+		dir = parsedPath.dir;
+		pathToFile = path.join(dir, fname);
+		fileFound = isFile(path.join('pages', pathToFile));
 	}
 
-	return pathToFile;
+	return fileFound ? pathToFile : FileNotFoundError(`Can not find file "${fname}" in directory "pages/${dir}"`);
 }
 
 export function resolveStatic(calledUrl, route, ignoreExistence) {

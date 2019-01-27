@@ -5,7 +5,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import multer from 'multer';
 
-import { compile, connectToDatabase, disconectFromSQLDatabase } from './compile';
+import { compile, reloadDatabase } from './compile';
 import {
     generateErrorPage,
     RessourceNotFoundError,
@@ -74,7 +74,7 @@ function servePage(pathToFile, params = {}, sessionData = {}, pageData = {}, sta
 		return pathToFile;
 	}
     const frontmatter = Object.assign({}, { request: params }, { global: loadGlobalFrontmatter() }, { page: pageData }, { session: sessionData });
-
+	console.log("serverPage", pathToFile);
 	return compile(pathToFile, frontmatter)
 		.then(html => Promise.resolve({html, status}));
 }
@@ -177,7 +177,7 @@ export function start(userConfig) {
 		const calledUrl = req.path;
 		console.log(`\n\nCalling ressource "${calledUrl} with method ${req.method}".`);
 
-        connectToDatabase()
+        reloadDatabase()
 			.then(prepareRoutes)
 			.then(routes => { //TODO different error msg, if no route found
 
@@ -199,7 +199,7 @@ export function start(userConfig) {
                         const sessionData = parseSession(req, res, params);
 
 						if (isDefined(route.page)) {
-							const pathToFile = resolvePage(calledUrl, route.page, 'pages', '.hbs');
+							const pathToFile = resolvePage(calledUrl, route.page);
 							result = servePage(pathToFile, params, sessionData);
 						}
 						if (isDefined(route.controller)) {
@@ -251,7 +251,7 @@ export function start(userConfig) {
 				} else {
 					console.log("Unexpected Server Error with Code 1. Please send a report to mpg@fh-wedel.de.");
 				}
-			}).finally(disconectFromSQLDatabase);
+			}).finally();
 	});
 
 	// TODO: do a server restart if configuration (i.e. port) has changed
