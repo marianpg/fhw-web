@@ -18,3 +18,9 @@ SQL
 * dynamische Bezeichner in SQL Statements falsch (typo, etc.)
  
 * zurzeit nur eine Datenbank "data/database.db" möglich
+
+* einzeilige Ergebnisse => einelementiges Array
+
+* sitzungs_counter (Insert Into On Conflict Do Update)
+
+* Parallele SQL-Anweisungen können Ärger bereiten: Reihenfolge!

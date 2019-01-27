@@ -87,3 +87,25 @@ export function objectFlatMap(arrOfObjects) {
 		return result;
 	}, {});
 }
+
+/*
+ * merges a list of object
+ * uses last occurrence whenever keys overlap
+ *
+ */
+export function mergeObjects(...objects) {
+
+	return objects.reduce((obj, val) => Object.assign(obj, val), {})
+}
+
+export function unpackSqlResult(result) {
+	if (result.length === 1) {
+		return unpackSqlResult(result[0]);
+	}
+
+	if (Object.keys(result).length === 1) {
+		return Object.values(result)[0];
+	}
+
+	return result;
+}

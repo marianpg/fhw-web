@@ -7,8 +7,7 @@ import handlebars from 'handlebars';
 import { FileNotFoundError, HelperAlreadyDeclared, WrongFiletypeError } from './customError';
 
 import { exists, contains, convert, listFiles, loadDynamicModule, toAbsolutePath } from './ressource-utils';
-import { objectFlatMap, isJson, isYaml, parseJson, parseYaml } from './helper';
-const sqlite3 = require('sqlite3').verbose();
+import { objectFlatMap, isJson, isYaml, parseJson, parseYaml, mergeObjects, unpackSqlResult } from './helper';
 
 
 function registerCustomHelpers(handlebarsEnv) {
@@ -72,35 +71,37 @@ function createHandlebarsEnv() {
     return handlebarsEnv;
 }
 
-let sqliteDB = null;
+const Sequelize = require('sequelize');
+const sequelize = new Sequelize('database', null, null, {
+	dialect: 'sqlite',
+	storage: 'data/database.db'
+});
+
 // TODO: legt eine sql-Datei im selben Ordner an
 export function connectToDatabase() {
     return new Promise((resolve, reject) => {
-        sqliteDB = new sqlite3.Database(toAbsolutePath('/data/database.db'), (err) => {
-            if (err) {
-            	reject('Database Error: ' + err.message); // TODO Custom Error Class
-            }
-            console.log('Connected to database.');
-            resolve(true);
-        });
+		sequelize
+			.authenticate()
+			.then( _ => {
+				console.log('Connected to database.');
+				resolve(true);
+			})
+			.catch(error => {
+				reject('Database Error: ' + error.message); // TODO Custom Error Class
+		});
 	})
 }
-
 export function disconectFromSQLDatabase() {
-    return new Promise((resolve, reject) => {
-        if (sqliteDB) {
-            sqliteDB.close((err) => {
-                if (err) {
-                    reject('Database Error: ' + err.message); // TODO Custom Error Class
-                }
-                console.log('Close the database connection.'); //TODO
-                sqliteDB = null;
-                resolve(true);
-            });
-        } else {
-            resolve(true);
-        }
-    })
+	return new Promise((resolve, reject) => {
+		sequelize.close()
+			.then(_ => {
+				console.log('Database connection closed.'); //TODO
+				resolve(true);
+			})
+			.catch(error => {
+				reject('Database Error: ' + err.message); // TODO Custom Error Class
+			});
+	});
 }
 
 function executeSql(key, value) {
@@ -129,13 +130,26 @@ function parseSql(maybeSql, requestParams) {
     return maybeSql;
 }
 
+function runSql(key, maybeSql, params) {
+	console.log(maybeSql, params);
+	return new Promise((resolve, reject) => {
+		sequelize.query(maybeSql,
+			{ replacements: params }
+		).then(result => {
+			resolve({[key]: result[0]});
+		})
+		.catch(error => {
+			resolve({[key]: unpackSqlResult(maybeSql)});
+		})
+	});
+}
+
 // TODO: Zurzeit wird eine "/data/database.sql" Datei erwartet. Mehrere Dateien erlauben? Wie sinnvoll verknüpfen?
 function parseAndExecuteSql(frontmatter, requestParams) {
     return new Promise((resolve, reject) => {
-
         let promises = Object.keys(frontmatter).map(key => {
-            let maybeSql = parseSql(frontmatter[key], requestParams);
-            return executeSql(key, maybeSql);
+        	console.log("runSql", key, frontmatter[key]);
+            return runSql(key, frontmatter[key], mergeObjects(requestParams.path, requestParams.get, requestParams.post));
         });
 
         Promise.all(promises).then(values => {
