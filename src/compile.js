@@ -72,86 +72,69 @@ function createHandlebarsEnv() {
 }
 
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize('database', null, null, {
-	dialect: 'sqlite',
-	storage: 'data/database.db'
-});
+let sequelize = null;
 
 // TODO: legt eine sql-Datei im selben Ordner an
 export function connectToDatabase() {
     return new Promise((resolve, reject) => {
-		sequelize
-			.authenticate()
-			.then( _ => {
-				console.log('Connected to database.');
-				resolve(true);
-			})
-			.catch(error => {
-				// fails, if connection is already established
-				resolve(true);
-		});
+    	if (!sequelize) {
+			sequelize = new Sequelize('database', null, null, {
+				dialect: 'sqlite',
+				storage: 'data/database.db'
+			});
+
+			sequelize
+				.authenticate()
+				.then( _ => {
+					console.log('Connected to database.');
+					resolve(true);
+				})
+				.catch(error => {
+					// fails, if connection is already established
+					resolve(true);
+				});
+    	}
 	})
 }
 export function disconectFromSQLDatabase() {
 	return new Promise((resolve, reject) => {
-		sequelize.close()
-			.then(_ => {
-				console.log('Database connection closed.'); //TODO
-				resolve(true);
-			})
-			.catch(error => {
-				// fails, if no connection is established
-				resolve(true);
+		if (sequelize) {
+			sequelize.close()
+				.then(_ => {
+					console.log('Database connection closed.'); //TODO
+					resolve(true);
+				})
+				.catch(error => {
+					// fails, if no connection is established
+					resolve(true);
+				})
+				.finally(_ => {
+					sequelize = null;
 			});
+		}
 	});
 }
 
-function executeSql(key, value) {
-    return new Promise((resolve, reject) => {
-        sqliteDB.all(value, [], (err, rows) => {
-           if (err) {
-               console.log('maybe sql error:', err);
-               resolve({[key]: value});
-           }
-           resolve({[key]: rows});
-        });
-    });
-}
-
-function parseSql(maybeSql, requestParams) {
-    const regex = /\$(get|post|path).([\w]+)/g;
-    let match, httpMethod, key;
-
-    while (match = regex.exec(maybeSql))
-    {
-        httpMethod = match[1];
-        key = match[2];
-        maybeSql = maybeSql.replace(match[0], requestParams[httpMethod][key]);
-    }
-
-    return maybeSql;
-}
-
 function runSql(key, maybeSql, params) {
-	console.log(maybeSql, params);
 	return new Promise((resolve, reject) => {
 		sequelize.query(maybeSql,
 			{ replacements: params }
 		).then(result => {
-			resolve({[key]: result[0]});
+			resolve({[key]: unpackSqlResult(result[0])});
 		})
 		.catch(error => {
-			resolve({[key]: unpackSqlResult(maybeSql)});
+			resolve({[key]: maybeSql});
 		})
 	});
 }
 
 // TODO: Zurzeit wird eine "/data/database.sql" Datei erwartet. Mehrere Dateien erlauben? Wie sinnvoll verknüpfen?
 function parseAndExecuteSql(frontmatter, requestParams) {
+	const params = mergeObjects(requestParams.path, requestParams.get, requestParams.post);
+
     return new Promise((resolve, reject) => {
         let promises = Object.keys(frontmatter).map(key => {
-        	console.log("runSql", key, frontmatter[key]);
-            return runSql(key, frontmatter[key], mergeObjects(requestParams.path, requestParams.get, requestParams.post));
+            return runSql(key, frontmatter[key], params);
         });
 
         Promise.all(promises).then(values => {
