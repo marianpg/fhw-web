@@ -87,7 +87,8 @@ export function connectToDatabase() {
 				resolve(true);
 			})
 			.catch(error => {
-				reject('Database Error: ' + error.message); // TODO Custom Error Class
+				// fails, if connection is already established
+				resolve(true);
 		});
 	})
 }
@@ -99,7 +100,8 @@ export function disconectFromSQLDatabase() {
 				resolve(true);
 			})
 			.catch(error => {
-				reject('Database Error: ' + err.message); // TODO Custom Error Class
+				// fails, if no connection is established
+				resolve(true);
 			});
 	});
 }
