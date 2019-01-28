@@ -5,7 +5,7 @@ const prepareRoutes = require('../lib/routes').default;
 
 
 const runTest = (name, urlCalled, routes, expected) => {
-    return prepareRoutes(routes).then(routes => {
+    return prepareRoutes({routes}).then(routes => {
         const determined = resolveStatic(urlCalled, routes[0], true);
         evaluate(name, determined, expected);
     });

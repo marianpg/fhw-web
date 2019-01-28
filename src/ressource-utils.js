@@ -101,7 +101,6 @@ function stripBOM (content) {
 	return content
 }
 
-// throws Exception
 export function loadJson(filename, directory = '/') {
 	const fname = filename.split(".")[0] + '.json';
 	const pathToFile = path.join(projectPath, directory, fname);

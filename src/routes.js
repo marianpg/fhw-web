@@ -7,30 +7,30 @@ import { isDefined, isUndefined, isArray, copy } from './helper';
 
 const HttpMethods = ['get', 'post', 'put', 'patch', 'delete'];
 
-const magicRoutes = [
-	{
-		"url": "/assets/*",
-		"static": "assets/*"
-	}, {
-		"url": "/*",
-		"method": ["get"],
-		"page": "*"
-	}
-];
+const magicRoutes = [{
+	"url": "/*",
+	"static": "/*"
+}, {
+	"url": "/*",
+	"page": "*"
+}];
 
-// TODO: bei jedem Request Routes neu einlesen
-export default function prepareRoutes() {
+export default function prepareRoutes(config) {
 	let routeDefinitions = {};
 
-	try {
-			routeDefinitions = loadJson('routes.json');
-		} catch(error) {
-			throw JsonParseError('routes.json', error.message);
+	if (config.magicRoutes) {
+		routeDefinitions = JSON.parse(JSON.stringify(magicRoutes));
+	} else if (config.routes) {
+		routeDefinitions = JSON.parse(JSON.stringify(config.routes));
+	} else {
+		routeDefinitions = loadJson('routes.json');
+		if (!routeDefinitions) {
+			throw JsonParseError('routes.json', 'Could not read routes.json file.');
 		}
+	}
 
-	routeDefinitions = routeDefinitions || JSON.parse(JSON.stringify(magicRoutes));
 
-    // TODO: Mit Sternchen umgehen
+	// TODO: Mit Sternchen umgehen
 	// TODO: was, wenn url === "" ? Ist das schlimm?
 	// TODO: URL-String sowie PAGE-String validieren
 

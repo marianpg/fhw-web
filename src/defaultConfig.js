@@ -3,5 +3,6 @@ export default {
 	validator: {
 		html: true,
 		css: true
-	}
+	},
+	magicRoutes: false
 };

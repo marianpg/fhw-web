@@ -178,7 +178,7 @@ export function start(userConfig) {
 		console.log(`\n\nCalling ressource "${calledUrl} with method ${req.method}".`);
 
         reloadDatabase()
-			.then(prepareRoutes)
+			.then(prepareRoutes.bind(null, config))
 			.then(routes => { //TODO different error msg, if no route found
 
 				// loop will stop early, if a route for called url was found
