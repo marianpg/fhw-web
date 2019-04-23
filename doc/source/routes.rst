@@ -1,9 +1,8 @@
 Routen
 ======
 
-Die Routendefinitionen werden in einer Datei `routes.json` beschrieben. Diese Datei muss ggf.
-erst im Projektordner angelegt werden. Existiert keine, verwendet das Framework automatisch
-*magische Routen*.
+Die Routendefinitionen werden in einer Datei `routes.json` beschrieben. Diese Datei muss erst im Projektordner angelegt werden.
+Alternativ können in der server.js "magicRoutes" also *magische Routen* aktivieren.
 
 
 Relative Pfade <> Absolute Pfade

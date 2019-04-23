@@ -47,6 +47,7 @@ Konfigurations-Objekt übergeben werden. Aktuell sind folgende Optionen möglich
             "html": <Boolean>, // default true
             "css": <Boolean>   // default true
         }
+        "magicRoutes": <Boolean> // default false
     }
 
 
@@ -56,7 +57,8 @@ Für die erste Übung sollte sollte diese folgendem Inhalt entsprechen::
     var fhWeb = require('fhw-web');
 
     fhWeb.start({
-        port: 8080
+        port: 8080,
+        magicRoutes: true
     });
 
 
@@ -159,7 +161,7 @@ Dabei werden drei wesentliche Aspekte im Framework umgesetzt:
 Projekt-/Ordnerstruktur
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Für die Aufgabe 01 werden Routen `magisch` bereitgestellt. Routing-Angaben enthalten im Wesentlichen Informationen
+Für die Einführungsaufgabe werden Routen `magisch` bereitgestellt. Routing-Angaben enthalten im Wesentlichen Informationen
 darüber, welche Ressourcen
 
 - der Server generell bereitstellt
