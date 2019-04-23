@@ -28,7 +28,7 @@ Für die erste Übung sollte sollte diese folgendem Inhalt entsprechen::
       "author": "",
       "license": "ISC",
       "dependencies": {
-        "fhw-web": "0.12.0"
+        "fhw-web": "0.12.1"
       }
     }
 

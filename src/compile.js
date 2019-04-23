@@ -137,7 +137,9 @@ export function parseFrontmatter(frontmatter, filename, requestParams) {
 
 	/*result = parseAndExecuteSql(result, requestParams);*/
 
-	return result;
+	return new Promise((resolve, reject) => {
+		resolve(result);
+	});
 }
 
 // kein 'precompile' von Handlebars!
