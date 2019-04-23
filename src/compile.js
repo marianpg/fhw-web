@@ -70,7 +70,7 @@ function createHandlebarsEnv() {
 
     return handlebarsEnv;
 }
-
+/*
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize('database', null, null, {
 	dialect: 'sqlite',
@@ -81,14 +81,14 @@ sequelize
 	.then( _ => {
 		console.log('Connected to database.');
 	});
-
+*/
 // TODO: figure out how to reload database only if database is for a page/fragment request needed. Otherwise t
 export function reloadDatabase() {
     return new Promise((resolve, reject) => {
 		resolve(true);
 	})
 }
-
+/*
 function runSql(key, maybeSql, params) {
 	return new Promise((resolve, reject) => {
 		sequelize.query(maybeSql,
@@ -116,11 +116,11 @@ function parseAndExecuteSql(frontmatter, requestParams) {
         });
     });
 }
-
+*/
 // Todo: global configuration "onlyJson"/"onlyYaml"/"both"
 export function parseFrontmatter(frontmatter, filename, requestParams) {
 	let result = {};
-
+	/*
 	if (isJson(frontmatter)) {
         result= parseJson(frontmatter, filename);
 	} else if (isYaml(frontmatter)) {
@@ -128,8 +128,14 @@ export function parseFrontmatter(frontmatter, filename, requestParams) {
 	} else {
         throw WrongFiletypeError(`Wrong filestructure in file ${filename}. It neither contains well-formed json or yaml.`);
 	}
+	*/
+	if (isJson(frontmatter)) {
+		result= parseJson(frontmatter, filename);
+	} else {
+		throw WrongFiletypeError(`Wrong filestructure in file ${filename}. It does not contain well-formed json.`);
+	}
 
-	result = parseAndExecuteSql(result, requestParams);
+	/*result = parseAndExecuteSql(result, requestParams);*/
 
 	return result;
 }
