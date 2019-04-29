@@ -347,7 +347,7 @@ templates/full-html.hbs
   ::
 
     <!DOCTYPE html>
-    <html>
+    <html lang="de">
     <head>
         <meta charset="UTF-8">
         <title>{{ global.title }}: {{ page.title }}</title>
