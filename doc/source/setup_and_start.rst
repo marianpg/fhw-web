@@ -242,7 +242,7 @@ angezeigt wird. Alternativ lässt sich die Fehlerbeschreibung auch im Inspector 
 Bspw. erzeugt ein Aufruf, einer nicht vorhandenen page `http://localhost:8080/invalid` folgenden HTML-Quelltext::
 
     <!-- Error Description in hidden div below -->
-    <html>
+    <html lang="de">
       <head>
       </head>
       <body style="background-color: #b30000;">
