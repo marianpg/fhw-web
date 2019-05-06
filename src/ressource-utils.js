@@ -72,7 +72,7 @@ export function listFiles(directory) {
 export function convert(url) {
 	let result = url === '' ? '/' : url;
 
-	result = result.match(/([\/\.0-9a-zA-Z-_]+)(?=[\?#])?/g)[0] || result;
+	result = result.match(/([\/\.\\0-9a-zA-Z-_]+)(?=[\?#])?/g)[0] || result;
 
 	if (result.slice(-1) === '/') {
 		result += 'index';
