@@ -91,6 +91,7 @@ class ModuleNotFound extends ExtendableError {}
 class DataSaveError extends ExtendableError {}
 class ControllerReturnValueError extends ExtendableError {}
 class WrongFiletypeError extends ExtendableError {}
+class CSS3VariableNotFoundError extends ExtendableError {}
 
 
 export function isConnectionError(error) {
@@ -113,4 +114,5 @@ export function ModuleNotFound(message) { return new ModuleNotFound(message, 500
 export function DataSaveError(filename, data, message) { return new DataSaveError(`DataSaveError: could not save ${filename} with data ${data}: ${message}`, 500); }
 export function ControllerReturnValueError(message) { return new ControllerReturnValueError(message, 500); }
 export function WrongFiletypeError(message) { return new WrongFiletypeError(message, 500); }
+export function CSS3VariableNotFoundError(filename, varName) { return new CSS3VariableNotFoundError(`CSS3VariableNotFoundError: Use of undefined CSS3-Variable named ${varName} in Stylesheet ${filename}.`, 500); }
 

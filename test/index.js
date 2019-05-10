@@ -1,5 +1,7 @@
 const routeTests = require('./routes');
+const cssValidationTests = require('./cssvalidator');
 const frontmatterTests = require('./frontmatter');
 
-routeTests(); //uncomment when ready
+routeTests();
+cssValidationTests();
 //frontmatterTests();

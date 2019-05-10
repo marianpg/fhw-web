@@ -4,5 +4,6 @@ export default {
 		html: true,
 		css: true
 	},
-	magicRoutes: false
+	magicRoutes: false,
+	shouldExtractCssVariables: true
 };

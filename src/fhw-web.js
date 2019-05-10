@@ -227,7 +227,7 @@ export function start(userConfig) {
                 || (!isDefined(result.validation) && config.validator.css);
 
 				if (!res.finished && result && result.html && validate) {
-					return validateCss(result);
+					return validateCss(result, config.shouldExtractCssVariables);
 				} else {
 					return Promise.resolve(result);
 				}

@@ -1,0 +1,11 @@
+@media screen and (max-width: 576px)  {
+	:root {
+		--main-color: red;
+		--font-size: 1.2em;
+	}
+
+	:root {
+		--bg-color: grey;
+		--padding: 2px;
+	}
+}
