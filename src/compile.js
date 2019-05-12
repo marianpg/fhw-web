@@ -156,8 +156,13 @@ function prepareCompile(url, startDir, frontmatter) {
 		const file = fs.readFileSync(path.join(directory, filename), 'utf8');
 		const fileSplitted = file.split('---');
 
-		const fmatter = fileSplitted.length > 1 ? fileSplitted[0] : '{}';
-		const hbs = fileSplitted.length > 1 ? fileSplitted[1] : fileSplitted[0] ;
+		let fmatter = fileSplitted.length > 1 ? fileSplitted[0] : '{}';
+		let hbs = fileSplitted.length > 1 ? fileSplitted[1] : fileSplitted[0];
+
+		if (fileSplitted.length > 2 && fileSplitted[0].length == 0) {
+			fmatter = fileSplitted[1];
+			hbs = fileSplitted[2];
+		}
 
 		return parseFrontmatter(fmatter, filename, frontmatter.request).then(frontmatterLocal => {
             const page = Object.assign({}, frontmatter.page, frontmatterLocal);
