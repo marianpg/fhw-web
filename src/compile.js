@@ -11,22 +11,22 @@ import { objectFlatMap, isJson, isYaml, parseJson, parseYaml, mergeObjects, unpa
 
 
 function registerCustomHelpers(handlebarsEnv) {
-	const helpersDirectory = 'helpers';
-	const regex = /(.+)(.js)/; // only *.js files with at least one character filenames
+    const helpersDirectory = 'helpers';
+    const regex = /(.+)(.js)/; // only *.js files with at least one character filenames
 
-	if (exists(helpersDirectory)) {
+    if (exists(helpersDirectory)) {
         let allHelpers = []; // element := { modulename, funcname }
-		listFiles(helpersDirectory).forEach(filename => {
-			const match = regex.exec(filename);
+        listFiles(helpersDirectory).forEach(filename => {
+            const match = regex.exec(filename);
 
-			if (match) {
-				const modulename = match[1];
-				const module = loadDynamicModule(modulename, helpersDirectory);
-				if (module instanceof Error) {
-					throw module;
-				}
+            if (match) {
+                const modulename = match[1];
+                const module = loadDynamicModule(modulename, helpersDirectory);
+                if (module instanceof Error) {
+                    throw module;
+                }
 
-				Object.keys(module).forEach(funcname => {
+                Object.keys(module).forEach(funcname => {
                     const newHelper = {modulename, funcname};
 
                     allHelpers.forEach(cur => {
@@ -41,11 +41,11 @@ function registerCustomHelpers(handlebarsEnv) {
                         args.pop(); // last argument contains an options object, we do not need it here
                         return module[funcname](...args);
                     });
-				});
+                });
 
-			}
-		})
-	}
+            }
+        })
+    }
 }
 
 
@@ -54,11 +54,11 @@ function registerCustomHelpers(handlebarsEnv) {
  * current context.
  */
 function registerGlobalHelpers(handlebarsEnv) {
-	handlebarsEnv.registerHelper('debugJson', function(context, options) {
-		const pageData = context.data.root;
-		const toReturn = `<pre>${JSON.stringify(pageData, null, 2)}</pre>`;
-		return (new handlebars.SafeString(toReturn));
-	});
+    handlebarsEnv.registerHelper('debugJson', function(context, options) {
+        const pageData = context.data.root;
+        const toReturn = `<pre>${JSON.stringify(pageData, null, 2)}</pre>`;
+        return (new handlebars.SafeString(toReturn));
+    });
 }
 
 function createHandlebarsEnv() {
@@ -73,38 +73,38 @@ function createHandlebarsEnv() {
 /*
 const Sequelize = require('sequelize');
 const sequelize = new Sequelize('database', null, null, {
-	dialect: 'sqlite',
-	storage: 'data/database.db'
+    dialect: 'sqlite',
+    storage: 'data/database.db'
 });
 sequelize
-	.authenticate()
-	.then( _ => {
-		console.log('Connected to database.');
-	});
+    .authenticate()
+    .then( _ => {
+        console.log('Connected to database.');
+    });
 */
 // TODO: figure out how to reload database only if database is for a page/fragment request needed. Otherwise t
 export function reloadDatabase() {
     return new Promise((resolve, reject) => {
-		resolve(true);
-	})
+        resolve(true);
+    })
 }
 /*
 function runSql(key, maybeSql, params) {
-	return new Promise((resolve, reject) => {
-		sequelize.query(maybeSql,
-			{ replacements: params }
-		).then(result => {
-			resolve({[key]: unpackSqlResult(result[0])});
-		})
-		.catch(error => {
-			resolve({[key]: maybeSql});
-		})
-	});
+    return new Promise((resolve, reject) => {
+        sequelize.query(maybeSql,
+            { replacements: params }
+        ).then(result => {
+            resolve({[key]: unpackSqlResult(result[0])});
+        })
+        .catch(error => {
+            resolve({[key]: maybeSql});
+        })
+    });
 }
 
 // TODO: Zurzeit wird eine "/data/database.sql" Datei erwartet. Mehrere Dateien erlauben? Wie sinnvoll verknüpfen?
 function parseAndExecuteSql(frontmatter, requestParams) {
-	const params = mergeObjects(requestParams.path, requestParams.get, requestParams.post);
+    const params = mergeObjects(requestParams.path, requestParams.get, requestParams.post);
 
     return new Promise((resolve, reject) => {
         let promises = Object.keys(frontmatter).map(key => {
@@ -119,52 +119,52 @@ function parseAndExecuteSql(frontmatter, requestParams) {
 */
 // Todo: global configuration "onlyJson"/"onlyYaml"/"both"
 export function parseFrontmatter(frontmatter, filename, requestParams) {
-	let result = {};
-	/*
-	if (isJson(frontmatter)) {
+    let result = {};
+    /*
+    if (isJson(frontmatter)) {
         result= parseJson(frontmatter, filename);
-	} else if (isYaml(frontmatter)) {
+    } else if (isYaml(frontmatter)) {
         result = parseYaml(frontmatter, filename);
-	} else {
+    } else {
         throw WrongFiletypeError(`Wrong filestructure in file ${filename}. It neither contains well-formed json or yaml.`);
-	}
-	*/
-	if (isJson(frontmatter)) {
-		result= parseJson(frontmatter, filename);
-	} else {
-		throw WrongFiletypeError(`Wrong filestructure in file ${filename}. It does not contain well-formed json.`);
-	}
+    }
+    */
+    if (isJson(frontmatter)) {
+        result= parseJson(frontmatter, filename);
+    } else {
+        throw WrongFiletypeError(`Wrong filestructure in file ${filename}. It does not contain well-formed json.`);
+    }
 
-	/*result = parseAndExecuteSql(result, requestParams);*/
+    /*result = parseAndExecuteSql(result, requestParams);*/
 
-	return new Promise((resolve, reject) => {
-		resolve(result);
-	});
+    return new Promise((resolve, reject) => {
+        resolve(result);
+    });
 }
 
 // kein 'precompile' von Handlebars!
 function prepareCompile(url, startDir, frontmatter) {
-	console.log('prepareCompile', url);
-	const preparedUrl = convert(url);
-	const filename = path.basename(preparedUrl);
-	const directory = path.join(startDir, path.dirname(preparedUrl));
+    console.log('prepareCompile', url);
+    const preparedUrl = convert(url);
+    const filename = path.basename(preparedUrl);
+    const directory = path.join(startDir, path.dirname(preparedUrl));
 
-	console.log(`Going to compile file ${filename} from directory ${directory}`);
+    console.log(`Going to compile file ${filename} from directory ${directory}`);
 
-	if (exists(directory) && contains(directory, filename)) {
+    if (exists(directory) && contains(directory, filename)) {
 
-		const file = fs.readFileSync(path.join(directory, filename), 'utf8');
-		const fileSplitted = file.split('---');
+        const file = fs.readFileSync(path.join(directory, filename), 'utf8');
+        const fileSplitted = file.split('---');
 
-		let fmatter = fileSplitted.length > 1 ? fileSplitted[0] : '{}';
-		let hbs = fileSplitted.length > 1 ? fileSplitted[1] : fileSplitted[0];
+        let fmatter = fileSplitted.length > 1 ? fileSplitted[0] : '{}';
+        let hbs = fileSplitted.length > 1 ? fileSplitted[1] : fileSplitted[0];
 
-		if (fileSplitted.length > 2 && fileSplitted[0].length == 0) {
-			fmatter = fileSplitted[1];
-			hbs = fileSplitted[2];
-		}
+        if (fileSplitted.length > 2 && fileSplitted[0].length == 0) {
+            fmatter = fileSplitted[1];
+            hbs = fileSplitted[2];
+        }
 
-		return parseFrontmatter(fmatter, filename, frontmatter.request).then(frontmatterLocal => {
+        return parseFrontmatter(fmatter, filename, frontmatter.request).then(frontmatterLocal => {
             const page = Object.assign({}, frontmatter.page, frontmatterLocal);
             const frontmatterCombined = Object.assign({}, { page: page }, { global: frontmatter.global }, { request: frontmatter.request }, { session: frontmatter.session });
 
@@ -175,15 +175,15 @@ function prepareCompile(url, startDir, frontmatter) {
 
             return Promise.resolve({hbs, frontmatterCombined});
         });
-	} else {
-	    throw FileNotFoundError(`File ${filename} not found in Directory ${directory}`);
+    } else {
+        throw FileNotFoundError(`File ${filename} not found in Directory ${directory}`);
     }
 }
 
 export function compile(url, frontmatter = {}, dir = 'pages', contentHtml = '') {
     return prepareCompile(url, dir, frontmatter)
-		.then(compiled => {
-			const { hbs, frontmatterCombined} = compiled;
+        .then(compiled => {
+            const { hbs, frontmatterCombined} = compiled;
 
             const handlebarsEnv = createHandlebarsEnv();
 
@@ -212,5 +212,5 @@ export function compile(url, frontmatter = {}, dir = 'pages', contentHtml = '') 
             }).then(htmlCompiled => {
                 return Promise.resolve(htmlCompiled.length === 0 ? " " : htmlCompiled.trim());
             });
-		});
+        });
 }
