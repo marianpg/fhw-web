@@ -11,26 +11,26 @@ import { HtmlValidationError, CssValidationError, FileNotFoundError, isConnectio
 
 
 export function validateHtml(result) {
-	const options = { format: 'text', data: result.html };
+    const options = { format: 'text', data: result.html };
 
-	return htmlValidator(options)
-		.then(evaluation => {
+    return htmlValidator(options)
+        .then(evaluation => {
 
-			if (isDefined(evaluation) && (evaluation.includes('Error:') || evaluation.includes('Warning:'))) {
-				throw HtmlValidationError(evaluation, result.html);
-			} else {
-				return Promise.resolve(result);
-			}
-		}).catch(error => {
-			if (isDefined(error)) {
-				if (isConnectionError(error)) {
-					console.log("Warning (HTML): could not establish internet connection to the html validator: validation skipped.");
-				} else {
-					throw HtmlValidationError(error, result.html);
-				}
-			}
-			return Promise.resolve(result);
-		});
+            if (isDefined(evaluation) && (evaluation.includes('Error:') || evaluation.includes('Warning:'))) {
+                throw HtmlValidationError(evaluation, result.html);
+            } else {
+                return Promise.resolve(result);
+            }
+        }).catch(error => {
+            if (isDefined(error)) {
+                if (isConnectionError(error)) {
+                    console.log("Warning (HTML): could not establish internet connection to the html validator: validation skipped.");
+                } else {
+                    throw HtmlValidationError(error, result.html);
+                }
+            }
+            return Promise.resolve(result);
+        });
 }
 
 
@@ -42,31 +42,31 @@ export function validateHtml(result) {
  * return Map of CSS3-Variables: {@key: var-name => @value: var-value}
  */
 export function grabCSS3Variables(css) {
-	const regex = /(\:root\s*\{\s*)([\s\S]+?(?=\s*\}))(\s*\})/g;
-	let resultCss = css;
-	let cssVariables = {};
+    const regex = /(\:root\s*\{\s*)([\s\S]+?(?=\s*\}))(\s*\})/g;
+    let resultCss = css;
+    let cssVariables = {};
 
-	let match = regex.exec(css);
+    let match = regex.exec(css);
 
-	while (match != null && match[0]) {
-		// first: extract root-Scope of CSS3-Variable-Declaration
-		resultCss = `${match[1]} ${match[3]}`;
-		// then extract CSS3-Variables from that Extraction
-		const regexCSSVariables = /(--.*)(\s*:\s*)(.*)(\s*;)/g;
-		let matchCSSVariables = regexCSSVariables.exec(match[2]);
+    while (match != null && match[0]) {
+        // first: extract root-Scope of CSS3-Variable-Declaration
+        resultCss = `${match[1]} ${match[3]}`;
+        // then extract CSS3-Variables from that Extraction
+        const regexCSSVariables = /(--.*)(\s*:\s*)(.*)(\s*;)/g;
+        let matchCSSVariables = regexCSSVariables.exec(match[2]);
 
-		while (matchCSSVariables != null) {
-			cssVariables[matchCSSVariables[1]] = matchCSSVariables[3];
-			matchCSSVariables = regexCSSVariables.exec(match[2]);
-		}
+        while (matchCSSVariables != null) {
+            cssVariables[matchCSSVariables[1]] = matchCSSVariables[3];
+            matchCSSVariables = regexCSSVariables.exec(match[2]);
+        }
 
-		match = regex.exec(css);
-	}
+        match = regex.exec(css);
+    }
 
-	return {
-		css: resultCss,
-		variables: cssVariables
-	};
+    return {
+        css: resultCss,
+        variables: cssVariables
+    };
 }
 
 /**
@@ -80,27 +80,27 @@ export function grabCSS3Variables(css) {
  * return modified CSS-Content as a string
  */
 export function replaceCSS3Variables(fname, css, variables) {
-	let resultCss = '';
+    let resultCss = '';
 
-	const regex = /([\s\S]+?)(var\()(--[\w-]*)(\)\s*)(;?)/g;
-	let match = regex.exec(css);
-	let lastIndex = 0;
+    const regex = /([\s\S]+?)(var\()(--[\w-]*)(\)\s*)(;?)/g;
+    let match = regex.exec(css);
+    let lastIndex = 0;
 
-	// find and replace every CSS3-Variable with its definition
-	while (match != null) {
-		if (!variables[match[3]]) {
-			throw CSS3VariableNotFoundError(fname, match[3]);
-		}
-		resultCss = `${resultCss} ${css.substring(match.index, match.index + match[1].length)} ${variables[match[3]]} ${match[5]}`;
+    // find and replace every CSS3-Variable with its definition
+    while (match != null) {
+        if (!variables[match[3]]) {
+            throw CSS3VariableNotFoundError(fname, match[3]);
+        }
+        resultCss = `${resultCss} ${css.substring(match.index, match.index + match[1].length)} ${variables[match[3]]} ${match[5]}`;
 
-		lastIndex += match[0].length;
-		match = regex.exec(css);
-	}
+        lastIndex += match[0].length;
+        match = regex.exec(css);
+    }
 
-	// rest of CSS-file
-	resultCss = resultCss + css.substring(lastIndex, css.length);
+    // rest of CSS-file
+    resultCss = resultCss + css.substring(lastIndex, css.length);
 
-	return resultCss;
+    return resultCss;
 }
 
 //TODO: more documentation
@@ -117,72 +117,72 @@ export function replaceCSS3Variables(fname, css, variables) {
  * @returns {*}
  */
 export function validateCss(result, shouldExtractCssVariables = false) {
-	const regex = /(<link.*href=\")(.*.css)(\")/g;
-	let match = regex.exec(result.html);
-	let queue = Promise.resolve(result);
-	const cssFiles = [];
+    const regex = /(<link.*href=\")(.*.css)(\")/g;
+    let match = regex.exec(result.html);
+    let queue = Promise.resolve(result);
+    const cssFiles = [];
 
-	while (match != null) {
-		const pathToFile = match[2].startsWith('/') ? match[2].substr(1) : match[2];
+    while (match != null) {
+        const pathToFile = match[2].startsWith('/') ? match[2].substr(1) : match[2];
 
-		if (!pathToFile.includes('http')) {
-			if (exists(pathToFile)) {
-				const file = openFile(pathToFile);
-				cssFiles.push({fname: pathToFile, content: file});
+        if (!pathToFile.includes('http')) {
+            if (exists(pathToFile)) {
+                const file = openFile(pathToFile);
+                cssFiles.push({fname: pathToFile, content: file});
 
-			} else {
-				return Promise.reject(FileNotFoundError(`Could not find Stylesheet ${pathToFile}`));
-			}
-		}
+            } else {
+                return Promise.reject(FileNotFoundError(`Could not find Stylesheet ${pathToFile}`));
+            }
+        }
 
-		match = regex.exec(result.html);
-	}
+        match = regex.exec(result.html);
+    }
 
-	let cssVariables = {};
-	cssFiles.map(({fname, content}) => {
-		const {css, variables} = shouldExtractCssVariables ? grabCSS3Variables(content) : {css: content, variables: {}};
-		cssVariables = Object.assign(cssVariables, variables);
-		return {fname, content: css};
+    let cssVariables = {};
+    cssFiles.map(({fname, content}) => {
+        const {css, variables} = shouldExtractCssVariables ? grabCSS3Variables(content) : {css: content, variables: {}};
+        cssVariables = Object.assign(cssVariables, variables);
+        return {fname, content: css};
 
-	})	.map(({fname, content}) => {
-		return {fname, content: shouldExtractCssVariables ? replaceCSS3Variables(fname, content, cssVariables) : content};
-	})
-		.forEach(({fname, content}) => {
-			if (content.replace(/\s/g,'').length > 0) {
-				const cssValidatorOptions = {
-					text: content,
-					profile: "css3",
-					warning: 1
-				};
+    })    .map(({fname, content}) => {
+        return {fname, content: shouldExtractCssVariables ? replaceCSS3Variables(fname, content, cssVariables) : content};
+    })
+        .forEach(({fname, content}) => {
+            if (content.replace(/\s/g,'').length > 0) {
+                const cssValidatorOptions = {
+                    text: content,
+                    profile: "css3",
+                    warning: 1
+                };
 
-				queue = queue.then(_  => new Promise((resolve, reject) => {
-					cssValidator.validate(cssValidatorOptions, (error, evaluation) => {
+                queue = queue.then(_  => new Promise((resolve, reject) => {
+                    cssValidator.validate(cssValidatorOptions, (error, evaluation) => {
 
-						if (isDefined(error)) {
-							if (isConnectionError(error)) {
-								console.log("Warning (CSS): could not establish internet connection to the css validator: validation skipped.");
-								resolve(result);
-							} else {
-								reject(CssValidationError(error, result.html));
-							}
+                        if (isDefined(error)) {
+                            if (isConnectionError(error)) {
+                                console.log("Warning (CSS): could not establish internet connection to the css validator: validation skipped.");
+                                resolve(result);
+                            } else {
+                                reject(CssValidationError(error, result.html));
+                            }
 
-						} else if (isDefined(evaluation) && isDefined(evaluation.errors) && evaluation.errors.length > 0) {
-							const msg = evaluation.errors.map(err => `${err.message.trim()} (in line ${err.line})`).join('\n');
-							reject(CssValidationError(msg, result.html, cssValidatorOptions.text));
+                        } else if (isDefined(evaluation) && isDefined(evaluation.errors) && evaluation.errors.length > 0) {
+                            const msg = evaluation.errors.map(err => `${err.message.trim()} (in line ${err.line})`).join('\n');
+                            reject(CssValidationError(msg, result.html, cssValidatorOptions.text));
 
-						} else if (isDefined(evaluation) && isDefined(evaluation.warnings) && evaluation.warnings.length > 0) {
-							// TODO: render Warning Page
-							const msg = evaluation.warnings.map(err => `${err.message.trim()} (in line ${err.line})`).join('\n');
-							reject(CssValidationError(msg, result.html, cssValidatorOptions.text));
+                        } else if (isDefined(evaluation) && isDefined(evaluation.warnings) && evaluation.warnings.length > 0) {
+                            // TODO: render Warning Page
+                            const msg = evaluation.warnings.map(err => `${err.message.trim()} (in line ${err.line})`).join('\n');
+                            reject(CssValidationError(msg, result.html, cssValidatorOptions.text));
 
-						} else {
-							resolve(result);
-						}
-					});
-				}));
-			}
-		});
+                        } else {
+                            resolve(result);
+                        }
+                    });
+                }));
+            }
+        });
 
 
-	return queue;
+    return queue;
 }
