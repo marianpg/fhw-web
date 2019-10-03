@@ -78,7 +78,7 @@ function parseCookie(req, res, get, post) {
 		sessionId = req.cookies['session-id'];
 	} else {
 		sessionId = generateId();
-		res.setHeader('Set-Cookie', `session-id=${sessionId}`);
+		res.setHeader('Set-Cookie', `session-id=${sessionId};path=/`); 
 	}
 
 	const session = openSession(sessionId);
