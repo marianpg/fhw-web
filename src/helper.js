@@ -3,27 +3,27 @@ import { JsonParseError, YamlParseError } from './customError';
 
 
 export function isObject(obj) {
-	return (typeof obj === 'object') && (!Array.isArray(obj));
+    return (typeof obj === 'object') && (!Array.isArray(obj));
 }
 
 export function isUndefined(obj) {
-	return obj == null;
+    return obj == null;
 }
 
 export function isDefined(obj) {
-	return !isUndefined(obj);
+    return !isUndefined(obj);
 }
 
 export function isArray(obj) {
-	return Array.isArray(obj);
+    return Array.isArray(obj);
 }
 
 export function isString(obj) {
-	return typeof obj === "string";
+    return typeof obj === "string";
 }
 
 export function isFunction(obj) {
-	return typeof obj === 'function';
+    return typeof obj === 'function';
 }
 
 // lists ::= [aList, aList]
@@ -34,11 +34,11 @@ export function isFunction(obj) {
 export const zip = rows=>rows[0].map((_,c)=>rows.map(row=>row[c]));
 
 export function parseJson(str, filename) {
-	try {
-		return JSON.parse(str);
-	} catch(error) {
-		throw JsonParseError(filename, error.message);
-	}
+    try {
+        return JSON.parse(str);
+    } catch(error) {
+        throw JsonParseError(filename, error.message);
+    }
 }
 
 export function parseYaml(str, filename) {
@@ -50,13 +50,13 @@ export function parseYaml(str, filename) {
 }
 
 export function isJson(str) {
-	try {
-		JSON.parse(str);
-	} catch(error) {
-		return false;
-	}
+    try {
+        JSON.parse(str);
+    } catch(error) {
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 export function isYaml(str) {
@@ -71,21 +71,21 @@ export function isYaml(str) {
 
 
 export function copy(obj) {
-	return JSON.parse(JSON.stringify(obj));
+    return JSON.parse(JSON.stringify(obj));
 }
 
 /*
-	Merges an array of objects of the following style
-	[{key: value}]
-	into one object of all containing keys.
-	notice: no key-collision handling included
+    Merges an array of objects of the following style
+    [{key: value}]
+    into one object of all containing keys.
+    notice: no key-collision handling included
  */
 export function objectFlatMap(arrOfObjects) {
-	return arrOfObjects.reduce((result, anObject) => {
-		let key = Object.keys(anObject)[0];
-		result[key] = anObject[key];
-		return result;
-	}, {});
+    return arrOfObjects.reduce((result, anObject) => {
+        let key = Object.keys(anObject)[0];
+        result[key] = anObject[key];
+        return result;
+    }, {});
 }
 
 /*
@@ -95,17 +95,17 @@ export function objectFlatMap(arrOfObjects) {
  */
 export function mergeObjects(...objects) {
 
-	return objects.reduce((obj, val) => Object.assign(obj, val), {})
+    return objects.reduce((obj, val) => Object.assign(obj, val), {})
 }
 
 export function unpackSqlResult(result) {
-	if (result.length === 1) {
-		return unpackSqlResult(result[0]);
-	}
+    if (result.length === 1) {
+        return unpackSqlResult(result[0]);
+    }
 
-	if (Object.keys(result).length === 1) {
-		return Object.values(result)[0];
-	}
+    if (Object.keys(result).length === 1) {
+        return Object.values(result)[0];
+    }
 
-	return result;
+    return result;
 }

@@ -6,72 +6,72 @@ import htmlEscape from 'html-escape';
 const errorColor = '#b30000';
 
 function wrapInBody(innerHtml = '') {
-	return `<body style="background-color: ${errorColor};">\n${innerHtml}\n</body>`
+    return `<body style="background-color: ${errorColor};">\n${innerHtml}\n</body>`
 }
 
 function styleBody(top, tail) {
-	return `${top} style="background-color: ${errorColor};" ${tail}`;
+    return `${top} style="background-color: ${errorColor};" ${tail}`;
 }
 
 function renderError(html, shouldBeHidden) {
-	const style = shouldBeHidden ? 'style="display: none;"' : '';
+    const style = shouldBeHidden ? 'style="display: none;"' : '';
 
-	return `<!-- Error Description in hidden div below -->\n
-			<div title="Error Description" ${style}>${html}</div>`
+    return `<!-- Error Description in hidden div below -->\n
+            <div title="Error Description" ${style}>${html}</div>`
 }
 
 export function generateErrorPage(error) {
-	let html = error.html ? error.html : '';
+    let html = error.html ? error.html : '';
 
-	const rawExtract = error.extract ? error.extract : '';
-	const extract = rawExtract.length === 0 ? rawExtract : rawExtract.split('\n').map((line, index) => {
-		const lineNo = index + 1;
-		const p = `${lineNo} ${htmlEscape(line)}`;
+    const rawExtract = error.extract ? error.extract : '';
+    const extract = rawExtract.length === 0 ? rawExtract : rawExtract.split('\n').map((line, index) => {
+        const lineNo = index + 1;
+        const p = `${lineNo} ${htmlEscape(line)}`;
 
-		return p;
-	}).join('\n');
+        return p;
+    }).join('\n');
 
-	let stacktrace = error.stack ? error.stack : '';
-	stacktrace = htmlEscape(stacktrace).split('\n').join('<br>');
+    let stacktrace = error.stack ? error.stack : '';
+    stacktrace = htmlEscape(stacktrace).split('\n').join('<br>');
 
-	const regex = /(<body)([\s\S]*)/g;
-	const match = regex.exec(html);
+    const regex = /(<body)([\s\S]*)/g;
+    const match = regex.exec(html);
 
-	if (isDefined(match) && isDefined(match[1]) && isDefined(match[2])) {
-		html = styleBody(match[1], match[2]);
-	} else {
-		html = wrapInBody(html);
-	}
+    if (isDefined(match) && isDefined(match[1]) && isDefined(match[2])) {
+        html = styleBody(match[1], match[2]);
+    } else {
+        html = wrapInBody(html);
+    }
 
-	const shouldBeHidden = isDefined(error.html) && error.html.length > 0;
+    const shouldBeHidden = isDefined(error.html) && error.html.length > 0;
 
-	const description = renderError(` 
-		<h1>An ${error.name} occured:</h1>\n 
-		<code name="stacktrace" style="white-space: pre-line">${stacktrace}</code>\n
-		<pre name="extract">${extract}</pre>\n
-		<div name="raw-extract" style="display: none;">${htmlEscape(rawExtract)}</div>
-	`, shouldBeHidden);
+    const description = renderError(` 
+        <h1>An ${error.name} occured:</h1>\n 
+        <code name="stacktrace" style="white-space: pre-line">${stacktrace}</code>\n
+        <pre name="extract">${extract}</pre>\n
+        <div name="raw-extract" style="display: none;">${htmlEscape(rawExtract)}</div>
+    `, shouldBeHidden);
 
-	return `${description}${html}`;
+    return `${description}${html}`;
 }
 
 // based on https://stackoverflow.com/a/32749533
 class ExtendableError extends Error {
-	constructor(message, status = 500, html = '', extract = '') {
-		super(message);
-		this.name = this.constructor.name;
-		this.status = status;
-		this.html = html;
-		this.extract = extract;
+    constructor(message, status = 500, html = '', extract = '') {
+        super(message);
+        this.name = this.constructor.name;
+        this.status = status;
+        this.html = html;
+        this.extract = extract;
 
         console.log(`${this.name}: ${message}`);
 
-		if (typeof Error.captureStackTrace === 'function') {
-			Error.captureStackTrace(this, this.constructor);
-		} else {
-			this.stack = (new Error(message)).stack;
-		}
-	}
+        if (typeof Error.captureStackTrace === 'function') {
+            Error.captureStackTrace(this, this.constructor);
+        } else {
+            this.stack = (new Error(message)).stack;
+        }
+    }
 }
 
 
@@ -95,7 +95,7 @@ class CSS3VariableNotFoundError extends ExtendableError {}
 
 
 export function isConnectionError(error) {
-	return (error.code === 'ENOTFOUND') && (error.syscall === 'getaddrinfo');
+    return (error.code === 'ENOTFOUND') && (error.syscall === 'getaddrinfo');
 }
 
 export function NotImplementedError(message) { return new NotImplementedError(message, 500); }

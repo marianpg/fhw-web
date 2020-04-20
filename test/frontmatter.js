@@ -14,21 +14,21 @@ module.exports = () => {
     let str = parseYaml(yaml);
     console.log(str);
 
-	let SqlResult = [{id: 0, name: 'Marcus'}, {id: 1, name: 'Michael'}];
-	let res = unpackSqlResult(SqlResult);
-	console.log(res);
+    let SqlResult = [{id: 0, name: 'Marcus'}, {id: 1, name: 'Michael'}];
+    let res = unpackSqlResult(SqlResult);
+    console.log(res);
 
     SqlResult = [{id: 0, name: 'Marcus'}];
-	res = unpackSqlResult(SqlResult);
-	console.log(res);
+    res = unpackSqlResult(SqlResult);
+    console.log(res);
 
-	SqlResult =  [{name: 'Marcus'}];
-	res = unpackSqlResult(SqlResult);
-	console.log(res);
+    SqlResult =  [{name: 'Marcus'}];
+    res = unpackSqlResult(SqlResult);
+    console.log(res);
 
-	SqlResult =  [{}];
-	res = unpackSqlResult(SqlResult);
-	console.log(res);
+    SqlResult =  [{}];
+    res = unpackSqlResult(SqlResult);
+    console.log(res);
 
     //connectToSQLdb();
 };
