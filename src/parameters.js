@@ -74,12 +74,12 @@ function saveSession(session, get = {}, post = {}, path = '') {
 function parseCookie(req, res, get, post) {
     let sessionId = '';
 
-    if (isDefined(req.cookies) && isDefined(req.cookies['session-id'])) {
-        sessionId = req.cookies['session-id'];
-    } else {
-        sessionId = generateId();
-        res.setHeader('Set-Cookie', `session-id=${sessionId}`);
-    }
+	if (isDefined(req.cookies) && isDefined(req.cookies['session-id'])) {
+		sessionId = req.cookies['session-id'];
+	} else {
+		sessionId = generateId();
+		res.setHeader('Set-Cookie', `session-id=${sessionId};path=/`); 
+	}
 
     const session = openSession(sessionId);
 
