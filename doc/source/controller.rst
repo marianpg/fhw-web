@@ -42,16 +42,19 @@ Rückgabewert
 
 Das Resultat einer Funktion muss dabei einem der folgenden definierten entsprechen::
 
-    | Return            ::= <pageResult> | <redirectResult>
+    | Return            ::= <pageResult> | <jsonResult> | <textResult> | <redirectResult>
     |
     | <pageResult>      ::= { <status>, <page>, <data> } // liefert direkt eine Seite <page> aus mit evtl. zusätzlichen <data> Daten
-    | <redirectResult>  ::= { <status>, <redirect> }
+    | <jsonResult>      ::= { <status>, <json> }
+    | <textResult>      ::= { <status>, <text> }
+    | <redirectResult>  ::= { <status>, <redirect> } 
     |
     | <status>          ::= <integer> // entspricht dem HTTP-Status-Code, insb. wichtig bei der Weiterleitung
-    | <page>            ::= <string> // Dateiname der page, enthalten im page-Ordner
-    | <redirect>        ::= <string> // eine URL,  auf die der Browser nach der Verarbeitung weitergeleitet werden soll
-    | <data>            ::= <object> // zusätzliche Daten, die im Frontmatter über das page-Objekt sichtbar sind
-
+    | <page>            ::= <string>  // Dateiname der page, enthalten im page-Ordner
+    | <redirect>        ::= <string>  // eine URL, auf die der Browser nach der Verarbeitung weitergeleitet werden soll
+    | <data>            ::= <object>  // zusätzliche Daten, die im Frontmatter über das page-Objekt sichtbar sind
+    | <json>            ::= <object>  // ein JavaScript-Objekt, welches serialisiert angezeigt wird
+    | <text>            ::= <string>  // einfacher String der auf der Seite angezeigt wird
 
 Dateiinhalt
 """""""""""
