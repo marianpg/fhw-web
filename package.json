@@ -1,47 +1,30 @@
 {
-  "name": "fhw-web",
-  "description": "Framework zur Übung 'Web-Anwendungen' an der Fachhochschule Wedel",
-  "version": "0.12.4",
-  "scripts": {
-    "compile": "rm -rf lib && mkdir lib && babel --presets es2015 --plugins transform-runtime -d lib/ src/",
-    "prepublish": "npm run compile",
-    "start": "npm run compile && node run.js",
-    "test": "npm run compile && node test/"
-  },
-  "dependencies-copy": {
-    "sequelize": "^4.42.0",
-    "sqlite3": "^4.0.6"
-  },
-  "dependencies": {
-    "babel-runtime": "^6.26.0",
-    "body-parser": "^1.18.2",
-    "cookie-parser": "^1.4.3",
-    "express": "^4.16.4",
-    "handlebars": "^4.0.12",
-    "html-escape": "^2.0.0",
-    "html-validator": "^3.1.3",
-    "multer": "^1.4.1",
-    "promised-handlebars": "^2.0.1",
-    "request": "^2.88.0",
-    "url": "^0.11.0",
-    "valid-url": "^1.0.9",
-    "w3c-css": "^2.0.2",
-    "yaml": "^1.2.1"
-  },
-  "devDependencies": {
-    "axios": "^0.18.0",
-    "babel-cli": "^6.26.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-es2015": "^6.24.1",
-    "cli-color": "^1.4.0"
-  },
-  "url": "https://www.npmjs.com/package/fhw-web",
-  "email": "mpg@fh-wedel.de",
-  "author": "[mpg] Marian P. Gajda",
-  "license": "ISC",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/marianpg/fhw-web"
-  }
+    "name": "fhw-web",
+    "version": "1.0.1",
+    "description": "Übungsbegleitendes Framework zur Veranstaltung \"Web-Anwendungen\" und \"Web-Technologien\" an der Fachhochschule Wedel\"",
+    "main": "dist/index.js",
+    "scripts": {
+        "prepublish": "tsc",
+        "tsc": "tsc",
+        "build": "tsc",
+        "dev": "ts-node-dev --respawn --transpileOnly ./src/index.ts"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/marianpg/fhw-web.git"
+    },
+    "author": "[mpg] Marian P. Gajda",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/marianpg/fhw-web/issues"
+    },
+    "homepage": "https://github.com/marianpg/fhw-web#readme",
+    "dependencies": {
+        "buzzy": "^1.0.2"
+    },
+    "devDependencies": {
+        "@types/node": "^13.13.2",
+        "ts-node-dev": "^1.0.0-pre.44",
+        "typescript": "^3.8.3"
+    }
 }
