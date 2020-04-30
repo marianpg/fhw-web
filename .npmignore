@@ -1,4 +1,5 @@
 .vscode/
+docs.old/
 src/
 .gitignore
 tsconfig.json
