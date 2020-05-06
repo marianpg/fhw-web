@@ -61,7 +61,7 @@ export class ControllerService {
 
     async callController(
         route: ControllerRoute,
-        global: GlobalData,
+        globalData: GlobalData,
         request: RequestData,
         session: Session,
         database: Database
@@ -77,7 +77,21 @@ export class ControllerService {
         if (!isDefined(_function)) {
             throw new Error(`Can not call function "${route.controller.function}" in Controller File "${route.controller.file}". Did you forget to export or to define the function?`)
         }
-
-        return _function(global, request, session, database)
+        
+        const dataArgument = {
+            request: {
+                get: request.query,
+                post: request.body,
+                path: request.path
+            },
+            session,
+            global: globalData
+        }
+        const dbArgument = {
+            loadJson: database.loadJson,
+            saveJson: database.saveJson
+        }
+        //@ts-ignore
+        return _function(dataArgument, dbArgument)
     }
 }

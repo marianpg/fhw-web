@@ -175,7 +175,7 @@ export class ResponseService {
         const database: Database = await this.databaseService.getDatabase(frontmatter)
         
         try {
-            const result = await this.controllerService.callController(route, global, request, session, database)
+            const result = await this.controllerService.callController(route, globalData, request, session, database)
             const response = this.processControllerResult(result, globalData, request, session.getData())
             return response
         } catch (err) {

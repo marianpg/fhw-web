@@ -1,22 +1,23 @@
 'use strict'
 
 module.exports = {
-    list: (global, request, session, database) => {
+    list: (data, db) => {
         return {
             status: 200,
             json: {
-                id: session.getId(),
-                meta: session.getMeta(),
-                data: session.getData()
+                id: data.session.getId(),
+                meta: data.session.getMeta(),
+                data: data.session.getData()
             }
         }
     },
-    add: (global, request, session, database) => {
-        const data = session.getData()
-        data.randoms = data.randoms ? data.randoms : []
-        data.randoms.push(Math.random())
+    add: (data, db) => {
+        const session = data.session
+        const sessionData = data.session.getData()
+        sessionData.randoms = sessionData.randoms ? sessionData.randoms : []
+        sessionData.randoms.push(Math.random())
 
-        session.save(data)
+        session.save(sessionData)
 
         return {
             status: 200,
