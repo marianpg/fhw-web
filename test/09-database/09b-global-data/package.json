@@ -1,0 +1,16 @@
+{
+    "name": "09b-database-global-data",
+    "version": "1.0.0",
+    "description": "",
+    "main": "server.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build-framework": "cd ../../ && npm run build",
+        "start": "npm run build-framework && node server.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "buzzy": "file:../../.."
+    }
+}

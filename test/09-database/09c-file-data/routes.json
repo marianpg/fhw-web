@@ -1,0 +1,16 @@
+[
+    {
+        "url": "/",
+        "controller": {
+            "file": "data",
+            "function": "list"
+        }
+    },
+    {
+        "url": "/add",
+        "controller": {
+            "file": "data",
+            "function": "add"
+        }
+    }
+]

@@ -1,0 +1,44 @@
+---
+{
+    "add-person": {
+        "query": "INSERT INTO persons (firstname, lastname) VALUES ('Tina', 'Aus Pages');"
+    },
+    "persons": {
+        "query": "SELECT * FROM persons;"
+    }
+}
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <section>
+        <h1>page persons</h1>
+        <h2>first</h2>
+        <p>{{page.persons._firstname}} {{page.persons._lastname}}</p>
+        <h2>all</h2>
+        <ul>
+        {{#each page.persons}}
+        <li>{{this.firstname}} {{this.lastname}}</li>
+        {{/each}}
+        </ul>
+    </section>
+    <section>
+        <h1>controller persons</h1>
+        <h2>first</h2>
+        <p>{{page.ctrl-persons._firstname}} {{page.ctrl-persons._lastname}}</p>
+        <h2>all</h2>
+        <ul>
+        {{#each page.ctrl-persons}}
+        <li>{{this.firstname}} {{this.lastname}}</li>
+        {{/each}}
+        </ul>
+    </section>
+    <hr>
+    {{debugJson}}
+</body>
+</html>

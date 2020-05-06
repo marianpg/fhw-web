@@ -1,0 +1,26 @@
+:root {
+    --silver: rgba(0,0,0,0.05);
+    --white: rgba(240,240,240,1.0);
+    --black: rgba(0,0,0,0.95);
+}
+
+not-existent {
+    broken: true
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--silver);
+}
+
+body * {
+    background-color: var(--white);
+    color: var(--black);
+}
+
+main {
+    border: 1px solid lightblue;
+}

@@ -1,5 +1,8 @@
 .vscode/
-docs.old/
+dev/
+docs/
 src/
+test/
 .gitignore
+jest.config.js
 tsconfig.json

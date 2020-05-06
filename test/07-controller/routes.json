@@ -1,0 +1,63 @@
+[
+    {
+        "url": "/assets/*",
+        "static": "/assets/*"
+    }, {
+        "url": "/",
+        "page": "index"
+    }, {
+        "url": "/empty",
+        "controller": {
+            "file": "collection",
+            "function": "empty"
+        }
+    }, {
+        "url": "/text",
+        "controller": {
+            "file": "collection",
+            "function": "text"
+        }
+    }, {
+        "url": "/json",
+        "controller": {
+            "file": "collection",
+            "function": "json"
+        }
+    }, {
+        "url": "/redirect",
+        "controller": {
+            "file": "collection",
+            "function": "redirect"
+        }
+    }, {
+        "url": "/static",
+        "controller": {
+            "file": "collection",
+            "function": "static"
+        }
+    }, {
+        "url": "/page",
+        "controller": {
+            "file": "collection",
+            "function": "page"
+        }
+    }, {
+        "url": "/fragment",
+        "controller": {
+            "file": "collection",
+            "function": "fragment"
+        }
+    }, {
+        "url": "/promise",
+        "controller": {
+            "file": "collection",
+            "function": "promise"
+        }
+    }, {
+        "url": "/promise-2",
+        "controller": {
+            "file": "collection",
+            "function": "promise-2"
+        }
+    }
+]

@@ -1,22 +1,16 @@
+# gui
 .vscode/
-docs.old/
-package-lock.json
+
+# Dependency directories
 node_modules/
-lib/
-doc/build/
 
-src/html-validator
+# dotenv environment variables file
+.env
+.env.dev
+.env.test
 
-assets/
-controller/
-data/
-helpers/
-pages/
-sessions/
-templates/
-public/
-webapp/
-routes.json
-global.json
+# build / generate output directory
+dist/
 
-todo.md
+# development environment directory
+dev/

@@ -1,0 +1,16 @@
+[
+    {
+        "url": "/assets/*",
+        "static": "/assets/*"
+    }, {
+        "url": "",
+        "page": "different-home"
+    }, {
+        "url": "/",
+        "page": "never-called"
+    },  
+    {
+        "url": "*",
+        "page": "*"
+    }
+]

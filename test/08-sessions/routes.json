@@ -1,0 +1,16 @@
+[
+    {
+        "url": "/session/list",
+        "controller": {
+            "file": "session",
+            "function": "list"
+        }
+    },
+    {
+        "url": "/session/add",
+        "controller": {
+            "file": "session",
+            "function": "add"
+        }
+    }
+]

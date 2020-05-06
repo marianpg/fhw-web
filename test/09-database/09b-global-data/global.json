@@ -1,0 +1,7 @@
+{
+    "title": "Ein Titel",
+    "persons": {
+        "query": "SELECT * FROM persons;"
+    },
+    "firstname": "Corinna"
+}

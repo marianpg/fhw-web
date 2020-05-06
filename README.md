@@ -1,4 +1,3 @@
+# Buzzy
 
-# fhw-web
-
-Übungsbegleitendes Framework zur Veranstaltung "Web-Anwendungen" und "Web-Technologien" an der Fachhochschule Wedel, basierend auf dem [buzzy-framework](https://github.com/marianpg/buzzy).
+A modular web server for rapid full-stack development.
