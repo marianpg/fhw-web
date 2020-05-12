@@ -1,0 +1,431 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="de" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="de" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Controller &mdash; fhw-web Dokumentation  Dokumentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script src="../_static/translations.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Stichwortverzeichnis" href="../genindex.html" />
+    <link rel="search" title="Suche" href="../search.html" />
+    <link rel="next" title="Sessions" href="../sessions/index_03.html" />
+    <link rel="prev" title="Templating" href="../templating/index_03.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> fhw-web Dokumentation
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Ausschnitt für Aufgabe 01</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../first_steps.html">Erste Schritte</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../config/index_01.html">Konfiguration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../routing/index_01.html">Routing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../templating/index_01.html">Templating</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../errors/index_01.html">Fehlerbehandlung</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Ausschnitt für Aufgabe 02</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../config/index_02.html">Konfiguration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../routing/index_02.html">Routing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../templating/index_02.html">Templating</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_02.html">Controller</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sessions/index_02.html">Sessions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../errors/index_02.html">Fehlerbehandlung</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Ausschnitt für Aufgabe 03</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../config/index_03.html">Konfiguration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../routing/index_03.html">Routing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../templating/index_03.html">Templating</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Controller</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#struktur">Struktur</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#eingabewerte">Eingabewerte</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#erster-parameter-daten">Erster Parameter: Daten</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#zweiter-parameter-datenbank">Zweiter Parameter: Datenbank</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#beispiel">Beispiel</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#ruckgabewert">Rückgabewert</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#syntaxbeschreibung">Syntaxbeschreibung</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#beispiele">Beispiele</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../sessions/index_03.html">Sessions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../errors/index_03.html">Fehlerbehandlung</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Ausschnitt für Aufgabe 04</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../config/index_04.html">Konfiguration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../routing/index_04.html">Routing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../templating/index_04.html">Templating</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index_04.html">Controller</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sessions/index_04.html">Sessions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../errors/index_04.html">Fehlerbehandlung</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Vollständig</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../config/index.html">Konfiguration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../routing/index.html">Routing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../templating/index.html">Templating</a></li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Controller</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sessions/index.html">Sessions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../errors/index.html">Fehlerbehandlung</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">fhw-web Dokumentation</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Controller</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/controller/index_03.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="controller">
+<h1>Controller<a class="headerlink" href="#controller" title="Link zu dieser Überschrift">¶</a></h1>
+<p>Ein Controller ermöglicht bei Requests einen Verarbeitungszwischenschritt. So wird nicht gleich eine Response ausgeliefert, sondern zunächst eine bestimmte Funktion aufgerufen.</p>
+<p>Sofern über die Konfiguration die Option <code class="docutils literal notranslate"><span class="pre">database.fileData.active</span></code> mit dem Wert <code class="docutils literal notranslate"><span class="pre">true</span></code> belegt ist, ist es möglich, dass der Controller Daten aus einer <em>Datenbank</em> lädt und speichert und andere Verarbeitsungsschritte unternimmt.</p>
+<div class="section" id="struktur">
+<h2>Struktur<a class="headerlink" href="#struktur" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Der Controller muss im Ordner <em>&lt;Projektordner&gt;/controller/</em> als Javascript-Datei (*.js) abgelegt sein. In dieser können beliebig viele benannte Funktionen definiert werden.
+Ähnlich wie bei den Helpern ist dies sinnvoll, um thematisch gleichartige Routinen zusammenzufassen.</p>
+<p>Eine Javascript-Datei exportiert dann ein Objekt mit benannten Funktionen: <em>&lt;Projektordner&gt;/controller/&lt;Dateiname&gt;.js</em></p>
+<p>Beispiel:</p>
+<p>Datei: <em>&lt;Projektordner&gt;/controller/persons.js</em></p>
+<blockquote>
+<div><div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">listPersons</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">db</span><span class="p">)</span> <span class="p">{</span>
+    <span class="cm">/* Der Aufbau von Controller-Funktionen</span>
+<span class="cm">    werden in den nächsten Abschnitten detailiert erläutert */</span>
+<span class="p">}</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;listPersons&quot;</span><span class="o">:</span> <span class="nx">listPersons</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Daraufhin kann eine <em>&lt;controllerRoute&gt;</em> in der Routing-Datei auf die Controller-Funktionen über den Dateinamen und der benannten Funktion eindeutig zugreifen.</p>
+<p>Beispiel:</p>
+<p>Datei: <em>&lt;Projektordner&gt;/routes.json</em></p>
+<blockquote>
+<div><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;url&quot;</span><span class="p">:</span> <span class="s2">&quot;/show-persons/&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;controller&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;file&quot;</span><span class="p">:</span> <span class="s2">&quot;persons&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;function&quot;</span><span class="p">:</span> <span class="s2">&quot;listPersons&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="eingabewerte">
+<h2>Eingabewerte<a class="headerlink" href="#eingabewerte" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Jede Controller-Funktion erhält zwei Parameter:</p>
+<div class="section" id="erster-parameter-daten">
+<h3>Erster Parameter: Daten<a class="headerlink" href="#erster-parameter-daten" title="Link zu dieser Überschrift">¶</a></h3>
+<p>Der erste Parameter ist ein Datenobjekt, auf dem wiederum folgende Daten per Punktnotation zugreifbar sind:</p>
+<dl>
+<dt>global</dt><dd><p>Globale-Daten</p>
+<p>Hier befinden sich die Daten aus der <em>global.json</em></p>
+</dd>
+<dt>request</dt><dd><p>Request-Daten</p>
+<p>Hier befinden sich die GET, POST und PATH-Parameter.</p>
+</dd>
+<dt>session</dt><dd><p>Session-Objekt</p>
+<p>Hiermit lässt sich die aktuelle Session verwalten. Näheres dazu im Abschnitt <em>Session</em>.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="zweiter-parameter-datenbank">
+<h3>Zweiter Parameter: Datenbank<a class="headerlink" href="#zweiter-parameter-datenbank" title="Link zu dieser Überschrift">¶</a></h3>
+<p>Wir arbeiten hier mit einer einfachen Form einer „Datenbank“. Dies wird durch eine Sammlung von json-Dokumenten im Ordner <em>data</em> dargestellt. Über den zweiten Parameter der Controller-Funktion sind dann folgende Funktionen bzw. Prozeduren aufrufbar:</p>
+<dl class="simple">
+<dt>loadJson(documentName): jsonObjekt</dt><dd><p>Funktion, womit ein JSON-Dokument gelesen wird. Der Rückgabewert dieser Funktion entsprich dem eingelesenen Datenobjekt aus der JSON-Datei.</p>
+</dd>
+<dt>saveJson(documentName, jsonObjekt)</dt><dd><p>Prozedur, womit ein jsonObjekt in einer als documentName benannten Datei abgespeichert wird.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="beispiel">
+<h3>Beispiel<a class="headerlink" href="#beispiel" title="Link zu dieser Überschrift">¶</a></h3>
+<p>Folgender Code-Ausschnitt zeigt die Verwendungsmöglichkeiten der Eingabeparameter:</p>
+<blockquote>
+<div><div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="kd">function</span> <span class="nx">printParams</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">db</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">global</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span> <span class="c1">// gibt den Inhalt der Variable &quot;name&quot; aus der global.json</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">get</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span> <span class="c1">// gibt den Inhalt der Variable &quot;name&quot; der GET-Parameter</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">post</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span> <span class="c1">// gibt den Inhalt der Variable &quot;name&quot; der POST-Parameter</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">path</span><span class="p">.</span><span class="nx">name</span><span class="p">);</span> <span class="c1">// gibt den Inhalt der Variable &quot;name&quot; der PATH-Parameter</span>
+    <span class="c1">// data.session wird im späteren Abschnitt behandelt</span>
+
+    <span class="c1">// Datenbankdatei &quot;/data/persons&quot; laden</span>
+    <span class="kr">const</span> <span class="nx">persons</span> <span class="o">=</span> <span class="nx">db</span><span class="p">.</span><span class="nx">loadJson</span><span class="p">(</span><span class="s1">&#39;persons.json&#39;</span><span class="p">)</span>
+    <span class="c1">// Das &quot;.json&quot; am Ende des Dateinamens ist optional</span>
+    <span class="c1">// const persons = db.loadJson(&#39;persons&#39;)</span>
+
+    <span class="c1">// Datenbankdatei &quot;/data/persons&quot; mit dem Inhalt der Variablen &quot;persons&quot; überschreiben und speichern</span>
+    <span class="nx">db</span><span class="p">.</span><span class="nx">saveJson</span><span class="p">(</span><span class="s1">&#39;persons.json&#39;</span><span class="p">,</span> <span class="nx">persons</span><span class="p">)</span>
+    <span class="c1">// Das &quot;.json&quot; am Ende des Dateinamens ist optional</span>
+    <span class="c1">// db.saveJson(&#39;persons&#39;, persons)</span>
+
+    <span class="cm">/* Rückgabewert wird als nächstes erläutert</span>
+<span class="cm">    return {</span>
+<span class="cm">        // .. more code</span>
+<span class="cm">    }</span>
+<span class="cm">    */</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="ruckgabewert">
+<h2>Rückgabewert<a class="headerlink" href="#ruckgabewert" title="Link zu dieser Überschrift">¶</a></h2>
+<p>Nachdem eine Controller-Funktionen alle nötigen Verarbeitungen erledigt hat, ist das Responseverhalten zu klären; also was ist die Antwort auf die Anfrage des Clients bzw. Browsers?</p>
+<p>Das Responseverhalten wird über den Rückgabewert der Controller-Funktion gesteuert. Folgende Verhalten sind mit dem <em>fhw-web</em>-Framework möglich:</p>
+<dl>
+<dt>Weiterleitung</dt><dd><p>&lt;redirectResult&gt;</p>
+<p>Der Client erhält eine URL, auf die er weitergeleitet werden soll. Mit dem Http-Status-Code wird die Art der Weiterleitung gesteuert. Weitere Informationen siehe: <a class="reference external" href="https://www.sistrix.de/frag-sistrix/onpage-optimierung/http-statuscode/3xx-redirection/">Http-Status-Code 3xx</a>, <a class="reference external" href="https://de.ryte.com/wiki/HTTP_Status_Code#Status_Code_3xx_-_Umleitung">Http-Status-Code 301 vs. 302</a> und <a class="reference external" href="https://www.seokratie.de/http-statuscodes/#300">SEO Tipps bei Http-Status-Code 3xx</a></p>
+</dd>
+<dt>Page Antwort</dt><dd><p>&lt;pageResult&gt;</p>
+<p>Zusätzlich zum Http-Status-Code wird eine <em>page</em> angegeben, die mittels Templating und einem zusätzlich angegebenen <em>frontmatter</em> vom Server generiert werden soll. Es können also zum Templating weitere Daten geladen werden.</p>
+</dd>
+<dt>Fragment Antwort</dt><dd><p>&lt;fragmentResult&gt;</p>
+<p>Ähnliches Verhalten wie bei &lt;pageResult&gt;, allerdings wird hier ein Fragment aus dem <em>templates</em> Ordner angegeben. Eignet sich dazu, um clientseitig HTML-Fragmente zur Laufzeit auszutauschen, ohne dass eine Seite neugeladen werden soll.</p>
+</dd>
+</dl>
+<div class="section" id="syntaxbeschreibung">
+<h3>Syntaxbeschreibung<a class="headerlink" href="#syntaxbeschreibung" title="Link zu dieser Überschrift">¶</a></h3>
+<p>Eine abstrakte Syntaxbeschreibung des Rückgabeobjekts <em>return</em> ist wie folgt:</p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">|</span> <span class="o">&lt;</span><span class="k">return</span><span class="o">&gt;</span>          <span class="p">:</span><span class="o">:=</span>     <span class="o">&lt;</span><span class="n">redirectResult</span><span class="o">&gt;</span>
+<span class="o">|</span>                       <span class="o">|</span>   <span class="o">&lt;</span><span class="n">pageResult</span><span class="o">&gt;</span>
+<span class="o">|</span>                       <span class="o">|</span>   <span class="o">&lt;</span><span class="n">fragmentResult</span><span class="o">&gt;</span>
+<span class="o">|</span>
+<span class="o">|</span> <span class="o">&lt;</span><span class="n">redirectResult</span><span class="o">&gt;</span>  <span class="p">:</span><span class="o">:=</span> <span class="p">{</span> <span class="o">&lt;</span><span class="n">status</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">redirect</span><span class="o">&gt;</span> <span class="p">}</span>
+<span class="o">|</span> <span class="o">&lt;</span><span class="n">pageResult</span><span class="o">&gt;</span>      <span class="p">:</span><span class="o">:=</span> <span class="p">{</span> <span class="o">&lt;</span><span class="n">status</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">frontmatter</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">page</span><span class="o">&gt;</span> <span class="p">}</span>
+<span class="o">|</span> <span class="o">&lt;</span><span class="n">fragmentResult</span><span class="o">&gt;</span>  <span class="p">:</span><span class="o">:=</span> <span class="p">{</span> <span class="o">&lt;</span><span class="n">status</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">frontmatter</span><span class="o">&gt;</span><span class="p">,</span> <span class="o">&lt;</span><span class="n">fragment</span><span class="o">&gt;</span> <span class="p">}</span>
+<span class="o">|</span>
+<span class="o">|</span> <span class="o">&lt;</span><span class="n">status</span><span class="o">&gt;</span>          <span class="p">:</span><span class="o">:=</span> <span class="o">&lt;</span><span class="n">integer</span><span class="o">&gt;</span> <span class="o">//</span> <span class="n">entspricht</span> <span class="n">dem</span> <span class="n">HTTP</span><span class="o">-</span><span class="n">Status</span><span class="o">-</span><span class="n">Code</span><span class="p">,</span> <span class="n">insb</span><span class="o">.</span> <span class="n">wichtig</span> <span class="n">bei</span> <span class="n">der</span> <span class="n">Weiterleitung</span>
+<span class="o">|</span> <span class="o">&lt;</span><span class="n">redirect</span><span class="o">&gt;</span>        <span class="p">:</span><span class="o">:=</span> <span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span>  <span class="o">//</span> <span class="n">eine</span> <span class="n">URL</span><span class="p">,</span> <span class="n">auf</span> <span class="n">die</span> <span class="n">der</span> <span class="n">Browser</span> <span class="n">nach</span> <span class="n">der</span> <span class="n">Verarbeitung</span> <span class="n">weitergeleitet</span> <span class="n">werden</span> <span class="n">soll</span>
+<span class="o">|</span> <span class="o">&lt;</span><span class="n">frontmatter</span><span class="o">&gt;</span>     <span class="p">:</span><span class="o">:=</span> <span class="o">&lt;</span><span class="nb">object</span><span class="o">&gt;</span>  <span class="o">//</span> <span class="n">zusätzliche</span> <span class="n">Daten</span><span class="p">,</span> <span class="n">die</span> <span class="n">im</span> <span class="n">Frontmatter</span> <span class="n">über</span> <span class="n">das</span> <span class="n">page</span><span class="o">-</span><span class="n">Objekt</span> <span class="n">sichtbar</span> <span class="n">sind</span>
+<span class="o">|</span> <span class="o">&lt;</span><span class="n">page</span><span class="o">&gt;</span>            <span class="p">:</span><span class="o">:=</span> <span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span>  <span class="o">//</span> <span class="n">Dateiname</span> <span class="n">der</span> <span class="n">page</span><span class="p">,</span> <span class="n">enthalten</span> <span class="n">im</span> <span class="n">page</span><span class="o">-</span><span class="n">Ordner</span>
+<span class="o">|</span> <span class="o">&lt;</span><span class="n">fragment</span><span class="o">&gt;</span>        <span class="p">:</span><span class="o">:=</span> <span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="o">//</span> <span class="n">Dateiname</span> <span class="n">des</span> <span class="n">fragments</span><span class="p">,</span> <span class="n">enthalten</span> <span class="n">im</span> <span class="n">templates</span><span class="o">-</span><span class="n">Ordner</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="beispiele">
+<h3>Beispiele<a class="headerlink" href="#beispiele" title="Link zu dieser Überschrift">¶</a></h3>
+<p><strong>&lt;redirectResult&gt;</strong></p>
+<blockquote>
+<div><div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="k">return</span> <span class="p">{</span>
+    <span class="nx">status</span><span class="o">:</span> <span class="mi">307</span><span class="p">,</span> <span class="c1">// HTTP-Status-Code</span>
+    <span class="nx">redirect</span><span class="o">:</span> <span class="s1">&#39;https://www.reddit.com/r/funny/&#39;</span> <span class="c1">// URL, auf die der Client bzw. der Browser temporär, also vorübergehend, weitergeleitet werden soll</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><strong>&lt;pageResult&gt;</strong></p>
+<blockquote>
+<div><div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="k">return</span> <span class="p">{</span>
+    <span class="nx">status</span><span class="o">:</span> <span class="mi">200</span><span class="p">,</span> <span class="c1">// HTTP-Status-Code</span>
+    <span class="nx">page</span><span class="o">:</span> <span class="s1">&#39;persons&#39;</span><span class="p">,</span> <span class="c1">// es gibt also eine Datei /pages/persons.hbs</span>
+    <span class="nx">frontmatter</span><span class="o">:</span> <span class="p">{</span> <span class="c1">// die Templating-Datei enthält irgendwo im Quelltext folgende Ausdrücke: {{ page.firstname }} {{ page.lastname }}</span>
+        <span class="nx">firstname</span><span class="o">:</span> <span class="s2">&quot;Tina&quot;</span><span class="p">,</span>
+        <span class="nx">lastname</span><span class="o">:</span> <span class="s2">&quot;Meier&quot;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><strong>&lt;fragmentResult&gt;</strong></p>
+<blockquote>
+<div><div class="highlight-js notranslate"><div class="highlight"><pre><span></span><span class="k">return</span> <span class="p">{</span>
+    <span class="nx">status</span><span class="o">:</span> <span class="mi">200</span><span class="p">,</span> <span class="c1">// HTTP-Status-Code</span>
+    <span class="nx">fragment</span><span class="o">:</span> <span class="s1">&#39;grid-item&#39;</span><span class="p">,</span> <span class="c1">// es gibt also eine Datei /templates/grid-item.hbs</span>
+    <span class="nx">frontmatter</span><span class="o">:</span> <span class="p">{</span> <span class="c1">// die Templating-Datei enthält irgendwo im Quelltext folgende Ausdrücke: {{ page.caption }} {{ page.highlight }}</span>
+        <span class="nx">caption</span><span class="o">:</span> <span class="s2">&quot;Awesome Product&quot;</span><span class="p">,</span>
+        <span class="nx">highlight</span><span class="o">:</span> <span class="kc">true</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../sessions/index_03.html" class="btn btn-neutral float-right" title="Sessions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../templating/index_03.html" class="btn btn-neutral float-left" title="Templating" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, [mpg] Marian P. Gajda
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(false);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

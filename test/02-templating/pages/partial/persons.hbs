@@ -1,0 +1,15 @@
+---
+{
+    "template": "full-html",
+    "persons": [
+        { "firstname": "Tina", "lastname": "Meier" },
+        { "firstname": "Max", "lastname": "Mustermann" },
+        { "firstname": "Anne", "lastname": "Banane" }
+    ]
+}
+---
+<ul>
+{{#each page.persons }}
+    {{include 'person' this }}
+{{/each}}
+</ul>
