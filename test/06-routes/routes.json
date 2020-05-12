@@ -8,7 +8,19 @@
     }, {
         "url": "/",
         "page": "never-called"
-    },  
+    }, {
+        "url": "/requests/get",
+        "method": [ "GET" ],
+        "page": "requests/get"
+    }, {
+        "url": "/requests/post",
+        "method": [ "POST" ],
+        "page": "requests/post"
+    }, {
+        "url": "/requests/path/:firstname/:lastname",
+        "method": [ "GET" ],
+        "page": "requests/path"
+    },
     {
         "url": "*",
         "page": "*"

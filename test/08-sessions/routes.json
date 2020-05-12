@@ -1,5 +1,9 @@
 [
     {
+        "url": "/page/list",
+        "page": "list"
+    },
+    {
         "url": "/session/list",
         "controller": {
             "file": "session",

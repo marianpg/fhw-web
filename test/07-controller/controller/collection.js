@@ -1,18 +1,18 @@
 'use strict'
 
 module.exports = {
-    empty: (data, db) => {
+    empty: (data, database) => {
         return {
             status: 200
         }
     },
-    text: (data, db) => {
+    text: (data, database) => {
         return {
             status: 200,
             text: 'yay'
         }
     },
-    json: (data, db) => {
+    json: (data, database) => {
         return {
             status: 200,
             json: {
@@ -20,13 +20,13 @@ module.exports = {
             }
         }
     },
-    redirect: (data, db) => {
+    redirect: (data, database) => {
         return {
             status: 307,
             redirect: 'https://www.reddit.com/r/funny/'
         }
     },
-    page: (data, db) => {
+    page: (data, database) => {
         return {
             status: 200,
             page: 'index',
@@ -35,7 +35,7 @@ module.exports = {
             }
         }
     },
-    fragment: (data, db) => {
+    fragment: (data, database) => {
         return {
             status: 200,
             fragment: 'snippet',
@@ -44,7 +44,7 @@ module.exports = {
             }
         }
     },
-    promise: (data, db) => {
+    promise: (data, database) => {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 resolve({
@@ -54,7 +54,7 @@ module.exports = {
             }, 2500)
         })
     },
-    "promise-2": async (data, db) => {
+    "promise-2": async (data, database) => {
         const wait = new Promise((resolve, reject) => {
             setTimeout(() => {
                 resolve()

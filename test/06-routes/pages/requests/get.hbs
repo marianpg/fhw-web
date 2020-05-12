@@ -1,0 +1,20 @@
+---
+{
+    "template": "full-html",
+    "title": "GET-Request"
+}
+---
+
+<h1>Personen-Informationen</h1>
+<ul>
+    <li>Vorname: {{ request.get.firstname }}</li>
+    <li>Nachname: {{ request.get.lastname }}</li>
+</ul>
+
+<form action="/requests/get" method="get">
+    <input type="text" name="firstname" value="Tina">
+    <input type="text" name="lastname" value="Meier">
+    <input type="submit" value="Submit">
+</form>
+
+{{ debugJson }}

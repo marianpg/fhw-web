@@ -1,0 +1,22 @@
+---
+{
+    "persons": [
+        { "firstname": "Tina", "hobby": "The Smiths" },
+        { "firstname": "Max", "hobby": "Piano" }
+    ]
+}
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partial Emulation</title>
+</head>
+<body>
+    <h1>Include-Fragment with added Context</h1>
+    {{#each page.persons}}
+    {{ include 'tile' this}}
+    {{/each}}
+</body>
+</html>

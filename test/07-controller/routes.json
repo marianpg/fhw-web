@@ -30,12 +30,6 @@
             "function": "redirect"
         }
     }, {
-        "url": "/static",
-        "controller": {
-            "file": "collection",
-            "function": "static"
-        }
-    }, {
         "url": "/page",
         "controller": {
             "file": "collection",

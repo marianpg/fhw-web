@@ -1,9 +1,9 @@
 'use strict'
 
 module.exports = {
-    list: (data, db) => {
-        const persons = db.loadJson('persons.json') || []
-        
+    list: (data, database) => {
+        const persons = database.loadJson('persons.json') || []
+
         return {
             status: 200,
             page: 'index',
@@ -12,15 +12,15 @@ module.exports = {
             }
         }
     },
-    add: (data, db) => {
-        const persons = db.loadJson('persons') || []
+    add: (data, database) => {
+        const persons = database.loadJson('persons') || []
         const person = {
             firstname: "Marie",
             lastname: "Schmidt"
         }
 
         persons.push(person)
-        db.saveJson('persons', persons)
+        database.saveJson('persons', persons)
 
         return {
             status: 200,

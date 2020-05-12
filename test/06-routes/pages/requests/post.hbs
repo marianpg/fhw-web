@@ -1,0 +1,20 @@
+---
+{
+    "template": "full-html",
+    "title": "POST-Request"
+}
+---
+
+<h1>Personen-Informationen</h1>
+<ul>
+    <li>Vorname: {{ request.post.firstname }}</li>
+    <li>Nachname: {{ request.post.lastname }}</li>
+</ul>
+
+<form action="/requests/post" method="post">
+    <input type="text" name="firstname" value="Tina">
+    <input type="text" name="lastname" value="Meier">
+    <input type="submit" value="Submit">
+</form>
+
+{{ debugJson }}

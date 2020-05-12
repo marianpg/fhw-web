@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-    list: async (global, request, session, database) => {
+    list: async (data, database) => {
         const persons = await database.executeSql('SELECT * FROM persons;')
 
         return {
@@ -12,7 +12,7 @@ module.exports = {
             }
         }
     },
-    add: async (global, request, session, database) => {
+    add: async (data, database) => {
         const firstname = request.query.firstname || 'Max'
         const lastname = request.query.lastname || 'Von Controller'
         await database.executeSql(`INSERT INTO persons (firstname, lastname) VALUES ('${firstname}', '${lastname}');`)
@@ -26,7 +26,7 @@ module.exports = {
             }
         }
     },
-    delete: async (global, request, session, database) => {
+    delete: async (data, database) => {
         await database.executeSql(`DELETE FROM persons;`)
         const persons = await database.executeSql('SELECT * FROM persons;')
         

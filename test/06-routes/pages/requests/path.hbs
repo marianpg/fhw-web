@@ -1,0 +1,16 @@
+---
+{
+    "template": "full-html",
+    "title": "PATH-Request"
+}
+---
+
+<h1>Personen-Informationen</h1>
+<ul>
+    <li>Vorname: {{ request.path.firstname }}</li>
+    <li>Nachname: {{ request.path.lastname }}</li>
+</ul>
+
+<a href="/requests/path/Tina/Meier">Submit</a>
+
+{{ debugJson }}
