@@ -12,6 +12,7 @@ import { isDefined, now, PaddedCounter } from '../helper'
 import { v4 as uuidv4 } from 'uuid'
 import { FileUtils } from '../filesystem-utils/file'
 import { Logging } from '../logging'
+import { RequestData } from '../../public/request'
 
 type SessionFile = {
     id: string,
@@ -37,10 +38,7 @@ class Session implements ISession {
         }
     }
     getData(): SessionData {
-        return {
-            ...JSON.parse(JSON.stringify(this.file.data)),
-            id: this.file.id
-        }
+        return JSON.parse(JSON.stringify(this.file.data))
     }
 
     save(data: Record<string, any>): void {
@@ -57,7 +55,7 @@ export class EmptySession implements ISession {
         return { createdAt: '', lastAccess: { at: '', url: '' } }
     }
     getData(): SessionData {
-        return { id: '' }
+        return { }
     }
     save(_data: Record<string, any>): void { }
 }
@@ -92,13 +90,17 @@ export class SessionService {
             : [fileExist, `${padded.next()}-${uuidv4()}`]
     }
 
-    private async writeSession(): Promise<void> {
+    private async writeSession(request: RequestData): Promise<void> {
         const file = {
             id: this.session.getId(),
             meta: this.session.getMeta(),
-            data: this.session.getData()
+            data: {
+                ...this.session.getData(),
+                ...request.path,
+                ...request.get,
+                ...request.post
+            }
         }
-        delete file.data.id
         return this.fileUtils.writeJson(file, this.session.getId(), 'sessions')
     }
     private async readSession(url: string, id: string): Promise<ISession> {
@@ -126,9 +128,9 @@ export class SessionService {
             : await this.initSession(url, id)
     }
 
-    async closeSession(): Promise<void> {
+    async closeSession(request: RequestData): Promise<void> {
         if (this.config.active) {
-            await this.writeSession()
+            await this.writeSession(request)
             this.res.cookie('session-id', this.session.getId())
         }
     }

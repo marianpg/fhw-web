@@ -3,7 +3,7 @@
 import { FileUtils } from '../filesystem-utils'
 import { TemplatingConfig } from '../../public/config'
 import { RouteException } from '../exception'
-import { Frontmatter, PageData, FrontmatterType } from '../../public/frontmatter'
+import { Frontmatter, PageData, FrontmatterTypes } from '../../public/frontmatter'
 import { DatabaseService } from '../database'
 import { FrontmatterService } from './frontmatter-service'
 import { isDefined } from '../helper'
@@ -88,7 +88,7 @@ export class TemplateFile {
         private file: string
     ) { }
 
-    private validateFrontmatterType(fmatterType: FrontmatterType): void {
+    private validateFrontmatterType(fmatterType: FrontmatterTypes): void {
         // TODO validate fmatterType
     }
 

@@ -3,7 +3,7 @@
 import { GlobalData } from './global'
 import { RequestData } from './request'
 import { Database } from './database'
-import { Session } from './session'
+import { Session, SessionData } from './session'
 
 
 interface BaseResult {
@@ -49,10 +49,13 @@ export type ControllerResult = ControllerStandardResult | Promise<ControllerStan
 
 
 export type ControllerFunction = (
-    global: GlobalData,
-    request: RequestData,
-    session: Session,
-    database: Database) => ControllerResult
+    data: {
+        global: GlobalData,
+        request: RequestData,
+        session: SessionData
+    },
+    database: Database,
+    session: Session) => ControllerResult
 
 export type FunctionName = string
 

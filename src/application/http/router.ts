@@ -52,7 +52,7 @@ export class Router {
                 'Incomming Request:',
                 request.method,
                 request.originalUrl,
-                jsonStringify(request.body)
+                jsonStringify(request.post)
             )
         }
     }

@@ -7,10 +7,12 @@ import { SessionData } from './session'
 
 export type PageData = Record<string, any>
 
-export enum FrontmatterType {
+export enum FrontmatterTypes {
     JSON = 'json',
     YAML = 'yaml'
 }
+
+export type FrontmatterType = 'json' | 'yaml'
 
 export interface Frontmatter {
     global: GlobalData

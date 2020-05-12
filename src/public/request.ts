@@ -7,7 +7,7 @@ export type RequestParams = { [key: string]: string } // TODO: is value always s
 export type RequestHeaders = Record<string, string>
 
 
-export enum RequestMethod {
+export enum RequestMethods {
     GET = 'get',
     POST = 'post',
     PATCH = 'patch',
@@ -15,12 +15,14 @@ export enum RequestMethod {
     DELETE = 'delete'
 }
 
+export type RequestMethod = 'get' | 'post' | 'patch' | 'put' | 'delete'
+
 export interface RequestData {
-    query: RequestQuery
-    body: RequestBody
-    params: RequestParams
+    get: RequestQuery
+    post: RequestBody
+    path: RequestParams
     method: RequestMethod
-    path: string
+    url: string
     originalUrl: string
     ip: string
     headers: RequestHeaders

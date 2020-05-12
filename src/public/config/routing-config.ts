@@ -6,10 +6,12 @@ export enum RoutingFileExtensions {
     TS = 'ts'
 }
 
+export type RoutingFileExtension = 'json' | 'ts'
+
 export interface RoutingConfig {
     magic: boolean
     fileName: string
-    fileExtension: RoutingFileExtensions
+    fileExtension: RoutingFileExtension
     reloadOnEveryRequest: boolean
     logging: boolean
 }

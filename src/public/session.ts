@@ -1,8 +1,6 @@
 'use strict'
 
-export type SessionData = Record<string, any> & {
-    id: string
-}
+export type SessionData = Record<string, any>
 
 export type SessionMeta = {
     createdAt: string,

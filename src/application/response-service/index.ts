@@ -89,7 +89,7 @@ export class ResponseService {
                 // TODO: double check when this happens
                 response = { type: 'empty', statusCode: 200 }
             }
-            await sessionService.closeSession()
+            await sessionService.closeSession(request)
             await this.databaseService.save()
         }
 
@@ -102,7 +102,7 @@ export class ResponseService {
     }
 
     async serveStatic(route: StaticRoute, request: RequestData): Promise<ResponseStatic> {
-        const relativePath = determineFilepath(route.static, request.params)
+        const relativePath = determineFilepath(route.static, request.path)
         const fullPath = this.fileUtils.fullPath(relativePath)
         if (!await this.fileUtils.fileExist(fullPath)) {
             throw RouteException.NotFound(`The searched path is not a file or does not exist on filesystem: "${fullPath}"`)

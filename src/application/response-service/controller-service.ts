@@ -77,21 +77,13 @@ export class ControllerService {
         if (!isDefined(_function)) {
             throw new Error(`Can not call function "${route.controller.function}" in Controller File "${route.controller.file}". Did you forget to export or to define the function?`)
         }
-        
+
         const dataArgument = {
-            request: {
-                get: request.query,
-                post: request.body,
-                path: request.path
-            },
-            session,
+            request,
+            session: session.getData(),
             global: globalData
         }
-        const dbArgument = {
-            loadJson: database.loadJson,
-            saveJson: database.saveJson
-        }
-        //@ts-ignore
-        return _function(dataArgument, dbArgument)
+
+        return _function(dataArgument, database, session)
     }
 }

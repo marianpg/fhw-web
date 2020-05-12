@@ -82,7 +82,7 @@ export class DatabaseService {
     }
 
     async getDatabase(frontmatter: Frontmatter): Promise<IDatabase> {
-        const params = Object.assign({}, frontmatter.page, frontmatter.request.params, frontmatter.request.query, frontmatter.request.body)
+        const params = Object.assign({}, frontmatter.page, frontmatter.request.path, frontmatter.request.get, frontmatter.request.post)
         return new Database(
             (filename: string) => this.fileDataService.loadJson(filename),
             (filename: string, data: JsonData) => this.fileDataService.saveJson(filename, data),

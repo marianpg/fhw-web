@@ -2,7 +2,7 @@
 
 import { Config } from '.'
 import { Languages } from './languages'
-import { FrontmatterType } from '../frontmatter'
+import { FrontmatterTypes } from '../frontmatter'
 import { LoggingTypes } from './logging-types'
 import { RoutingFileExtensions } from './routing-config'
 
@@ -32,7 +32,7 @@ export const DefaultConfig: Config = {
             controller: 'controller'
         },
         allowedExtensions: ['html', 'hbs'],
-        frontmatterFormat: FrontmatterType.JSON,
+        frontmatterFormat: FrontmatterTypes.JSON,
         helpers: {
             reloadOnEveryRequest: true,
         },
@@ -48,14 +48,14 @@ export const DefaultConfig: Config = {
             active: true,
             reloadOnEveryRequest: true,
             pathToFile: './global.json',
-            format: FrontmatterType.JSON,
+            format: FrontmatterTypes.JSON,
             logging: true
         },
         fileData: {
             active: false,
             reloadOnEveryRequest: true,
             path: './data',
-            format: FrontmatterType.JSON,
+            format: FrontmatterTypes.JSON,
             logging: true
         },
         sqliteData: {

@@ -2,7 +2,7 @@
 
 import { RequestData } from '../../public/request'
 import { DefaultMethod } from '../../public/route'
-import { Frontmatter, PageData, FrontmatterType } from '../../public/frontmatter'
+import { Frontmatter, PageData, FrontmatterTypes } from '../../public/frontmatter'
 import { GlobalData } from '../../public/global'
 import { SessionData } from '../../public/session'
 
@@ -28,8 +28,8 @@ export class FrontmatterService {
             global: {},
             page: {},
             request: {
-                query: {}, body: {}, params: {},
-                method: DefaultMethod, path: '',
+                get: {}, post: {}, path: {},
+                method: DefaultMethod, url: '',
                 originalUrl: '', ip: '', headers: {}
             },
             session: { id: '' }
@@ -49,11 +49,11 @@ export class FrontmatterService {
         const empty = FrontmatterService.CreateEmpty()
         const request: RequestData = isDefined(fm.request)
             ? {
-                query: fm.request.query || empty.request.query,
-                body: fm.request.body || empty.request.body,
-                params: fm.request.params || empty.request.params,
-                method: fm.request.method || empty.request.method,
+                get: fm.request.get || empty.request.get,
+                post: fm.request.post || empty.request.post,
                 path: fm.request.path || empty.request.path,
+                method: fm.request.method || empty.request.method,
+                url: fm.request.url || empty.request.url,
                 originalUrl: fm.request.originalUrl || empty.request.originalUrl,
                 ip: fm.request.ip || empty.request.ip,
                 headers: fm.request.headers || empty.request.headers
@@ -69,19 +69,19 @@ export class FrontmatterService {
     }
 
     //  TODO result type and actual value are not matching everytime
-    static FromRawString(raw: string): [Frontmatter, FrontmatterType] {
+    static FromRawString(raw: string): [Frontmatter, FrontmatterTypes] {
         let error = null
 
         try {
             const asJson = parseJson(raw)
-            return [asJson, FrontmatterType.JSON]
+            return [asJson, FrontmatterTypes.JSON]
         } catch (err) {
             error = err
         }
 
         try {
             const asYaml = parseYaml(raw)
-            return [asYaml, FrontmatterType.YAML]
+            return [asYaml, FrontmatterTypes.YAML]
         } catch (_) { }
 
         // TODO: determine whenever json or yaml is requested and print the corresponding error output, if present

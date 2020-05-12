@@ -1,8 +1,8 @@
 'use strict'
 
-import { RequestMethod } from './request'
+import { RequestMethod, RequestMethods } from './request'
 
-export const DefaultMethod: RequestMethod = RequestMethod.GET
+export const DefaultMethod: RequestMethod = RequestMethods.GET
 
 interface RouteBasic {
     url: string

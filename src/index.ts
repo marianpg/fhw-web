@@ -1,6 +1,6 @@
 'use strict'
 
-import { Config, RoutingFileExtensions } from './public/config'
+import { Config } from './public/config'
 
 import { parseConfig } from './application/config'
 import { LoggingService, Logging } from './application/logging'
@@ -82,3 +82,12 @@ export {
 // TODO: fileExtension: 'ts'
 // TODO: angelegte, aber leere global.json wirft unleserlichen Fehler
 // TODO: Fehlermeldungen ausschaltbar, aber mit Möglichkeit diese in Datei zu schreiben.
+/* TODO: was passiert, wenn der Nutzer in einer Controller-Datei erwartet, dass ein saveJson sofort ausgeführt wird?
+Beispiel:
+const data = db.loadJson()
+// change data
+db.saveJson()
+// change data
+const originalData = db.loadJson()
+// --> compare changeData and originalData
+*/

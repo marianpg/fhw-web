@@ -50,7 +50,7 @@ export class HtmlService {
 
         const pagePath = typeof ressource === 'string'
             ? ressource
-            : this.parsePagePath(ressource, frontmatter.request.params)
+            : this.parsePagePath(ressource, frontmatter.request.path)
 
         return await this.renderEngine.renderPage(pagePath, frontmatter)
     }
@@ -60,7 +60,7 @@ export class HtmlService {
 
         const pagePath = typeof ressource === 'string'
             ? ressource
-            : this.parsePagePath(ressource, frontmatter.request.params)
+            : this.parsePagePath(ressource, frontmatter.request.path)
 
         return await this.renderEngine.renderTemplate(pagePath, frontmatter)
     }

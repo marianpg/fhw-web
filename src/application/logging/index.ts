@@ -1,11 +1,11 @@
 'use strict'
 
-import { LoggingTypes } from '../../public/config'
+import { LoggingType, LoggingTypes } from '../../public/config'
 
 
 const colors = require('colors')
 
-const themeConfig: Record<LoggingTypes, string> = {
+const themeConfig: Record<LoggingType, string> = {
     info: 'brightCyan',
     data: 'grey',
     warn: 'brightYellow',
@@ -20,10 +20,10 @@ export class Logging {
     constructor(
         private tag: string,
         private shouldLog: boolean,
-        private loggingActive: LoggingTypes[]
+        private loggingActive: LoggingType[]
     ) { }
 
-    protected log(type: LoggingTypes, ...args: any[]) {
+    protected log(type: LoggingType, ...args: any[]) {
         if (this.loggingActive.includes(type) && this.shouldLog) {
             let tag = `[${this.tag}]`
             console.log(colors[type](...[tag, ...args]))
@@ -62,7 +62,7 @@ export class FakeLogging extends Logging {
 
 export class LoggingService {
     constructor(
-        private loggingActive: LoggingTypes[]
+        private loggingActive: LoggingType[]
     ) { }
 
     create(tag: string, shouldLog: boolean): Logging {
