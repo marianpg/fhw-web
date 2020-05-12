@@ -52,10 +52,9 @@ export type ControllerFunction = (
     data: {
         global: GlobalData,
         request: RequestData,
-        session: SessionData
+        session: Session
     },
-    database: Database,
-    session: Session) => ControllerResult
+    database: Database) => ControllerResult
 
 export type FunctionName = string
 

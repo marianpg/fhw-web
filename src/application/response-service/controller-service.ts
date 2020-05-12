@@ -80,10 +80,10 @@ export class ControllerService {
 
         const dataArgument = {
             request,
-            session: session.getData(),
+            session,
             global: globalData
         }
 
-        return _function(dataArgument, database, session)
+        return _function(dataArgument, database)
     }
 }
