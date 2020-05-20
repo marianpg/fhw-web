@@ -48,3 +48,40 @@ Datei: *templates/title.hbs*
     .. code-block:: handlebars
 
         <h1>{{page.title}}</h1>
+
+
+.. note::
+
+    Ein per ``include`` einzubeziehendes Fragment wird mittels Templating erzeugt; dabei wird automatisch der *global* und *page* Kontext berücksichtigt, jedoch nicht der Kontext, der bspw. über eine Iteration zusätzlich entsteht.
+
+Damit ein Schleifenkontext beim ``include`` dennoch berücksichtigt wird, ist dieser als *zweites Argument* dem ``include`` zu übergeben:
+
+    Datei: *<Projektordner>/pages/personen.hbs*
+
+        .. code-block::
+        
+            ---
+            {
+                "persons": [
+                    { "firstname": "Tina", "music": "The Smiths" },
+                    { "firstname": "Max", "music": "Piano" }
+                ]
+            }
+            ---
+
+        .. code-block:: handlebars
+
+            <h1>Alle Personen:</h1>
+            {{#each page.persons}}
+            {{ include 'karte' this }}
+            {{/each}}
+
+
+    Datei: *<Projektordner>/templates/karte.hbs*
+
+        .. code-block:: handlebars
+
+            <article>
+                <h1>{{ page.firstname }}</h1>
+                <p>{{ page.music }}</p>
+            </article>

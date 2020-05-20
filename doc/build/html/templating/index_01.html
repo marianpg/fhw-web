@@ -378,6 +378,41 @@ Mit der Punktnotation stehen dann auf oberste Ebene zwei “globale Objekte” b
 </pre></div>
 </div>
 </div></blockquote>
+<div class="admonition note">
+<p class="admonition-title">Bemerkung</p>
+<p>Ein per <code class="docutils literal notranslate"><span class="pre">include</span></code> einzubeziehendes Fragment wird mittels Templating erzeugt; dabei wird automatisch der <em>global</em> und <em>page</em> Kontext berücksichtigt, jedoch nicht der Kontext, der bspw. über eine Iteration zusätzlich entsteht.</p>
+</div>
+<p>Damit ein Schleifenkontext beim <code class="docutils literal notranslate"><span class="pre">include</span></code> dennoch berücksichtigt wird, ist dieser als <em>zweites Argument</em> dem <code class="docutils literal notranslate"><span class="pre">include</span></code> zu übergeben:</p>
+<blockquote>
+<div><p>Datei: <em>&lt;Projektordner&gt;/pages/personen.hbs</em></p>
+<blockquote>
+<div><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">---</span>
+<span class="p">{</span>
+    <span class="s2">&quot;persons&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span> <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Tina&quot;</span><span class="p">,</span> <span class="s2">&quot;music&quot;</span><span class="p">:</span> <span class="s2">&quot;The Smiths&quot;</span> <span class="p">},</span>
+        <span class="p">{</span> <span class="s2">&quot;firstname&quot;</span><span class="p">:</span> <span class="s2">&quot;Max&quot;</span><span class="p">,</span> <span class="s2">&quot;music&quot;</span><span class="p">:</span> <span class="s2">&quot;Piano&quot;</span> <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span>
+<span class="o">---</span>
+</pre></div>
+</div>
+<div class="highlight-handlebars notranslate"><div class="highlight"><pre><span></span><span class="x">&lt;h1&gt;Alle Personen:&lt;/h1&gt;</span>
+<span class="cp">{{</span><span class="m m-Attribute">#each</span> <span class="nv">page.persons</span><span class="cp">}}</span><span class="x"></span>
+<span class="cp">{{</span> <span class="nv">include</span> <span class="s1">&#39;karte&#39;</span> <span class="nv">this</span> <span class="cp">}}</span><span class="x"></span>
+<span class="cp">{{</span><span class="m m-Attribute">/each</span><span class="cp">}}</span><span class="x"></span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Datei: <em>&lt;Projektordner&gt;/templates/karte.hbs</em></p>
+<blockquote>
+<div><div class="highlight-handlebars notranslate"><div class="highlight"><pre><span></span><span class="x">&lt;article&gt;</span>
+<span class="x">    &lt;h1&gt;</span><span class="cp">{{</span> <span class="nv">page.firstname</span> <span class="cp">}}</span><span class="x">&lt;/h1&gt;</span>
+<span class="x">    &lt;p&gt;</span><span class="cp">{{</span> <span class="nv">page.music</span> <span class="cp">}}</span><span class="x">&lt;/p&gt;</span>
+<span class="x">&lt;/article&gt;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div></blockquote>
 </div>
 <div class="section" id="validierung">
 <h2>Validierung<a class="headerlink" href="#validierung" title="Link zu dieser Überschrift">¶</a></h2>
