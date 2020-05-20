@@ -51,7 +51,7 @@ export class HelpersRegistration {
 
                 hbs.registerHelper(functionsName, (...args: any[]) => {
                     args.pop() //last argument contains an options object, we do not need it here
-                    return new hbs.SafeString(_function(...args))
+                    return _function(...args)
                 })
             })
         })
