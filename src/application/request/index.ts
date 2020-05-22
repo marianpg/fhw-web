@@ -36,8 +36,9 @@ export class Request {
 
     async getStylesheet(path: string): Promise<string> {
         try {
+            const host = this.config.host
             const port = this.config.port
-            const _url = url.resolve(`http://localhost:${port}/`, path)
+            const _url = url.resolve(`http://${host}:${port}/`, path)
             const { data } = await axios.get(_url, {
                 headers: {
                     "Content-Type": "text/css",
