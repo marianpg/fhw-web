@@ -8,7 +8,6 @@ Sind in der Konfiguration *magic routes* aktiviert, so wird die *routes.json* ni
     [
         {
             "url": "*",
-            "method": ["get"],
             "static": "*"
         }, {
             "url": "*",
