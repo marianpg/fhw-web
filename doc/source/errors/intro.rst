@@ -1,1 +1,0 @@
-In diesem Abschnitt wird erläutert, wie Fehlerbehandlungen im Zusammenhang mit dem *fhw-web*-Framework identifiziert und behandelt werden können.

@@ -1,1 +1,0 @@
-Die Routendefinitionen werden in einer Datei routes.json beschrieben. Diese Datei muss erst im Projektordner angelegt werden.
