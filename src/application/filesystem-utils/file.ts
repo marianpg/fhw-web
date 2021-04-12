@@ -130,7 +130,7 @@ export class FileUtils {
         const name = path.parse(filename).name
         const fullPath = this.fullPath(`${name}.json`, relativePath)
         try {
-            await fsp.writeFile(fullPath, content, options)
+            fs.writeFileSync(fullPath, content, options)
         } catch (err) {
             throw new Error(`Could not write file: ${err}`)
         }
