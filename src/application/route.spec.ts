@@ -3,7 +3,7 @@
 import { expect } from 'chai'
 import 'mocha'
 
-import { RequestMethod, RequestParams } from '../public/request'
+import { RequestMethods, RequestParams } from '../public/request'
 import { PageRoute, StaticRoute, ControllerRoute } from '../public/route'
 
 import { parseRoutes, determineFilepath } from './route'
@@ -118,7 +118,7 @@ describe('Route', () => {
             const json = [{ url: '/test', page: 'test', method: ['get'] }]
             try {
                 const route: PageRoute = parseRoutes(json)[0] as PageRoute
-                const method = RequestMethod.GET
+                const method = RequestMethods.GET
                 expect(route.method[0]).to.equal(method)
             } catch (_) {
                 expect(false).to.be.true
@@ -128,7 +128,7 @@ describe('Route', () => {
             const json = [{ url: '/test', page: 'test', method: ['GET'] }]
             try {
                 const route: PageRoute = parseRoutes(json)[0] as PageRoute
-                const method = RequestMethod.GET
+                const method = RequestMethods.GET
                 expect(route.method[0]).to.equal(method)
             } catch (_) {
                 expect(false).to.be.true
@@ -138,7 +138,7 @@ describe('Route', () => {
             const json = [{ url: '/test', page: 'test', method: ['GeT'] }]
             try {
                 const route: PageRoute = parseRoutes(json)[0] as PageRoute
-                const method = RequestMethod.GET
+                const method = RequestMethods.GET
                 expect(route.method[0]).to.equal(method)
             } catch (_) {
                 expect(false).to.be.true

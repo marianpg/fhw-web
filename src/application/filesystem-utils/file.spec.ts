@@ -6,7 +6,7 @@ import 'mocha'
 import { FileUtils } from '.'
 import { FakeLogging } from '../logging'
 
-const fileUtils = new FileUtils(new FakeLogging)
+const fileUtils = new FileUtils(new FakeLogging, process.cwd())
 
 describe('listFiles', () => {
     it('recursively', async () => {
