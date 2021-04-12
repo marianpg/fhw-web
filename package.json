@@ -1,6 +1,6 @@
 {
     "name": "fhw-web",
-    "version": "1.1.4",
+    "version": "1.1.5",
     "description": "Übungsbegleitendes Framework zur Veranstaltung \"Web-Anwendungen\" und \"Web-Technologien\" an der Fachhochschule Wedel\"",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
