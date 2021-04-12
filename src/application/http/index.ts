@@ -4,6 +4,7 @@ import { Config } from '../../public/config'
 
 import { Express } from 'express'
 import express = require('express') //see https://stackoverflow.com/a/34520891
+const cors = require('cors')
 import { Server as HttpServer } from 'http'
 import cookieParser = require('cookie-parser') //and again...
 
@@ -36,6 +37,7 @@ export class Server {
 
     async build(): Promise<void> {
         this.app = express()
+        this.app.use(cors())
         this.app.use(express.urlencoded({ extended: true }))
         this.app.use(express.json())
         this.app.use(cookieParser())
