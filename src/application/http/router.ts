@@ -46,10 +46,10 @@ export class Router {
         const userAgent = request.headers['user-agent'] || ''
         const isUserAgent = userAgent.includes('fhw-web')
         const wantsFavicon = request.originalUrl.includes('favicon')
-        
+
         if (!isUserAgent && !wantsFavicon) {
             this.logging.data(
-                'Incomming Request:',
+                'Incoming request:',
                 request.method,
                 request.originalUrl,
                 jsonStringify(request.post)
@@ -64,7 +64,7 @@ export class Router {
 
         if (!isUserAgent && !wantsFavicon) {
             this.logging.data(
-                'Sending Response',
+                'Sending response',
                 request.originalUrl,
                 response.statusCode,
                 response.type
@@ -137,7 +137,7 @@ export class Router {
 
 	/**
 	 * @important must not throw any error
-	 * 
+	 *
 	 * @param response FHW-Web-Response Object
 	 * @param res Express-Response Object
 	 */
