@@ -1,6 +1,9 @@
 # gui
 .vscode/
 
+# jetbrains
+.idea
+
 # Dependency directories
 node_modules/
 
