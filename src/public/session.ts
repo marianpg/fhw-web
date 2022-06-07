@@ -7,7 +7,8 @@ export type SessionMeta = {
     lastAccess: {
         at: string,
         url: string
-    }
+    },
+    cameFrom: string
 }
 
 export interface Session {

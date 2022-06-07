@@ -28,6 +28,7 @@ export class FileDataService {
         if (!isDefined(filename) && (typeof filename !== 'string')) {
             throw new Error('Error while executing "loadJson": either filename is missing or is not of type string.')
         }
+        filename = filename.startsWith('/') ? filename.substring(1) : filename
         filename = this.normalizeFilename(filename)
         return isDefined(this.data[filename])
             ? JSON.parse(JSON.stringify(this.data[filename]))
@@ -41,6 +42,7 @@ export class FileDataService {
         if (!isDefined(data)) {
             throw new Error('Error while executing "saveJson": data, which has to be saved, is missing.')
         }
+        filename = filename.startsWith('/') ? filename.substring(1) : filename
         filename = this.normalizeFilename(filename)
         this.data[filename] = data
     }
@@ -56,11 +58,13 @@ export class FileDataService {
         await Promise.all(
             files.map(async (filename) => {
                 if (filename.endsWith(`.${this.config.format}`)) {
-                    result[filename] = await this.fileUtils.readJson(filename, this.config.path)
+                    const { path, file } = this.fileUtils.parsePath(
+                        this.fileUtils.join(this.config.path, filename)
+                    )
+                    result[filename] = await this.fileUtils.readJson(file, path)
                 }
             })
         )
-
         this.data = result
     }
 
@@ -80,9 +84,11 @@ export class FileDataService {
     async save(): Promise<void> {
         if (this.config.active) {
             await Promise.all(
-                Object.keys(this.data).map(async (filename) => {
-                    filename = this.normalizeFilename(filename)
-                    await this.fileUtils.writeJson(this.data[filename], filename, this.config.path)
+                Object.keys(this.data).map(async (key) => {
+                    const { path, file } = this.fileUtils.parsePath(
+                        this.fileUtils.join(this.config.path, key)
+                    )
+                    await this.fileUtils.writeJson(this.data[key], file, path)
                 })
             )
         }

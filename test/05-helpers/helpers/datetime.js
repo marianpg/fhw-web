@@ -2,5 +2,5 @@
 
 module.exports = {
     now: () => new Date(),
-    nextDay: (timestamp) => `${timestamp}, but tomorrow`
+    nextDay: (timestamp) => `${timestamp}, but just the day after`
 }

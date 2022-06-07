@@ -6,49 +6,49 @@
         "url": "/",
         "page": "index"
     }, {
-        "url": "/empty",
+        "url": "/empty/:status",
         "controller": {
             "file": "collection",
             "function": "empty"
         }
     }, {
-        "url": "/text",
+        "url": "/text/:status",
         "controller": {
             "file": "collection",
             "function": "text"
         }
     }, {
-        "url": "/json",
+        "url": "/json/:status",
         "controller": {
             "file": "collection",
             "function": "json"
         }
     }, {
-        "url": "/redirect",
+        "url": "/redirect/:status",
         "controller": {
             "file": "collection",
             "function": "redirect"
         }
     }, {
-        "url": "/page",
+        "url": "/page/:status",
         "controller": {
             "file": "collection",
             "function": "page"
         }
     }, {
-        "url": "/fragment",
+        "url": "/fragment/:status",
         "controller": {
             "file": "collection",
             "function": "fragment"
         }
     }, {
-        "url": "/promise",
+        "url": "/promise/:status",
         "controller": {
             "file": "collection",
             "function": "promise"
         }
     }, {
-        "url": "/promise-2",
+        "url": "/promise-2/:status",
         "controller": {
             "file": "collection",
             "function": "promise-2"

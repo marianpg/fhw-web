@@ -2,7 +2,7 @@
 
 import { RoutingConfig, TemplatingConfig } from '../../public/config'
 import { ControllerRoute } from '../../public/route'
-import { ControllerFunction, ControllerResult, TextResult, JsonResult, RedirectResult, PageResult, FragmentResult } from '../../public/controller'
+import { ControllerFunction, ControllerResult, TextResult, JsonResult, RedirectResult, PageResult, FragmentResult, BaseResult } from '../../public/controller'
 import { GlobalData } from '../../public/global'
 import { RequestData } from '../../public/request'
 import { Session } from '../../public/session'
@@ -29,6 +29,9 @@ export const isPageResult = (result: ControllerResult): result is PageResult => 
 }
 export const isFragmentResult = (result: ControllerResult): result is FragmentResult => {
     return isDefined((result as FragmentResult).fragment)
+}
+export const isBaseResult = (result: ControllerResult): result is BaseResult => {
+    return isDefined((result as BaseResult).status)
 }
 
 export const parseControllerFunction = (_exports: Record<string, any>): Record<string, ControllerFunction> => {

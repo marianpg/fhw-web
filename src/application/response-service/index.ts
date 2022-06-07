@@ -25,6 +25,10 @@ import {
     isControllerRoute,
     determineFilepath
 } from '../route'
+
+
+import { isDefined } from '../helper'
+
 import {
     Response,
     ResponseStatic,
@@ -37,7 +41,8 @@ import {
     isJsonResult,
     isRedirectResult,
     isPageResult,
-    isFragmentResult
+    isFragmentResult,
+    isBaseResult
 } from './controller-service'
 import { isPromise } from '../helper'
 import { SessionService } from '../http'
@@ -75,19 +80,19 @@ export class ResponseService {
         } else {
             const globalData: GlobalData = await this.databaseService.getGlobalData()
             const session: Session = await sessionService.getSession(request.originalUrl)
-
+            
             if (isPageRoute(route)) {
                 const frontmatter = FrontmatterService.From({
                     request,
                     global: globalData,
                     session: session.getData()
                 })
-                response = await this.servePage(route, frontmatter)
+                response = await this.servePage(200, route, frontmatter)
             } else if (isControllerRoute(route)) {
                 response = await this.serveController(route, globalData, request, session)
             } else {
                 // TODO: double check when this happens
-                response = { type: 'empty', statusCode: 200 }
+                response = { type: 'empty', statusCode: 400 }
             }
             await sessionService.closeSession(request)
             await this.databaseService.save()
@@ -111,19 +116,19 @@ export class ResponseService {
         return { type: 'static', statusCode: 200, pathToFile: fullPath }
     }
 
-    async servePage(ressource: string | PageRoute, frontmatter: Frontmatter): Promise<ResponseHtml> {
+    async servePage(statusCode: number, ressource: string | PageRoute, frontmatter: Frontmatter): Promise<ResponseHtml> {
         const pageHtml = await this.htmlService.parsePage(ressource, frontmatter)
         const [valid, html] = await this.htmlService.validate(pageHtml)
         if (valid) {
-            return { statusCode: 200, type: 'text/html', html }
+            return { statusCode: statusCode, type: 'text/html', html }
         } else {
             return { statusCode: 500, type: 'text/html', html }
         }
     }
 
-    async serveFragment(ressource: string | PageRoute, frontmatter: Frontmatter): Promise<ResponseHtml> {
+    async serveFragment(statusCode: number, ressource: string | PageRoute, frontmatter: Frontmatter): Promise<ResponseHtml> {
         const templateHtml = await this.htmlService.parseTemplate(ressource, frontmatter)
-        return { statusCode: 200, type: 'text/html', html: templateHtml }
+        return { statusCode: statusCode, type: 'text/html', html: templateHtml }
     }
 
     private async processControllerResult(result: ControllerResult, globalData: GlobalData, request: RequestData, session: SessionData): Promise<Response> {
@@ -140,7 +145,7 @@ export class ResponseService {
                 global: globalData,
                 page: result.frontmatter
             })
-            return this.servePage(result.page, frontmatter)
+            return this.servePage(result.status, result.page, frontmatter)
         } else if (isFragmentResult(result)) {
             const frontmatter = FrontmatterService.From({
                 request,
@@ -148,7 +153,7 @@ export class ResponseService {
                 global: globalData,
                 page: result.frontmatter
             })
-            return this.serveFragment(result.fragment, frontmatter)
+            return this.serveFragment(result.status, result.fragment, frontmatter)
         } else if (isPromise(result)) {
             try {
                 const promiseResult = await Promise.resolve(result)
@@ -156,11 +161,13 @@ export class ResponseService {
             } catch (err) {
                 throw new Error(`One of your controller rejected a promise: ${err})`)
             }
+        } else if (isBaseResult(result)) {
+            return { type: 'empty', statusCode: result.status }
         }
 
         // TODO: double check when this happens
         // - case 1: when a returned chained promise does not get called
-        return { type: 'empty', statusCode: 200 }
+        return { type: 'empty', statusCode: 400 }
     }
 
     async serveController(route: ControllerRoute, globalData: GlobalData, request: RequestData, session: Session): Promise<Response> {

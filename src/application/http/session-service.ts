@@ -34,7 +34,8 @@ class Session implements ISession {
             lastAccess: {
                 at: this.file.meta.lastAccess.at,
                 url: this.file.meta.lastAccess.url
-            }
+            },
+            cameFrom: this.file.meta.cameFrom
         }
     }
     getData(): SessionData {
@@ -52,7 +53,7 @@ export class EmptySession implements ISession {
         return ''
     }
     getMeta(): SessionMeta {
-        return { createdAt: '', lastAccess: { at: '', url: '' } }
+        return { createdAt: '', lastAccess: { at: '', url: '' }, cameFrom: '' }
     }
     getData(): SessionData {
         return { }
@@ -101,6 +102,8 @@ export class SessionService {
                 ...request.post
             }
         }
+        file.meta.cameFrom = request.originalUrl
+
         return this.fileUtils.writeJson(file, this.session.getId(), 'sessions')
     }
     private async readSession(url: string, id: string): Promise<ISession> {
@@ -114,7 +117,7 @@ export class SessionService {
     private async initSession(url: string, existingId?: string): Promise<ISession> {
         const datetime = now()
         const [_, id] = await this.prepare(existingId)
-        const meta = { createdAt: datetime, lastAccess: { at: datetime, url } }
+        const meta = { createdAt: datetime, lastAccess: { at: datetime, url }, cameFrom: '' }
         const data = {}
         this.session = new Session({ id, meta, data })
         return this.session

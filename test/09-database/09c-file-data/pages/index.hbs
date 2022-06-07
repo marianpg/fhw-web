@@ -6,10 +6,16 @@
     <title>Document</title>
 </head>
 <body>
+    {{#each page.data}}
     <ul>
-        {{#each page.persons}}
-        <li>{{ this.firstname }} {{ this.lastname }}</li>
+        {{#each this}}
+            {{#if this.firstname}}
+            <li>{{ this.firstname }} {{ this.lastname }}</li>
+            {{else}}
+            <li>{{ this }}</li>
+            {{/if}}
         {{/each}}
     </ul>
+    {{/each}}
 </body>
 </html>

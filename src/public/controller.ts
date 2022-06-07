@@ -6,7 +6,7 @@ import { Database } from './database'
 import { Session, SessionData } from './session'
 
 
-interface BaseResult {
+export interface BaseResult {
     status: number
 }
 

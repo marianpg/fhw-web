@@ -11,6 +11,13 @@
         }
     },
     {
+        "url": "/session/list2",
+        "controller": {
+            "file": "session",
+            "function": "list"
+        }
+    },
+    {
         "url": "/session/add",
         "controller": {
             "file": "session",

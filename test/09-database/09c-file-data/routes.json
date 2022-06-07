@@ -12,5 +12,19 @@
             "file": "data",
             "function": "add"
         }
+    },
+    {
+        "url": "/alphabet/add",
+        "controller": {
+            "file": "data",
+            "function": "alphabet-add"
+        }
+    },
+    {
+        "url": "/numbers/add",
+        "controller": {
+            "file": "data",
+            "function": "number-add"
+        }
     }
 ]

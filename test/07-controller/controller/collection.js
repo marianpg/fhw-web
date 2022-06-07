@@ -2,33 +2,43 @@
 
 module.exports = {
     empty: (data, database) => {
+        const status = data.request.path.status;
+
         return {
-            status: 200
+            status
         }
     },
     text: (data, database) => {
+        const status = data.request.path.status;
+
         return {
-            status: 200,
+            status,
             text: 'yay'
         }
     },
     json: (data, database) => {
+        const status = data.request.path.status;
+
         return {
-            status: 200,
+            status,
             json: {
                 message: 'all righty!'
             }
         }
     },
     redirect: (data, database) => {
+        const status = data.request.path.status;
+
         return {
-            status: 307,
+            status,
             redirect: 'https://www.reddit.com/r/funny/'
         }
     },
     page: (data, database) => {
+        const status = data.request.path.status;
+
         return {
-            status: 200,
+            status,
             page: 'index',
             frontmatter: {
                 data: 'Controller are Awesome!'
@@ -36,8 +46,10 @@ module.exports = {
         }
     },
     fragment: (data, database) => {
+        const status = data.request.path.status;
+
         return {
-            status: 200,
+            status,
             fragment: 'snippet',
             frontmatter: {
                 data: 'Controller are Awesome!'
@@ -45,16 +57,20 @@ module.exports = {
         }
     },
     promise: (data, database) => {
+        const status = data.request.path.status;
+
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 resolve({
-                    status: 200,
+                    status,
                     text: 'promises are working!'
                 })
             }, 2500)
         })
     },
     "promise-2": async (data, database) => {
+        const status = data.request.path.status;
+        
         const wait = new Promise((resolve, reject) => {
             setTimeout(() => {
                 resolve()
@@ -64,7 +80,7 @@ module.exports = {
         await wait
 
         return {
-            status: 200,
+            status,
             text: 'promises-2 are working!'
         }
     },
